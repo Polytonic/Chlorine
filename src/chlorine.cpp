@@ -5,7 +5,7 @@
 #ifdef __APPLE__
 #include <OpenCL/OpenCL.h>
 #else
-#include <CL/OpenCL.h>
+#include <CL/opencl.h>
 #endif
 
 
