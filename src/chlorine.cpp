@@ -1,12 +1,13 @@
-//
-//  main.cpp
-//  Chlorine
-//
-//  Created by Polytonic on 9/15/13.
-//
-//
-
+// Standard Library Headers
 #include <iostream>
+
+// Platform Specific Headers
+#ifdef __APPLE__
+#include <OpenCL/OpenCL.h>
+#else
+#include <CL/OpenCL.h>
+#endif
+
 
 int main(int argc, const char * argv[])
 {
