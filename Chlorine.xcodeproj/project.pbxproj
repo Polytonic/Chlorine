@@ -44,6 +44,7 @@
 		5717701A17F76BB8001DCB59 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		5717701C17F77BF5001DCB59 /* clinfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clinfo.cpp; sourceTree = "<group>"; };
 		5717702117F77C17001DCB59 /* clinfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clinfo; sourceTree = BUILT_PRODUCTS_DIR; };
+		576A481C17F78A530062FDEA /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +100,7 @@
 			children = (
 				5717701A17F76BB8001DCB59 /* OpenCL.framework */,
 				57176FFA17F7535A001DCB59 /* makefile */,
+				576A481C17F78A530062FDEA /* .travis.yml */,
 				57176FFE17F76972001DCB59 /* lib */,
 				5717700017F76972001DCB59 /* src */,
 				57176FFC17F76972001DCB59 /* bin */,
@@ -300,6 +302,7 @@
 				5717702917F77C17001DCB59 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		57CDCA6E17E6981400BEBD07 /* Build configuration list for PBXProject "Chlorine" */ = {
 			isa = XCConfigurationList;

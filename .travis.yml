@@ -1,0 +1,17 @@
+# Travis Configuration
+language: cpp
+script: make
+compiler:
+  - clang
+  - gcc
+
+# Install OpenCL Headers
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq opencl-headers
+
+# Restrict to `master`
+branches:
+  only:
+    - master
+
