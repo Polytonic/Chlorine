@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		57176FFB17F7535A001DCB59 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 57176FFA17F7535A001DCB59 /* makefile */; };
 		5717700317F76972001DCB59 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5717700217F76972001DCB59 /* main.cpp */; };
+		5717701B17F76BB8001DCB59 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5717701A17F76BB8001DCB59 /* OpenCL.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,6 +30,7 @@
 		5717700117F76972001DCB59 /* Chlorine.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = Chlorine.1; sourceTree = "<group>"; };
 		5717700217F76972001DCB59 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		5717700417F769EA001DCB59 /* Chlorine */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Chlorine; sourceTree = BUILT_PRODUCTS_DIR; };
+		5717701A17F76BB8001DCB59 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5717701B17F76BB8001DCB59 /* OpenCL.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +74,7 @@
 		57CDCA6A17E6981400BEBD07 = {
 			isa = PBXGroup;
 			children = (
+				5717701A17F76BB8001DCB59 /* OpenCL.framework */,
 				57176FFA17F7535A001DCB59 /* makefile */,
 				57176FFE17F76972001DCB59 /* lib */,
 				5717700017F76972001DCB59 /* src */,
@@ -130,7 +133,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5717700317F76972001DCB59 /* main.cpp in Sources */,
-				57176FFB17F7535A001DCB59 /* makefile in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
