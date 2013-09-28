@@ -1,0 +1,1 @@
+[![Build Status](https://travis-ci.org/Polytonic/Chlorine.png)](https://travis-ci.org/Polytonic/Chlorine)
