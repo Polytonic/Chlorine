@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		57CDCA7717E6981400BEBD07 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57CDCA7617E6981400BEBD07 /* main.cpp */; };
-		57CDCA7917E6981400BEBD07 /* Chlorine.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 57CDCA7817E6981400BEBD07 /* Chlorine.1 */; };
+		57176FFB17F7535A001DCB59 /* makefile in Sources */ = {isa = PBXBuildFile; fileRef = 57176FFA17F7535A001DCB59 /* makefile */; };
+		5717700317F76972001DCB59 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5717700217F76972001DCB59 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -18,16 +18,18 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				57CDCA7917E6981400BEBD07 /* Chlorine.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		57CDCA7317E6981400BEBD07 /* Chlorine */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Chlorine; sourceTree = BUILT_PRODUCTS_DIR; };
-		57CDCA7617E6981400BEBD07 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		57CDCA7817E6981400BEBD07 /* Chlorine.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Chlorine.1; sourceTree = "<group>"; };
+		57176FFA17F7535A001DCB59 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
+		57176FFD17F76972001DCB59 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		57176FFF17F76972001DCB59 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		5717700117F76972001DCB59 /* Chlorine.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = Chlorine.1; sourceTree = "<group>"; };
+		5717700217F76972001DCB59 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		57CDCA7317E6981400BEBD07 /* Chlorine */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = Chlorine; path = "/Users/Dropbox/Documents/Arts and Crafts/Chlorine/build/Debug/Chlorine"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,29 +43,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		57176FFC17F76972001DCB59 /* bin */ = {
+			isa = PBXGroup;
+			children = (
+				57176FFD17F76972001DCB59 /* .gitignore */,
+			);
+			path = bin;
+			sourceTree = "<group>";
+		};
+		57176FFE17F76972001DCB59 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				57176FFF17F76972001DCB59 /* .gitignore */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		5717700017F76972001DCB59 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				5717700117F76972001DCB59 /* Chlorine.1 */,
+				5717700217F76972001DCB59 /* main.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		57CDCA6A17E6981400BEBD07 = {
 			isa = PBXGroup;
 			children = (
-				57CDCA7517E6981400BEBD07 /* Chlorine */,
-				57CDCA7417E6981400BEBD07 /* Products */,
+				57176FFA17F7535A001DCB59 /* makefile */,
+				57176FFC17F76972001DCB59 /* bin */,
+				57176FFE17F76972001DCB59 /* lib */,
+				5717700017F76972001DCB59 /* src */,
 			);
-			sourceTree = "<group>";
-		};
-		57CDCA7417E6981400BEBD07 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				57CDCA7317E6981400BEBD07 /* Chlorine */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		57CDCA7517E6981400BEBD07 /* Chlorine */ = {
-			isa = PBXGroup;
-			children = (
-				57CDCA7617E6981400BEBD07 /* main.cpp */,
-				57CDCA7817E6981400BEBD07 /* Chlorine.1 */,
-			);
-			path = Chlorine;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,7 +114,7 @@
 				en,
 			);
 			mainGroup = 57CDCA6A17E6981400BEBD07;
-			productRefGroup = 57CDCA7417E6981400BEBD07 /* Products */;
+			productRefGroup = 57CDCA6A17E6981400BEBD07;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -116,7 +128,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				57CDCA7717E6981400BEBD07 /* main.cpp in Sources */,
+				5717700317F76972001DCB59 /* main.cpp in Sources */,
+				57176FFB17F7535A001DCB59 /* makefile in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
