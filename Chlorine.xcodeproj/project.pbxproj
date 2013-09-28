@@ -45,6 +45,7 @@
 		5717701C17F77BF5001DCB59 /* clinfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clinfo.cpp; sourceTree = "<group>"; };
 		5717702117F77C17001DCB59 /* clinfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clinfo; sourceTree = BUILT_PRODUCTS_DIR; };
 		576A481C17F78A530062FDEA /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
+		576A481D17F792FB0062FDEA /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +101,7 @@
 			children = (
 				5717701A17F76BB8001DCB59 /* OpenCL.framework */,
 				57176FFA17F7535A001DCB59 /* makefile */,
+				576A481D17F792FB0062FDEA /* readme.md */,
 				576A481C17F78A530062FDEA /* .travis.yml */,
 				57176FFE17F76972001DCB59 /* lib */,
 				5717700017F76972001DCB59 /* src */,
