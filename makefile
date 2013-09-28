@@ -24,7 +24,7 @@ endif
 
 # Clang Compiler Flags
 ifeq ($(CXX), clang++)
-CFLAGS += -O4 -g -Weverything
+CFLAGS += -O3 -g -Weverything
 
 # GNU Compiler Flags
 else ifeq ($(CXX), g++)
