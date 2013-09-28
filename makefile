@@ -1,10 +1,12 @@
 # Makefile Targets
 TARGET = chlorine
+CLINFO = clinfo
 OUTDIR = bin/
 INCDIR = lib/
 
 # Configure Compiler Options
-SOURCE = src/main.cpp
+SOURCE = src/chlorine.cpp
+CLNFOS = src/clinfo.cpp
 UNAMES = $(shell uname -s)
 
 # OS X Configuration Flags
@@ -30,12 +32,15 @@ CFLAGS += -O3 -g -Wall -Wextra
 endif
 
 # Clear Binary and Build
-default: clean $(TARGET)
+default: clean $(TARGET) $(CLINFO)
 all: default
 .PHONY: all
 
 # Compile Source and Flags
 $(TARGET): $(SOURCE)
+	$(CXX) $(CFLAGS) $< -o $(OUTDIR)$@ $(LFLAGS)
+
+$(CLINFO): $(CLNFOS)
 	$(CXX) $(CFLAGS) $< -o $(OUTDIR)$@ $(LFLAGS)
 
 # Remove Generated Files
