@@ -1,6 +1,8 @@
 # Xcode Project Files
 xcuserdata
 UserInterfaceState.xcuserstate
+
+# Ignore UNIX Executables
 chlorine
 
 # Compiled Object files
