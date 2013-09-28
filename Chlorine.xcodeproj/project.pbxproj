@@ -7,11 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5717700317F76972001DCB59 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5717700217F76972001DCB59 /* main.cpp */; };
+		5717700317F76972001DCB59 /* chlorine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5717700217F76972001DCB59 /* chlorine.cpp */; };
 		5717701B17F76BB8001DCB59 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5717701A17F76BB8001DCB59 /* OpenCL.framework */; };
+		5717702A17F77C2F001DCB59 /* clinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5717701C17F77BF5001DCB59 /* clinfo.cpp */; };
+		5717702F17F77D39001DCB59 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5717701A17F76BB8001DCB59 /* OpenCL.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		5717701F17F77C17001DCB59 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		57CDCA7117E6981400BEBD07 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -28,12 +39,22 @@
 		57176FFD17F76972001DCB59 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		57176FFF17F76972001DCB59 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		5717700117F76972001DCB59 /* Chlorine.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = Chlorine.1; sourceTree = "<group>"; };
-		5717700217F76972001DCB59 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		5717700217F76972001DCB59 /* chlorine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chlorine.cpp; sourceTree = "<group>"; };
 		5717700417F769EA001DCB59 /* Chlorine */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Chlorine; sourceTree = BUILT_PRODUCTS_DIR; };
 		5717701A17F76BB8001DCB59 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
+		5717701C17F77BF5001DCB59 /* clinfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clinfo.cpp; sourceTree = "<group>"; };
+		5717702117F77C17001DCB59 /* clinfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clinfo; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5717701E17F77C17001DCB59 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5717702F17F77D39001DCB59 /* OpenCL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		57CDCA7017E6981400BEBD07 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -50,6 +71,7 @@
 			children = (
 				57176FFD17F76972001DCB59 /* .gitignore */,
 				5717700417F769EA001DCB59 /* Chlorine */,
+				5717702117F77C17001DCB59 /* clinfo */,
 			);
 			path = bin;
 			sourceTree = "<group>";
@@ -66,7 +88,8 @@
 			isa = PBXGroup;
 			children = (
 				5717700117F76972001DCB59 /* Chlorine.1 */,
-				5717700217F76972001DCB59 /* main.cpp */,
+				5717700217F76972001DCB59 /* chlorine.cpp */,
+				5717701C17F77BF5001DCB59 /* clinfo.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -85,6 +108,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5717702017F77C17001DCB59 /* clinfo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5717702717F77C17001DCB59 /* Build configuration list for PBXNativeTarget "clinfo" */;
+			buildPhases = (
+				5717701D17F77C17001DCB59 /* Sources */,
+				5717701E17F77C17001DCB59 /* Frameworks */,
+				5717701F17F77C17001DCB59 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = clinfo;
+			productName = clinfo;
+			productReference = 5717702117F77C17001DCB59 /* clinfo */;
+			productType = "com.apple.product-type.tool";
+		};
 		57CDCA7217E6981400BEBD07 /* Chlorine */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 57CDCA7C17E6981400BEBD07 /* Build configuration list for PBXNativeTarget "Chlorine" */;
@@ -123,22 +163,62 @@
 			projectRoot = "";
 			targets = (
 				57CDCA7217E6981400BEBD07 /* Chlorine */,
+				5717702017F77C17001DCB59 /* clinfo */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5717701D17F77C17001DCB59 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5717702A17F77C2F001DCB59 /* clinfo.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		57CDCA6F17E6981400BEBD07 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5717700317F76972001DCB59 /* main.cpp in Sources */,
+				5717700317F76972001DCB59 /* chlorine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		5717702817F77C17001DCB59 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5717702917F77C17001DCB59 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		57CDCA7A17E6981400BEBD07 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -213,6 +293,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5717702717F77C17001DCB59 /* Build configuration list for PBXNativeTarget "clinfo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5717702817F77C17001DCB59 /* Debug */,
+				5717702917F77C17001DCB59 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		57CDCA6E17E6981400BEBD07 /* Build configuration list for PBXProject "Chlorine" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
