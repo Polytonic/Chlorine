@@ -4,6 +4,7 @@ UserInterfaceState.xcuserstate
 
 # Ignore UNIX Executables
 chlorine
+clinfo
 
 # Compiled Object files
 *.slo
