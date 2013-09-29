@@ -1,19 +1,14 @@
 // Standard Library Headers
 #include <iostream>
 
-// Platform Specific Headers
-#ifdef __APPLE__
-#include <OpenCL/OpenCL.h>
-#else
-#include <CL/opencl.h>
-#endif
-
+// Local Dependencies
+#include "clinfo.hpp"
 
 int main(int argc, const char * argv[])
 {
-
+    std::cout << argc << std::endl;
+    std::cout << sizeof(*argv) << std::endl;
     // insert code here...
     std::cout << "Hello, CL!\n";
     return 0;
 }
-
