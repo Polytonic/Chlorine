@@ -38,10 +38,10 @@ all: default
 
 # Compile Source and Flags
 $(TARGET): $(SOURCE)
-	$(CXX) $(CFLAGS) $(LFLAGS) -I$(LIBDIR) $< -o $(OUTDIR)$@
+	$(CXX) $(CFLAGS) -I$(LIBDIR) $< -o $(OUTDIR)$@ $(LFLAGS)
 
 $(CLINFO): $(CLNFOS)
-	$(CXX) $(CFLAGS) $(LFLAGS) -I$(LIBDIR) $< -o $(OUTDIR)$@
+	$(CXX) $(CFLAGS) -I$(LIBDIR) $< -o $(OUTDIR)$@ $(LFLAGS)
 
 # Remove Generated Files
 clean:
