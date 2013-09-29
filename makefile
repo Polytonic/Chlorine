@@ -2,7 +2,7 @@
 TARGET = chlorine
 CLINFO = clinfo
 OUTDIR = bin/
-INCDIR = lib/
+LIBDIR = lib/
 
 # Configure Compiler Options
 SOURCE = src/chlorine.cpp
@@ -38,10 +38,10 @@ all: default
 
 # Compile Source and Flags
 $(TARGET): $(SOURCE)
-	$(CXX) $(CFLAGS) $< -o $(OUTDIR)$@ $(LFLAGS)
+	$(CXX) $(CFLAGS) $(LFLAGS) -I$(LIBDIR) $< -o $(OUTDIR)$@
 
 $(CLINFO): $(CLNFOS)
-	$(CXX) $(CFLAGS) $< -o $(OUTDIR)$@ $(LFLAGS)
+	$(CXX) $(CFLAGS) $(LFLAGS) -I$(LIBDIR) $< -o $(OUTDIR)$@
 
 # Remove Generated Files
 clean:
