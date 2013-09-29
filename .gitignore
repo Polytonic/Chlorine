@@ -2,10 +2,6 @@
 xcuserdata
 UserInterfaceState.xcuserstate
 
-# Ignore UNIX Executables
-chlorine
-clinfo
-
 # Compiled Object files
 *.slo
 *.lo
@@ -14,7 +10,6 @@ clinfo
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dSYM
 
 # Compiled Static libraries
 *.lai
