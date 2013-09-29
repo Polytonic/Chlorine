@@ -9,10 +9,10 @@
 #endif
 
 // Include OpenCL C++ Bindings
-#pragma clang diagnostic push
-#pragma clang system_header
+#pragma GCC diagnostic push
+#pragma GCC system_header
 #include "cl.hpp"
-#pragma clang diagnostic pop
+#pragma GCC diagnostic pop
 
 // Create Chlorine Namespace
 namespace chlorine {}
