@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5717700317F76972001DCB59 /* chlorine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5717700217F76972001DCB59 /* chlorine.cpp */; };
+		5717700317F76972001DCB59 /* chlorine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5717700217F76972001DCB59 /* chlorine.cpp */; settings = {COMPILER_FLAGS = "-O4 -Weverything"; }; };
 		5717701B17F76BB8001DCB59 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5717701A17F76BB8001DCB59 /* OpenCL.framework */; };
 		5717702A17F77C2F001DCB59 /* clinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5717701C17F77BF5001DCB59 /* clinfo.cpp */; };
 		5717702F17F77D39001DCB59 /* OpenCL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5717701A17F76BB8001DCB59 /* OpenCL.framework */; };
@@ -38,12 +38,15 @@
 		57176FFA17F7535A001DCB59 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		57176FFD17F76972001DCB59 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		57176FFF17F76972001DCB59 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		5717700117F76972001DCB59 /* Chlorine.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = Chlorine.1; sourceTree = "<group>"; };
 		5717700217F76972001DCB59 /* chlorine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chlorine.cpp; sourceTree = "<group>"; };
 		5717700417F769EA001DCB59 /* Chlorine */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Chlorine; sourceTree = BUILT_PRODUCTS_DIR; };
 		5717701A17F76BB8001DCB59 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
 		5717701C17F77BF5001DCB59 /* clinfo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = clinfo.cpp; sourceTree = "<group>"; };
 		5717702117F77C17001DCB59 /* clinfo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = clinfo; sourceTree = BUILT_PRODUCTS_DIR; };
+		573009DD17F8B3E0005DE0E3 /* chlorine.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = chlorine.hpp; sourceTree = "<group>"; };
+		573009DE17F8B56C005DE0E3 /* error.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = error.hpp; sourceTree = "<group>"; };
+		573009DF17F8B73E005DE0E3 /* cl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cl.hpp; sourceTree = "<group>"; };
+		573009E017F8C066005DE0E3 /* clinfo.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = clinfo.hpp; sourceTree = "<group>"; };
 		576A481C17F78A530062FDEA /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
 		576A481D17F792FB0062FDEA /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -81,7 +84,11 @@
 		57176FFE17F76972001DCB59 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				573009DD17F8B3E0005DE0E3 /* chlorine.hpp */,
+				573009E017F8C066005DE0E3 /* clinfo.hpp */,
+				573009DF17F8B73E005DE0E3 /* cl.hpp */,
 				57176FFF17F76972001DCB59 /* .gitignore */,
+				573009DE17F8B56C005DE0E3 /* error.hpp */,
 			);
 			path = lib;
 			sourceTree = "<group>";
@@ -89,7 +96,6 @@
 		5717700017F76972001DCB59 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				5717700117F76972001DCB59 /* Chlorine.1 */,
 				5717700217F76972001DCB59 /* chlorine.cpp */,
 				5717701C17F77BF5001DCB59 /* clinfo.cpp */,
 			);
