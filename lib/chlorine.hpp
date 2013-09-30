@@ -1,12 +1,6 @@
 #ifndef CHLORINE_MAIN
 #define CHLORINE_MAIN
 
-// Platform Specific Headers
-#ifdef __APPLE__
-#include <OpenCL/OpenCL.h>
-#else
-#include <CL/opencl.h>
-#endif
 
 // Include OpenCL C++ Bindings
 #pragma GCC diagnostic push
