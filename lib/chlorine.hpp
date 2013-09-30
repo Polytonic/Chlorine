@@ -1,6 +1,9 @@
 #ifndef CHLORINE_MAIN
 #define CHLORINE_MAIN
 
+// Enable Extensions and Exceptions
+#define __CL_ENABLE_EXTENSIONS
+#define __CL_ENABLE_EXCEPTIONS
 
 // Include OpenCL C++ Bindings
 #pragma GCC diagnostic push
