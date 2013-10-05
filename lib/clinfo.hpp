@@ -3,10 +3,4 @@
 
 #include "chlorine.hpp"
 
-// Create Chlorine Namespace
-namespace chlorine {}
-
-// Create Namespace Alias
-namespace ch = chlorine;
-
 #endif
