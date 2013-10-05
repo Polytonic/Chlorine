@@ -12,9 +12,9 @@
 #pragma GCC diagnostic pop
 
 // Create Chlorine Namespace
-namespace chlorine {}
+namespace ch {}
 
 // Create Namespace Alias
-namespace ch = chlorine;
+namespace chlorine = ch;
 
 #endif
