@@ -1,14 +1,47 @@
 // Standard Library Headers
 #include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <vector>
+#include <string>
+#include <sstream>
 
 // Local Dependencies
+#include "utilities.hpp"
+#include "chlorine.hpp"
 #include "clinfo.hpp"
+#include "error.hpp"
 
 int main(int argc, const char * argv[])
 {
-    std::cout << argc << std::endl;
-    std::cout << sizeof(*argv) << std::endl;
-    // insert code here...
-    std::cout << "Hello, CL!\n";
-    return 0;
+    try {
+
+        // Display OpenCL Implementation Information
+        cl::Platform::get(& ch::platforms);
+        if (ch::platforms.size() > 0)
+            std::cout << std::string(80,'-')
+            << std::endl;
+
+        for (unsigned int i = 0; i < ch::platforms.size(); i++)
+        {
+            // Query Platform Information
+            ch::get_platform_info(ch::platforms[i]);
+            std::cout << std::endl;
+
+            // Query Device Information
+            ch::platforms[i].getDevices(CL_DEVICE_TYPE_ALL, & ch::devices);
+            for (unsigned int j = 0; j < ch::devices.size(); j++)
+            {
+                ch::get_device_info(ch::devices[j]);
+                std::cout << std::endl;
+            }   std::cout << std::string(80,'-') << std::endl;
+        }
+
+    } catch (cl::Error exception) {
+        chlorine::print_exception_string(exception);
+        std::cout << argc << *argv;
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
