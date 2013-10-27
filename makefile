@@ -8,7 +8,6 @@ LIBDIR = lib/
 SOURCE = src/chlorine.cpp
 CLNFOS = src/clinfo.cpp
 UNAMES = $(shell uname -s)
-CFLAGS = -std=c++11 -stdlib=libc++
 
 # OS X Configuration Flags
 ifeq ($(UNAMES), Darwin)
