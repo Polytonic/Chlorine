@@ -26,7 +26,7 @@ namespace ch
     std::vector<std::string> extensions;
 
     // Output Formatting
-    const unsigned int width = 30;
+    const unsigned int width = 35;
 }
 
 // Create Namespace Alias
