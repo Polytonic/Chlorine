@@ -12,7 +12,20 @@
 #pragma GCC diagnostic pop
 
 // Create Chlorine Namespace
-namespace ch {}
+namespace ch
+{
+    // Function Prototypes
+    void get_platform_info(cl::Platform platform);
+
+    // OpenCL Containers
+    std::vector<cl::Platform> platforms;
+
+    // Diagnostic Information
+    std::vector<std::string> extensions;
+
+    // Output Formatting
+    const unsigned int width = 25;
+}
 
 // Create Namespace Alias
 namespace chlorine = ch;
