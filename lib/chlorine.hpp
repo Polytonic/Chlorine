@@ -16,15 +16,17 @@ namespace ch
 {
     // Function Prototypes
     void get_platform_info(cl::Platform platform);
+    void get_device_info(cl::Device device);
 
     // OpenCL Containers
     std::vector<cl::Platform> platforms;
+    std::vector<cl::Device> devices;
 
     // Diagnostic Information
     std::vector<std::string> extensions;
 
     // Output Formatting
-    const unsigned int width = 25;
+    const unsigned int width = 30;
 }
 
 // Create Namespace Alias
