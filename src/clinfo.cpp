@@ -16,16 +16,30 @@ int main(int argc, const char * argv[])
 {
     try {
 
+        // Display OpenCL Implementation Information
         cl::Platform::get(& ch::platforms);
-        ch::get_platform_info(ch::platforms[0]);
-        std::cout << std::endl;
+        if (ch::platforms.size() > 0)
+            std::cout << std::string(80,'-')
+            << std::endl;
 
-        ch::platforms[0].getDevices(CL_DEVICE_TYPE_ALL, & ch::devices);
-        ch::get_device_info(ch::devices[0]);
-        std::cout << std::endl;
-        
+        for (unsigned int i = 0; i < ch::platforms.size(); i++)
+        {
+            // Query Platform Information
+            ch::get_platform_info(ch::platforms[i]);
+            std::cout << std::endl;
+
+            // Query Device Information
+            ch::platforms[i].getDevices(CL_DEVICE_TYPE_ALL, & ch::devices);
+            for (unsigned int j = 0; j < ch::devices.size(); j++)
+            {
+                ch::get_device_info(ch::devices[j]);
+                std::cout << std::endl;
+            }   std::cout << std::string(80,'-') << std::endl;
+        }
+
     } catch (cl::Error exception) {
         chlorine::print_exception_string(exception);
+        std::cout << argc << *argv;
         return EXIT_FAILURE;
     }
 
