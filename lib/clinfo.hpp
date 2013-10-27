@@ -1,7 +1,24 @@
 #ifndef CHLORINE_CLINFO
 #define CHLORINE_CLINFO
 
-#include "chlorine.hpp"
+/*
+    CL_DEVICE_DOUBLE_FP_CONFIG
+    CL_DEVICE_HALF_FP_CONFIG
+    CL_DEVICE_SINGLE_FP_CONFIG
+    CL_DEVICE_PARTITION_AFFINITY_DOMAIN
+
+    ### MISSING TEMPLATES OR DON'T WORK WITH DEVICE GET INFO ###
+    CL_DEVICE_IMAGE_MAX_BUFFER_SIZE
+    CL_DEVICE_IMAGE_MAX_ARRAY_SIZE
+    CL_DEVICE_LINKER_AVAILABLE
+    CL_DEVICE_MAX_WORK_ITEM_SIZES
+    CL_DEVICE_PARTITION_MAX_SUB_DEVICES
+    CL_DEVICE_PARTITION_PROPERTIES
+    CL_DEVICE_PARTITION_TYPE
+    CL_DEVICE_PRINTF_BUFFER_SIZE
+
+    CL_DEVICE_NATIVE_VECTOR_WIDTH returns strange (incorrect?) sizes...
+ */
 
 namespace ch
 {
@@ -149,29 +166,24 @@ namespace ch
                   << std::setw(ch::width) << std::left                         << "\tDriver Version:"
                   << device.getInfo<CL_DRIVER_VERSION>()                       << std::endl;
 
-        /*
-            CL_DEVICE_BUILT_IN_KERNELS
-            CL_DEVICE_DOUBLE_FP_CONFIG
-            CL_DEVICE_HALF_FP_CONFIG
-            CL_DEVICE_SINGLE_FP_CONFIG
-            CL_DEVICE_EXECUTION_CAPABILITIES
-            CL_DEVICE_PARTITION_AFFINITY_DOMAIN
-            CL_DEVICE_QUEUE_PROPERTIES ( == CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE)
+        // Output Native Kernel Support
+        std::cout << std::setw(ch::width) << std::left << "\tCan Execute Native Kernels:";
+        device.getInfo<CL_DEVICE_EXECUTION_CAPABILITIES>() | CL_EXEC_NATIVE_KERNEL ?
+            std::cout << CL_TRUE : std::cout << CL_FALSE; std::cout << std::endl;
 
+        // Output Out-of-Order Command Queue Support
+        std::cout << std::setw(ch::width) << std::left << "\tOut-of-Order Command Queues:";
+        device.getInfo<CL_DEVICE_QUEUE_PROPERTIES>() | CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE ?
+            std::cout << CL_TRUE : std::cout << CL_FALSE; std::cout << std::endl;
 
-            ### MISSING TEMPLATES OR DON'T WORK WITH DEVICE GET INFO ###
-            CL_DEVICE_IMAGE_MAX_BUFFER_SIZE
-            CL_DEVICE_IMAGE_MAX_ARRAY_SIZE
-            CL_DEVICE_LINKER_AVAILABLE
-            CL_DEVICE_MAX_WORK_ITEM_SIZES
-            CL_DEVICE_PARTITION_MAX_SUB_DEVICES
-            CL_DEVICE_PARTITION_PROPERTIES
-            CL_DEVICE_PARTITION_TYPE
-            CL_DEVICE_PRINTF_BUFFER_SIZE
-
-            CL_DEVICE_NATIVE_VECTOR_WIDTH returns strange (incorrect?) sizes...
-         */
-
+        // Print Device Builtin Kernels
+        ch::extensions = ch::split(device.getInfo<CL_DEVICE_BUILT_IN_KERNELS>());
+        if (ch::extensions.size() > 0)
+        {
+            std::cout << std::endl << "Builtin Kernels\n" << std::endl;
+            for (unsigned int i = 0; i < ch::extensions.size(); i++)
+                std::cout << "\t" << ch::extensions[i] << std::endl;
+        }
     }
 }
 
