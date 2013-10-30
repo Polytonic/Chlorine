@@ -4,7 +4,7 @@
 namespace ch
 {
     // Display Additional Information About the Exception
-    inline int print_exception_string(cl::Error exception)
+    int print_exception_string(cl::Error exception)
     {
         fprintf(stderr, "%s (%d) :", exception.what(), exception.err());
         switch(exception.err()) // Lookup the Appropriate Response

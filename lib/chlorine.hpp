@@ -29,6 +29,8 @@ namespace ch
     // Function Prototypes
     void get_platform_info(cl::Platform platform);
     void get_device_info(cl::Device device);
+    std::vector<std::string> split(const std::string & s, char delim);
+    int print_exception_string(cl::Error exception);
 
     // OpenCL Containers
     std::vector<cl::Platform> platforms;
