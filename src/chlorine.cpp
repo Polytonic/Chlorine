@@ -14,7 +14,7 @@ int main(int argc, const char * argv[])
         std::cout << sizeof(*argv) << std::endl;
 
     } catch (cl::Error exception) {
-        chlorine::print_exception_string(exception);
+        ch::print_exception_string(exception);
         return EXIT_FAILURE;
     }
 

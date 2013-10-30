@@ -29,7 +29,5 @@ namespace ch
     const unsigned int width = 35;
 }
 
-// Create Namespace Alias
-namespace chlorine = ch;
 
 #endif
