@@ -36,11 +36,14 @@ namespace ch
     std::vector<cl::Platform> platforms;
     std::vector<cl::Device> devices;
 
-    // Diagnostic Information
+    // Chlorine Configuration
     std::vector<std::string> extensions;
-
-    // Output Formatting
     const unsigned int width = 35;
+    static struct option opts[] =
+    {
+        { "help", no_argument, NULL, 'h' },
+        {  NULL , 0          , NULL,  0  },
+    };
 }
 
 // Local Dependencies
