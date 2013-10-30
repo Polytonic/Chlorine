@@ -37,7 +37,6 @@
 /* Begin PBXFileReference section */
 		57176FFA17F7535A001DCB59 /* makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = makefile; sourceTree = "<group>"; };
 		57176FFD17F76972001DCB59 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		57176FFF17F76972001DCB59 /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		5717700217F76972001DCB59 /* chlorine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chlorine.cpp; sourceTree = "<group>"; };
 		5717700417F769EA001DCB59 /* Chlorine */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Chlorine; sourceTree = BUILT_PRODUCTS_DIR; };
 		5717701A17F76BB8001DCB59 /* OpenCL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenCL.framework; path = System/Library/Frameworks/OpenCL.framework; sourceTree = SDKROOT; };
@@ -88,7 +87,6 @@
 				573009DD17F8B3E0005DE0E3 /* chlorine.hpp */,
 				573009E017F8C066005DE0E3 /* clinfo.hpp */,
 				573009DF17F8B73E005DE0E3 /* cl.hpp */,
-				57176FFF17F76972001DCB59 /* .gitignore */,
 				5757A4E0181CDBE10050E6AB /* utilities.hpp */,
 				573009DE17F8B56C005DE0E3 /* error.hpp */,
 			);
