@@ -5,6 +5,18 @@
 #define __CL_ENABLE_EXTENSIONS
 #define __CL_ENABLE_EXCEPTIONS
 
+// Standard Library Headers
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <vector>
+#include <string>
+#include <sstream>
+
+// UNIX Header Includes
+#include <unistd.h>
+#include <getopt.h>
+
 // Include OpenCL C++ Bindings
 #pragma GCC diagnostic push
 #pragma GCC system_header
@@ -29,5 +41,9 @@ namespace ch
     const unsigned int width = 35;
 }
 
+// Local Dependencies
+#include "utilities.hpp"
+#include "clinfo.hpp"
+#include "error.hpp"
 
 #endif

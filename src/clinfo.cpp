@@ -1,16 +1,5 @@
-// Standard Library Headers
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
-#include <vector>
-#include <string>
-#include <sstream>
-
 // Local Dependencies
-#include "utilities.hpp"
 #include "chlorine.hpp"
-#include "clinfo.hpp"
-#include "error.hpp"
 
 int main(int argc, const char * argv[])
 {
