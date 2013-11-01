@@ -1,12 +1,11 @@
 // Local Dependencies
 #include "chlorine.hpp"
 
-int main(int argc, const char * argv[])
+int main(int argc, char * argv[])
 {
     try {
 
-        std::cout << argc << std::endl;
-        std::cout << sizeof(*argv) << std::endl;
+        ch::parse_arguments(argc, argv);
 
     } catch (cl::Error exception) {
         ch::print_exception_string(exception);
