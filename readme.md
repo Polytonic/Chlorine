@@ -13,7 +13,7 @@ make clean
 make all
 ./bin/clinfo
 ```
-Xcode users can also run Chlorine using the included, preconfigured project.  
+Xcode users can also run Chlorine using the included project.  
 
 ## Dependencies
 - C++ Compiler with `<unistd.h>`
