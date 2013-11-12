@@ -135,10 +135,13 @@ namespace ch
                   << device.getInfo<CL_DEVICE_NATIVE_VECTOR_WIDTH_DOUBLE>()    << std::endl
                   << std::setw(ch::width) << std::left                         << "\tNative Vector Width (HALF):"
                   << device.getInfo<CL_DEVICE_NATIVE_VECTOR_WIDTH_HALF>()      << std::endl
-                  << std::setw(ch::width) << std::left                         << "\tOpenCL C Version:"
-                  << device.getInfo<CL_DEVICE_OPENCL_C_VERSION>()              << std::endl
-                  << std::setw(ch::width) << std::left                         << "\tParent Device:"
-                  << device.getInfo<CL_DEVICE_PARENT_DEVICE>()                 << std::endl
+
+        // Requires OpenCL 1.2
+        //<< std::setw(ch::width) << std::left                         << "\tOpenCL C Version:"
+        //<< device.getInfo<CL_DEVICE_OPENCL_C_VERSION>()              << std::endl
+        //<< std::setw(ch::width) << std::left                         << "\tParent Device:"
+        //<< device.getInfo<CL_DEVICE_PARENT_DEVICE>()                 << std::endl
+
                   << std::setw(ch::width) << std::left                         << "\tCurrent Platform:"
                   << device.getInfo<CL_DEVICE_PLATFORM>()                      << std::endl
                   << std::setw(ch::width) << std::left                         << "\tPreferred Vector Width (CHAR):"
@@ -155,12 +158,18 @@ namespace ch
                   << device.getInfo<CL_DEVICE_PREFERRED_VECTOR_WIDTH_DOUBLE>() << std::endl
                   << std::setw(ch::width) << std::left                         << "\tPreferred Vector Width (HALF):"
                   << device.getInfo<CL_DEVICE_PREFERRED_VECTOR_WIDTH_HALF>()   << std::endl
-                  << std::setw(ch::width) << std::left                         << "\tUser Handles Interop Memory Sync:"
-                  << device.getInfo<CL_DEVICE_PREFERRED_INTEROP_USER_SYNC>()   << std::endl
+
+        // Requires OpenCL 1.2
+        //<< std::setw(ch::width) << std::left                         << "\tUser Handles Interop Memory Sync:"
+        //<< device.getInfo<CL_DEVICE_PREFERRED_INTEROP_USER_SYNC>()   << std::endl
+
                   << std::setw(ch::width) << std::left                         << "\tProfiling Timer Resolution (ns):"
                   << device.getInfo<CL_DEVICE_PROFILING_TIMER_RESOLUTION>()    << std::endl
-                  << std::setw(ch::width) << std::left                         << "\tReference Count:"
-                  << device.getInfo<CL_DEVICE_REFERENCE_COUNT>()               << std::endl
+
+        // Requires OpenCL 1.2
+        //<< std::setw(ch::width) << std::left                         << "\tReference Count:"
+        //<< device.getInfo<CL_DEVICE_REFERENCE_COUNT>()               << std::endl
+
                   << std::setw(ch::width) << std::left                         << "\tUnique Vendor Identifier:"
                   << device.getInfo<CL_DEVICE_VENDOR_ID>()                     << std::endl
                   << std::setw(ch::width) << std::left                         << "\tDriver Version:"
@@ -176,6 +185,7 @@ namespace ch
         device.getInfo<CL_DEVICE_QUEUE_PROPERTIES>() | CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE ?
             std::cout << CL_TRUE : std::cout << CL_FALSE; std::cout << std::endl;
 
+        /* Requires OpenCL 1.2
         // Print Device Builtin Kernels
         ch::extensions = ch::split(device.getInfo<CL_DEVICE_BUILT_IN_KERNELS>());
         if (ch::extensions.size() > 0)
@@ -184,6 +194,7 @@ namespace ch
             for (unsigned int i = 0; i < ch::extensions.size(); i++)
                 std::cout << "\t" << ch::extensions[i] << std::endl;
         }
+         */
     }
 }
 
