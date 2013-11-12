@@ -24,11 +24,14 @@ namespace ch
             case CL_MAP_FAILURE                                 : std::cerr << "Map Failure";                                       break;
             case CL_MISALIGNED_SUB_BUFFER_OFFSET                : std::cerr << "Misaligned Sub-Buffer Offset";                      break;
             case CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST   : std::cerr << "Execution Status Error for Events in Wait List";    break;
-            case CL_COMPILE_PROGRAM_FAILURE                     : std::cerr << "Compile Program Failure";                           break;
-            case CL_LINKER_NOT_AVAILABLE                        : std::cerr << "Linker Not Available";                              break;
-            case CL_LINK_PROGRAM_FAILURE                        : std::cerr << "Link Program Failure";                              break;
-            case CL_DEVICE_PARTITION_FAILED                     : std::cerr << "Device Partition Failed";                           break;
-            case CL_KERNEL_ARG_INFO_NOT_AVAILABLE               : std::cerr << "Kernel Argument Information Not Available";         break;
+
+                // Requires OpenCL 1.1 (Rev33)
+                //case CL_COMPILE_PROGRAM_FAILURE                     : std::cerr << "Compile Program Failure";                           break;
+                //case CL_LINKER_NOT_AVAILABLE                        : std::cerr << "Linker Not Available";                              break;
+                //case CL_LINK_PROGRAM_FAILURE                        : std::cerr << "Link Program Failure";                              break;
+                //case CL_DEVICE_PARTITION_FAILED                     : std::cerr << "Device Partition Failed";                           break;
+                //case CL_KERNEL_ARG_INFO_NOT_AVAILABLE               : std::cerr << "Kernel Argument Information Not Available";         break;
+
             case CL_INVALID_VALUE                               : std::cerr << "Invalid Value";                                     break;
             case CL_INVALID_DEVICE_TYPE                         : std::cerr << "Invalid Device Type";                               break;
             case CL_INVALID_PLATFORM                            : std::cerr << "Invalid Platform";                                  break;
@@ -64,10 +67,13 @@ namespace ch
             case CL_INVALID_MIP_LEVEL                           : std::cerr << "Invalid MIP Level";                                 break;
             case CL_INVALID_GLOBAL_WORK_SIZE                    : std::cerr << "Invalid Global Work Size";                          break;
             case CL_INVALID_PROPERTY                            : std::cerr << "Invalid Property";                                  break;
-            case CL_INVALID_IMAGE_DESCRIPTOR                    : std::cerr << "Invalid Image Descriptor";                          break;
-            case CL_INVALID_COMPILER_OPTIONS                    : std::cerr << "Invalid Compiler Options";                          break;
-            case CL_INVALID_LINKER_OPTIONS                      : std::cerr << "Invalid Linker Options";                            break;
-            case CL_INVALID_DEVICE_PARTITION_COUNT              : std::cerr << "Invalid Device Partition Count";                    break;
+
+                // Requires OpenCL 1.1 (Rev33)
+                //case CL_INVALID_IMAGE_DESCRIPTOR                    : std::cerr << "Invalid Image Descriptor";                          break;
+                //case CL_INVALID_COMPILER_OPTIONS                    : std::cerr << "Invalid Compiler Options";                          break;
+                //case CL_INVALID_LINKER_OPTIONS                      : std::cerr << "Invalid Linker Options";                            break;
+                //case CL_INVALID_DEVICE_PARTITION_COUNT              : std::cerr << "Invalid Device Partition Count";                    break;
+
             default                                             : std::cerr << "Unhandled Error";                                   break;
         }   return exception.err(); // Return the Error Code
     }
