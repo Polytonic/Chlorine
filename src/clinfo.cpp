@@ -9,7 +9,7 @@ int main(int argc, const char * argv[])
         cl::Platform::get(& ch::platforms);
         if (ch::platforms.size() > 0)
             std::cout << std::string(80,'-')
-            << std::endl;
+                      << std::endl;
 
         for (unsigned int i = 0; i < ch::platforms.size(); i++)
         {
