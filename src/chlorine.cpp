@@ -13,8 +13,7 @@ int main(int argc, const char * argv[])
         ch::Device = ch::devices[0];
 
         // Parse the Kernel File and Generate Command Queues
-        load_kernels("/Users/Dropbox/Documents/Arsenal/Chlorine/src/kernel.cl");
-
+        ch::load_kernels("/Users/Dropbox/Documents/Arsenal/Chlorine/src/kernel.cl");
 
         // Create a Command Queue from Selected Device
         // Should Parse Arguments At Some Point
