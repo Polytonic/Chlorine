@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <fstream>
 
 // UNIX Header Includes
 #include <unistd.h>
@@ -29,12 +30,20 @@ namespace ch
     // Function Prototypes
     void get_platform_info(cl::Platform platform);
     void get_device_info(cl::Device device);
+    void load_kernels(std::string kernel_source);
     std::vector<std::string> split(const std::string & s, char delim);
     int print_exception_string(cl::Error exception);
 
     // OpenCL Containers
     std::vector<cl::Platform> platforms;
     std::vector<cl::Device> devices;
+    std::vector<cl::Kernel> kernels;
+
+    // Chlorine Compute Objects
+    cl::Platform Platform;
+    cl::Device   Device;
+    cl::Context  Context;
+    cl::Program  Program;
 
     // Chlorine Configuration
     std::vector<std::string> extensions;
@@ -48,6 +57,7 @@ namespace ch
 
 // Local Dependencies
 #include "utilities.hpp"
+#include "kernels.hpp"
 #include "clinfo.hpp"
 #include "error.hpp"
 
