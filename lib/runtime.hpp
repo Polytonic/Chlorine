@@ -1,14 +1,16 @@
-//
-//  runtime.hpp
-//  Chlorine
-//
-//  Created by Polytonic on 12/13/13.
-//
-//
+#ifndef CHLORINE_RUNTIME
+#define CHLORINE_RUNTIME
 
-#ifndef Chlorine_runtime_hpp
-#define Chlorine_runtime_hpp
-
-
+// Template Typename Float, FloatN
+// Load Data from File
+// Save Data to Arrays
+// Allocate Buffers and Work Dims
+// Set Kernel Arguments
+// Pass Extra Arguments
+// Execute Kernel on CommandQueue
+// Should Run this in Background
+// Write Buffer Data to File
+// Clean Up and Exit
+// Print Some Diagnostic Data
 
 #endif

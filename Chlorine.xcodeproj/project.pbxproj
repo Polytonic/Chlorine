@@ -50,6 +50,7 @@
 		5757A4E0181CDBE10050E6AB /* utilities.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = utilities.hpp; path = lib/utilities.hpp; sourceTree = SOURCE_ROOT; };
 		575ACF14185BC298009A53AD /* kernels.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = kernels.hpp; sourceTree = "<group>"; };
 		575ACF15185BC9A3009A53AD /* kernel.cl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.opencl; path = kernel.cl; sourceTree = "<group>"; };
+		575ACF17185BD182009A53AD /* runtime.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = runtime.hpp; path = lib/runtime.hpp; sourceTree = SOURCE_ROOT; };
 		576A481C17F78A530062FDEA /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
 		576A481D17F792FB0062FDEA /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -92,6 +93,7 @@
 				573009DF17F8B73E005DE0E3 /* cl.hpp */,
 				5757A4E0181CDBE10050E6AB /* utilities.hpp */,
 				575ACF14185BC298009A53AD /* kernels.hpp */,
+				575ACF17185BD182009A53AD /* runtime.hpp */,
 				573009DE17F8B56C005DE0E3 /* error.hpp */,
 			);
 			path = lib;
