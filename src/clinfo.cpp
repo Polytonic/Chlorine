@@ -28,7 +28,7 @@ int main(int argc, const char * argv[])
 
     } catch (cl::Error exception) {
         ch::print_exception_string(exception);
-        std::cout << argc << *argv;
+        std::cout << std::endl;
         return EXIT_FAILURE;
     }
 
