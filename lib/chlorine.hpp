@@ -44,6 +44,7 @@ namespace ch
     cl::Device   Device;
     cl::Context  Context;
     cl::Program  Program;
+    cl::CommandQueue Queue;
 
     // Chlorine Configuration
     std::vector<std::string> extensions;
@@ -53,6 +54,7 @@ namespace ch
         { "help", no_argument, NULL, 'h' },
         {  NULL , 0          , NULL,  0  },
     };
+    bool profiling = true;
 }
 
 // Local Dependencies
