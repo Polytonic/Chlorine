@@ -24,7 +24,7 @@ namespace ch
         // Dynamically Determine the Option Flag Separators
         for (flag = 0; flag < sizeof(opts) / sizeof(option); flag++)
         {
-            args += opts[flag].val; // Append Option Letter
+            args +=  opts[flag].val; // Append Option Letter
                  if (opts[flag].has_arg == 1) { args += ":";  }
             else if (opts[flag].has_arg == 2) { args += "::"; }
         }

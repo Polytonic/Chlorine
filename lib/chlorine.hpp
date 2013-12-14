@@ -31,6 +31,7 @@ namespace ch
     void get_platform_info(cl::Platform platform);
     void get_device_info(cl::Device device);
     void load_kernels(std::string kernel_source);
+    void parse_arguments(int argc, char * argv[]);
     int print_exception_string(cl::Error exception);
     std::vector<std::string> split(const std::string & s, char delim);
 

@@ -1,7 +1,7 @@
 // Local Dependencies
 #include "chlorine.hpp"
 
-int main(int argc, const char * argv[])
+int main(int argc, char * argv[])
 {
     try {
 
@@ -13,6 +13,7 @@ int main(int argc, const char * argv[])
         ch::Device = ch::devices[0];
 
         // Parse the Kernel File and Generate Command Queues
+        ch::parse_arguments(argc, argv);
         ch::load_kernels("/Users/Dropbox/Documents/Arsenal/Chlorine/src/kernel.cl");
 
         // Create a Command Queue from Selected Device
