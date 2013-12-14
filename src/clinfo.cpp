@@ -1,6 +1,9 @@
 // Local Dependencies
 #include "chlorine.hpp"
 
+// Ignore Unused Parameters Warning
+#pragma clang diagnostic ignored "-Wunused-parameter"
+
 int main(int argc, const char * argv[])
 {
     try {
