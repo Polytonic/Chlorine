@@ -1,6 +1,16 @@
 #ifndef CHLORINE_RUNTIME
 #define CHLORINE_RUNTIME
 
+namespace ch
+{
+    template <typename Float, typename FloatN>
+    void execute()
+    {
+        std::cout << sizeof(Float)  << std::endl;
+        std::cout << sizeof(FloatN) << std::endl;
+    }
+}
+
 // Template Typename Float, FloatN
 // Load Data from File
 // Save Data to Arrays
