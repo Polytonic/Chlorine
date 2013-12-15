@@ -31,8 +31,8 @@ namespace ch
         try { ch::Program.build(ch::devices);
         } catch (cl::Error exception) {
             std::cerr << "Printing Build Log\n\n"
-            << ch::Program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(ch::Device)
-            << "Please Resolve Errors" << std::endl;
+            << ch::Program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(ch::Device);
+            return exit(EXIT_FAILURE);
         } ch::Program.createKernels(& ch::kernels);
     }
 
