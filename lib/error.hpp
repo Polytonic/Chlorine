@@ -6,7 +6,7 @@ namespace ch
     // Display Additional Information About the Exception
     int print_exception_string(cl::Error exception)
     {
-        fprintf(stderr, "%s (%d) :", exception.what(), exception.err());
+        fprintf(stderr, "%s (%d): ", exception.what(), exception.err());
         switch(exception.err()) // Lookup the Appropriate Response
         {
             case CL_SUCCESS                                     : std::cerr << "Success";                                           break;
