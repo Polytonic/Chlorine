@@ -52,10 +52,14 @@ namespace ch
     const unsigned int width = 35;
     static struct option opts[] =
     {
-        { "help", no_argument, NULL, 'h' },
-        {  NULL , 0          , NULL,  0  },
+        { "vectype", required_argument, NULL, 'v' },
+        { "help"   , no_argument      , NULL, 'h' },
+        {  NULL    , 0                , NULL,  0  },
     };
+
     bool profiling = true;
+    unsigned int precision = 4; // Floating Point Precision
+    unsigned int vec_width = 16; // Vector Type Width
 }
 
 // Local Dependencies
