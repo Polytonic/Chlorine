@@ -33,7 +33,5 @@ int main(int argc, const char * argv[])
         ch::print_exception_string(exception);
         std::cout << std::endl;
         return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
+    }   return EXIT_SUCCESS;
 }
