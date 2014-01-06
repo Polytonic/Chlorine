@@ -53,6 +53,7 @@
 		575ACF17185BD182009A53AD /* runtime.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = runtime.hpp; path = lib/runtime.hpp; sourceTree = SOURCE_ROOT; };
 		576A481C17F78A530062FDEA /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
 		576A481D17F792FB0062FDEA /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = readme.md; sourceTree = "<group>"; };
+		57E6C83B187B1835001EC1A4 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,9 +114,10 @@
 			isa = PBXGroup;
 			children = (
 				5717701A17F76BB8001DCB59 /* OpenCL.framework */,
+				57E6C83B187B1835001EC1A4 /* .gitignore */,
+				576A481C17F78A530062FDEA /* .travis.yml */,
 				57176FFA17F7535A001DCB59 /* makefile */,
 				576A481D17F792FB0062FDEA /* readme.md */,
-				576A481C17F78A530062FDEA /* .travis.yml */,
 				57176FFE17F76972001DCB59 /* lib */,
 				5717700017F76972001DCB59 /* src */,
 				57176FFC17F76972001DCB59 /* bin */,
