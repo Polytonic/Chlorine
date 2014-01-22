@@ -19,5 +19,4 @@ Xcode users can also run Chlorine using the included project.
 - C++ Compiler with `<unistd.h>`
 - OpenCL (v1.1+) Installation
 
-## Usage
-## Features
+Chlorine is in development.
