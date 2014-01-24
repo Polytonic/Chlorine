@@ -21,8 +21,8 @@ namespace ch
 
         // Generate Kernel From Kernel Source
         cl::Program::Sources source (1,
-                                     std::make_pair(prgm_str.c_str(),
-                                                    prgm_str.length()+1));
+            std::make_pair(prgm_str.c_str(),
+                           prgm_str.length()+1));
 
         ch::Context = cl::Context(ch::devices);
         ch::Program = cl::Program(ch::Context, source);
