@@ -1,6 +1,0 @@
-# Ignore Executables
-chlorine
-clinfo
-
-# Ignore Generated Files
-*.dSYM
