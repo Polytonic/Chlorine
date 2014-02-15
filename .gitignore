@@ -1,0 +1,18 @@
+# Compiled Makefile Outputs
+chlorine
+clinfo
+*.dSYM
+
+# Compiled Object Files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic Libraries
+*.so
+*.dylib
+
+# Compiled Static Libraries
+*.lai
+*.la
+*.a
