@@ -7,7 +7,8 @@ SOURCES = sources
 HEADERS = headers
 
 # Configuration Variables
-UNAME = $(shell uname -s)
+UNAME  = $(shell uname -s)
+CFLAGS = -O4 -std=c++11
 
 # Default Makefile Commands
 default: clean $(CHLORINE) $(CLINFO)
@@ -37,7 +38,7 @@ endif
 
 # Enable Compiler Warnings
 ifeq ($(CXX), g++)
-CFLAGS += -O3 -Wall -Wextra -Wpedantic
+CFLAGS += -Wall -Wextra -Wpedantic
 else # Implicitly Clang++
-CFLAGS += -O3 -Weverything
+CFLAGS += -Weverything
 endif
