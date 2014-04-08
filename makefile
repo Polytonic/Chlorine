@@ -8,7 +8,7 @@ HEADERS = headers
 
 # Configuration Variables
 UNAME  = $(shell uname -s)
-CFLAGS = -O4 -std=c++11
+CFLAGS = -O3 -std=c++11
 
 # Default Makefile Commands
 default: clean $(CHLORINE) $(CLINFO)
