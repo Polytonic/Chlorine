@@ -15,6 +15,9 @@
 // Standard Library Headers
 #include <iostream>
 #include <fstream>
+#include <map>
+
+// POSIX Headers
 
 // Local Headers
 #include "include/worker.hpp"
