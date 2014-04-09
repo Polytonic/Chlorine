@@ -15,6 +15,11 @@ namespace ch
         void set_platform(unsigned int platform);
         void set_device(unsigned int device);
         void set_kernel(std::string kernel_source);
+        template<typename T>
+        void push(std::vector<T> v);
+        template<typename V,typename ...Args>
+        void push(V vec,Args ...a);
+        std::vector<cl::Buffer> buffers;
 
     private:
 
@@ -52,6 +57,22 @@ namespace ch
         mContext = cl::Context(devices);
         mDevice = devices[device];
         mQueue = cl::CommandQueue(mContext, mDevice, CL_QUEUE_PROFILING_ENABLE);
+    }
+
+    template<typename T>
+    void Worker::push(std::vector<T> vec) {
+
+       unsigned int array_size = vec.size()*sizeof(T);
+
+       buffers.push_back(cl::Buffer(mContext,
+            CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
+            array_size, & vec.front()));
+    }
+
+    template <typename V, typename ...Args>
+    void Worker::push(V vec, Args... args) {
+        push(vec);
+        push(args...);
     }
 
     void Worker::set_kernel(std::string kernel_source)
