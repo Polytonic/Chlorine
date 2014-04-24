@@ -16,6 +16,29 @@ namespace ch
         void set_device(unsigned int device);
         void set_kernel(std::string kernel_source);
 
+        template<typename T, typename ... Params>
+        void execute(std::string kernel_function,
+                     std::vector<T> & vector,
+                     Params && ... parameters)
+        {
+            std::cout << "I am a Vector!\n";
+            std::cout << "Setting Vector Element Zero to 0!\n";
+            vector[0] = 0;
+            execute(kernel_function, parameters...);
+        }
+
+        // Primitive Types
+        template<typename T, typename ... Params>
+        void execute(std::string kernel_function,
+                     T & argument,
+                     Params && ... parameters)
+        {
+            std::cout << "I am a Type!\n";
+            execute(kernel_function, parameters...);
+        }
+
+        // Handle the Base Case
+        void execute(std::string kernel_function) {};
 
     private:
 

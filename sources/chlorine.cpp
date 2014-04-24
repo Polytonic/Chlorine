@@ -1,12 +1,16 @@
 #include "chlorine.hpp"
-#include <vector>
+
 int main()
 {
+    std::vector<int>    spam (10, 3);
+    std::vector<double> eggs (10, 2.7182);
+
     ch::Worker busybot;
-    //fill vectors
-    std::vector<float> f1(1.0,30);
-    std::vector<int> i1(3,10); 
-    std::vector<double> d1(1.7,36);
-    busybot.push(f1,i1,d1);    
+    long double n = 6.5;
+
+    std::cout << "Spam of Zero: " << spam[0] << std::endl;
+    busybot.execute("add");
+    busybot.execute("add", spam, 5, eggs, 4.4, n);
+    std::cout << "Spam of Zero: " << spam[0] << std::endl;
     return 0;
 }
