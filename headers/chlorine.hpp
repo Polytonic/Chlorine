@@ -16,6 +16,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <valarray>
 
 // POSIX Headers
 

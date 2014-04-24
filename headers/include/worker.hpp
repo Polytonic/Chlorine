@@ -16,6 +16,9 @@ namespace ch
         void set_device(unsigned int device);
         void set_kernel(std::string kernel_source);
 
+       // Handle the Base Case
+        void execute(std::string kernel_function) {};
+
         template<typename T, typename ... Params>
         void execute(std::string kernel_function,
                      std::vector<T> & vector,
@@ -27,18 +30,26 @@ namespace ch
             execute(kernel_function, parameters...);
         }
 
-        // Primitive Types
         template<typename T, typename ... Params>
         void execute(std::string kernel_function,
-                     T & argument,
+                     std::valarray<T> & valarray,
                      Params && ... parameters)
         {
-            std::cout << "I am a Type!\n";
+            std::cout << "I am a Valarray!\n";
+            std::cout << "Setting Valarray Element Zero to 0!\n";
+            valarray[0] = 0;
             execute(kernel_function, parameters...);
         }
 
-        // Handle the Base Case
-        void execute(std::string kernel_function) {};
+        // Primitive Types
+        template<typename T, typename ... Params>
+        void execute(std::string kernel_function,
+                     T argument,
+                     Params && ... parameters)
+        {
+            std::cout << "I am a Type! " << argument << "\n";
+            execute(kernel_function, parameters...);
+        }
 
     private:
 
