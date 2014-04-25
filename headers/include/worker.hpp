@@ -99,8 +99,8 @@ namespace ch
 
     template<typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
-                 std::vector<T> & vector,
-                 Params && ... parameters)
+                         std::vector<T> & vector,
+                         Params && ... parameters)
     {
         std::cout << "I am a Vector!\n";
         std::cout << "Setting Vector Element Zero to 0!\n";
@@ -110,8 +110,8 @@ namespace ch
 
     template<typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
-                 std::valarray<T> & valarray,
-                 Params && ... parameters)
+                         std::valarray<T> & valarray,
+                         Params && ... parameters)
     {
         std::cout << "I am a Valarray!\n";
         std::cout << "Setting Valarray Element Zero to 0!\n";
@@ -122,8 +122,8 @@ namespace ch
     // Primitive Types
     template<typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
-                 T argument,
-                 Params && ... parameters)
+                         T argument,
+                         Params && ... parameters)
     {
         std::cout << "I am a Type! " << argument << "\n";
         execute(kernel_function, parameters...);
