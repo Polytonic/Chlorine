@@ -19,13 +19,13 @@ namespace ch
         // Handle STL Vectors
         template<unsigned int level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
-                     std::vector<T> & vector,
+                     std::vector<T> & array,
                      Params && ... parameters);
 
         // Handle STL Valarrays
         template<unsigned int level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
-                     std::valarray<T> & valarray,
+                     std::valarray<T> & array,
                      Params && ... parameters);
 
         // Primitive Types
@@ -107,7 +107,6 @@ namespace ch
                          std::vector<T> & array,
                          Params && ... parameters)
     {
-
         size_t array_size = array.size() * sizeof(T);
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR,
                                        array_size, & array.front());
@@ -119,13 +118,13 @@ namespace ch
 
     template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
-                         std::valarray<T> & valarray,
+                         std::valarray<T> & array,
                          Params && ... parameters)
     {
         std::cout << "I am at recursion depth " << level << std::endl;
         std::cout << "I am a Valarray!\n";
         std::cout << "Setting Valarray Element Zero to 0!\n";
-        valarray[0] = 0;
+        array[0] = 0;
         execute<level+1>(kernel_function, parameters...);
     }
 
@@ -135,8 +134,7 @@ namespace ch
                          T primitive,
                          Params && ... parameters)
     {
-        std::cout << "I am at recursion depth " << level << std::endl;
-        std::cout << "I am a Primitive! " << primitive << "\n";
+        mKernels[kernel_function].setArg(level, primitive);
         execute<level+1>(kernel_function, parameters...);
     }
 

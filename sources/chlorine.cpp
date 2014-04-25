@@ -7,7 +7,7 @@ int main()
     std::valarray<int>  bacon (99, 10); // valarray constructor is backwards
 
     ch::Worker busybot;
-    busybot.execute("add", spam, eggs);
+    busybot.execute("add", spam, eggs, 1);
     std::cout << spam[1] << std::endl;
     std::cout << eggs[1] << std::endl;
     return 0;
