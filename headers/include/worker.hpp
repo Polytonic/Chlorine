@@ -1,6 +1,23 @@
-// Chlorine Main Header
-#ifndef CHLORINE_WORKER
-#define CHLORINE_WORKER
+// Enable Extensions and Exceptions
+#define __CL_ENABLE_EXTENSIONS
+#define __CL_ENABLE_EXCEPTIONS
+
+// Include OpenCL C++ Bindings
+#pragma GCC diagnostic push
+#pragma GCC system_header
+#include "vendor/cl.hpp"
+#pragma GCC diagnostic pop
+
+// Standard Library Headers
+#include <iostream>
+#include <fstream>
+#include <list>
+#include <map>
+#include <valarray>
+
+// Chlorine Header
+#ifndef CHLORINE
+#define CHLORINE
 
 namespace ch
 {
@@ -9,17 +26,17 @@ namespace ch
     public:
 
         // Constructors
-        Worker(); // Default Constructor
+        Worker();
 
         // Proposed Class Methods
         void set_platform(unsigned int platform);
         void set_device(unsigned int device);
         void set_kernel(std::string kernel_source);
 
-        // Handle STL Vectors
+        // Handle Primitive Types
         template<unsigned int level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
-                     std::vector<T> & array,
+                     T primitive,
                      Params && ... parameters);
 
         // Handle STL Valarrays
@@ -28,10 +45,10 @@ namespace ch
                      std::valarray<T> & array,
                      Params && ... parameters);
 
-        // Handle Primitive Types
+        // Handle STL Vectors
         template<unsigned int level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
-                     T primitive,
+                     std::vector<T> & array,
                      Params && ... parameters);
 
         // Handle the Base Case
@@ -55,6 +72,7 @@ namespace ch
         cl::NDRange mGlobal = cl::NullRange;
         cl::NDRange mLocal  = cl::NullRange;
         cl::NDRange mOffset = cl::NullRange;
+
     };
 
     // Default Constructor
@@ -105,16 +123,13 @@ namespace ch
             mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
     }
 
-    // Handle STL Vectors
+    // Handle Primitive Types
     template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
-                         std::vector<T> & array,
+                         T primitive,
                          Params && ... parameters)
     {
-        size_t array_size = array.size() * sizeof(T);
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
-        mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(level, buffer);
+        mKernels[kernel_function].setArg(level, primitive);
         execute<level+1>(kernel_function, parameters...);
     }
 
@@ -131,13 +146,16 @@ namespace ch
         execute<level+1>(kernel_function, parameters...);
     }
 
-    // Handle Primitive Types
+    // Handle STL Vectors
     template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
-                         T primitive,
+                         std::vector<T> & array,
                          Params && ... parameters)
     {
-        mKernels[kernel_function].setArg(level, primitive);
+        size_t array_size = array.size() * sizeof(T);
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(level, buffer);
         execute<level+1>(kernel_function, parameters...);
     }
 
