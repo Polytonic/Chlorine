@@ -36,16 +36,17 @@ namespace ch
 
         // Handle the Base Case
         template<unsigned int level = 0>
-        void execute(std::string kernel_function) {
-            std::cout << "I am at recursion depth " << level << std::endl;
-            std::cout << "I am the base case." << std::endl;
-        }
+        void execute(std::string kernel_function);
 
     private:
 
         // Containers
+        std::list<std::pair<cl::Buffer, size_t>> mBuffers;
         std::map<std::string, cl::Kernel> mKernels;
-        std::map<std::string, cl::Buffer> mBuffers;
+
+        cl::NDRange mGlobal = cl::NullRange;
+        cl::NDRange mLocal  = cl::NullRange;
+        cl::NDRange mOffset = cl::NullRange;
 
         cl::CommandQueue mQueue;
         cl::Context      mContext;
@@ -98,19 +99,21 @@ namespace ch
         mProgram.createKernels(& kernels);
         mKernels.clear();
         for (auto &i : kernels)
-           mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
+            mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
     }
 
     template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
-                         std::vector<T> & vector,
+                         std::vector<T> & array,
                          Params && ... parameters)
     {
-        mKernels[kernel_function];
-        std::cout << "I am at recursion depth " << level << std::endl;
-        std::cout << "I am a Vector!\n";
-        std::cout << "Setting Vector Element Zero to 0!\n";
-        vector[0] = 0;
+
+        size_t array_size = array.size() * sizeof(T);
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR,
+                                       array_size, & array.front());
+
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(level, buffer);
         execute<level+1>(kernel_function, parameters...);
     }
 
@@ -135,6 +138,23 @@ namespace ch
         std::cout << "I am at recursion depth " << level << std::endl;
         std::cout << "I am a Primitive! " << primitive << "\n";
         execute<level+1>(kernel_function, parameters...);
+    }
+
+    // Handle the Base Case
+    template<unsigned int level>
+    void Worker::execute(std::string kernel_function)
+    {
+        // Perform the Calculation
+        mGlobal = cl::NDRange(100); // dummy for now
+        std::cout << "Global Size" << mGlobal[0] << std::endl;
+        mQueue.enqueueNDRangeKernel(mKernels[kernel_function],
+                                    mOffset, mGlobal, mLocal);
+
+        // Read Data from the GPU
+        for (auto &i : mBuffers)
+            mQueue.enqueueUnmapMemObject(i.first,
+            mQueue.enqueueMapBuffer(i.first, CL_TRUE, CL_MAP_READ, 0, i.second));
+        mBuffers.clear();
     }
 }
 
