@@ -28,7 +28,7 @@ namespace ch
     public:
 
         // Constructors
-        Worker();
+        Worker(unsigned int platform = 0, unsigned int device = 0);
 
         // Proposed Class Methods
         void set_platform(unsigned int platform);
@@ -78,11 +78,10 @@ namespace ch
     };
 
     // Default Constructor
-    Worker::Worker()
+    Worker::Worker(unsigned int platform, unsigned int device)
     {
-        set_platform(0);
-        set_device(0);
-        set_kernel("default.cl");
+        set_platform(platform);
+        set_device(device);
 
         mGlobal = cl::NDRange(100); // dummy for now
         std::cout << "Global Size" << mGlobal[0] << std::endl;
