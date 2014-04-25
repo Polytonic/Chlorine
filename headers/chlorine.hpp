@@ -13,7 +13,9 @@
 #include <fstream>
 #include <list>
 #include <map>
+#include <string>
 #include <valarray>
+#include <vector>
 
 // Chlorine Header
 #ifndef CHLORINE
