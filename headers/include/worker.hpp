@@ -17,25 +17,29 @@ namespace ch
         void set_kernel(std::string kernel_source);
 
         // Handle STL Vectors
-        template<typename T, typename ... Params>
+        template<size_t level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
                      std::vector<T> & vector,
                      Params && ... parameters);
 
         // Handle STL Valarrays
-        template<typename T, typename ... Params>
+        template<size_t level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
                      std::valarray<T> & valarray,
                      Params && ... parameters);
 
         // Primitive Types
-        template<typename T, typename ... Params>
+        template<size_t level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
-                     T argument,
+                     T primitive,
                      Params && ... parameters);
 
         // Handle the Base Case
-        void execute(std::string kernel_function) {}
+        template<size_t level = 0>
+        void execute(std::string kernel_function) {
+            std::cout << "I am at recursion depth " << level << std::endl;
+            std::cout << "I am the base case." << std::endl;
+        }
 
     private:
 
@@ -97,36 +101,40 @@ namespace ch
            mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
     }
 
-    template<typename T, typename ... Params>
+    template<size_t level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          std::vector<T> & vector,
                          Params && ... parameters)
     {
+        mKernels[kernel_function];
+        std::cout << "I am at recursion depth " << level << std::endl;
         std::cout << "I am a Vector!\n";
         std::cout << "Setting Vector Element Zero to 0!\n";
         vector[0] = 0;
-        execute(kernel_function, parameters...);
+        execute<level+1>(kernel_function, parameters...);
     }
 
-    template<typename T, typename ... Params>
+    template<size_t level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          std::valarray<T> & valarray,
                          Params && ... parameters)
     {
+        std::cout << "I am at recursion depth " << level << std::endl;
         std::cout << "I am a Valarray!\n";
         std::cout << "Setting Valarray Element Zero to 0!\n";
         valarray[0] = 0;
-        execute(kernel_function, parameters...);
+        execute<level+1>(kernel_function, parameters...);
     }
 
     // Primitive Types
-    template<typename T, typename ... Params>
+    template<size_t level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
-                         T argument,
+                         T primitive,
                          Params && ... parameters)
     {
-        std::cout << "I am a Type! " << argument << "\n";
-        execute(kernel_function, parameters...);
+        std::cout << "I am at recursion depth " << level << std::endl;
+        std::cout << "I am a Primitive! " << primitive << "\n";
+        execute<level+1>(kernel_function, parameters...);
     }
 }
 
