@@ -17,25 +17,25 @@ namespace ch
         void set_kernel(std::string kernel_source);
 
         // Handle STL Vectors
-        template<size_t level = 0, typename T, typename ... Params>
+        template<unsigned int level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
                      std::vector<T> & vector,
                      Params && ... parameters);
 
         // Handle STL Valarrays
-        template<size_t level = 0, typename T, typename ... Params>
+        template<unsigned int level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
                      std::valarray<T> & valarray,
                      Params && ... parameters);
 
         // Primitive Types
-        template<size_t level = 0, typename T, typename ... Params>
+        template<unsigned int level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
                      T primitive,
                      Params && ... parameters);
 
         // Handle the Base Case
-        template<size_t level = 0>
+        template<unsigned int level = 0>
         void execute(std::string kernel_function) {
             std::cout << "I am at recursion depth " << level << std::endl;
             std::cout << "I am the base case." << std::endl;
@@ -101,7 +101,7 @@ namespace ch
            mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
     }
 
-    template<size_t level, typename T, typename ... Params>
+    template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          std::vector<T> & vector,
                          Params && ... parameters)
@@ -114,7 +114,7 @@ namespace ch
         execute<level+1>(kernel_function, parameters...);
     }
 
-    template<size_t level, typename T, typename ... Params>
+    template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          std::valarray<T> & valarray,
                          Params && ... parameters)
@@ -127,7 +127,7 @@ namespace ch
     }
 
     // Primitive Types
-    template<size_t level, typename T, typename ... Params>
+    template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          T primitive,
                          Params && ... parameters)
