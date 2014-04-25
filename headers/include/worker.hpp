@@ -28,7 +28,7 @@ namespace ch
                      std::valarray<T> & array,
                      Params && ... parameters);
 
-        // Primitive Types
+        // Handle Primitive Types
         template<unsigned int level = 0, typename T, typename ... Params>
         void execute(std::string kernel_function,
                      T primitive,
@@ -40,20 +40,21 @@ namespace ch
 
     private:
 
-        // Containers
-        std::list<std::pair<cl::Buffer, size_t>> mBuffers;
-        std::map<std::string, cl::Kernel> mKernels;
-
-        cl::NDRange mGlobal = cl::NullRange;
-        cl::NDRange mLocal  = cl::NullRange;
-        cl::NDRange mOffset = cl::NullRange;
-
+        // Components
         cl::CommandQueue mQueue;
         cl::Context      mContext;
         cl::Device       mDevice;
         cl::Platform     mPlatform;
         cl::Program      mProgram;
 
+        // Containers
+        std::list<std::pair<cl::Buffer, size_t>> mBuffers;
+        std::map<std::string, cl::Kernel> mKernels;
+
+        // Data Ranges
+        cl::NDRange mGlobal = cl::NullRange;
+        cl::NDRange mLocal  = cl::NullRange;
+        cl::NDRange mOffset = cl::NullRange;
     };
 
     // Default Constructor
@@ -63,6 +64,8 @@ namespace ch
         set_device(0);
         set_kernel("default.cl");
 
+        mGlobal = cl::NDRange(100); // dummy for now
+        std::cout << "Global Size" << mGlobal[0] << std::endl;
     }
 
     void Worker::set_platform(unsigned int platform)
@@ -102,33 +105,33 @@ namespace ch
             mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
     }
 
+    // Handle STL Vectors
     template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          std::vector<T> & array,
                          Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR,
-                                       array_size, & array.front());
-
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(level, buffer);
         execute<level+1>(kernel_function, parameters...);
     }
 
+    // Handle STL Valarrays
     template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          std::valarray<T> & array,
                          Params && ... parameters)
     {
-        std::cout << "I am at recursion depth " << level << std::endl;
-        std::cout << "I am a Valarray!\n";
-        std::cout << "Setting Valarray Element Zero to 0!\n";
-        array[0] = 0;
+        size_t array_size = array.size() * sizeof(T);
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(level, buffer);
         execute<level+1>(kernel_function, parameters...);
     }
 
-    // Primitive Types
+    // Handle Primitive Types
     template<unsigned int level, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          T primitive,
@@ -143,16 +146,14 @@ namespace ch
     void Worker::execute(std::string kernel_function)
     {
         // Perform the Calculation
-        mGlobal = cl::NDRange(100); // dummy for now
-        std::cout << "Global Size" << mGlobal[0] << std::endl;
         mQueue.enqueueNDRangeKernel(mKernels[kernel_function],
                                     mOffset, mGlobal, mLocal);
 
-        // Read Data from the GPU
+        // Read Data from Memory Buffers
         for (auto &i : mBuffers)
             mQueue.enqueueUnmapMemObject(i.first,
             mQueue.enqueueMapBuffer(i.first, CL_TRUE, CL_MAP_READ, 0, i.second));
-        mBuffers.clear();
+            mBuffers.clear();
     }
 }
 

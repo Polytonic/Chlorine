@@ -15,8 +15,8 @@
 // Standard Library Headers
 #include <iostream>
 #include <fstream>
-#include <map>
 #include <list>
+#include <map>
 #include <valarray>
 
 // POSIX Headers
