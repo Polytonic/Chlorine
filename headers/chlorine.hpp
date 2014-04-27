@@ -1,3 +1,7 @@
+// Chlorine Header
+#ifndef CHLORINE
+#define CHLORINE
+
 // Include OpenCL C++ Bindings
 #pragma GCC diagnostic push
 #pragma GCC system_header
@@ -12,10 +16,6 @@
 #include <string>
 #include <valarray>
 #include <vector>
-
-// Chlorine Header
-#ifndef CHLORINE
-#define CHLORINE
 
 namespace ch
 {
