@@ -1,16 +1,13 @@
-// Enable Extensions and Exceptions
-#define __CL_ENABLE_EXTENSIONS
-#define __CL_ENABLE_EXCEPTIONS
-
 // Include OpenCL C++ Bindings
 #pragma GCC diagnostic push
 #pragma GCC system_header
+#define __CL_ENABLE_EXCEPTIONS
 #include "cl.hpp"
 #pragma GCC diagnostic pop
 
 // Standard Library Headers
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <list>
 #include <map>
 #include <string>
