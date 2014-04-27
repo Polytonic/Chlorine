@@ -8,7 +8,6 @@
 // Standard Library Headers
 #include <fstream>
 #include <iostream>
-#include <list>
 #include <map>
 #include <string>
 #include <valarray>
@@ -64,7 +63,7 @@ namespace ch
         cl::Program      mProgram;
 
         // Containers
-        std::list<std::pair<cl::Buffer, size_t>> mBuffers;
+        std::vector<std::pair<cl::Buffer, size_t>> mBuffers;
         std::map<std::string, cl::Kernel> mKernels;
 
         // Data Ranges
