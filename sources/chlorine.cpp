@@ -18,19 +18,15 @@ int main()
     std::cout << bacon[0] << std::endl;
     return 0;
 }
+    // implement << operator for piping in kernel output?
+    // implement dispatch() and continue() class methods?
 
+    /* Common Pitfalls
 
-    // http://stackoverflow.com/questions/21512678/check-at-compile-time-is-a-template-type-a-vector
-    // http://stackoverflow.com/questions/12042824/how-to-write-a-type-trait-is-container-or-is-vector
-    // if array.size() < mGlobal[0]
-    // if array.front().size() < mGlobal[1], etc.
-    // store a reference to the original container?
+        kernels don't do type promotion, so a literal 3.14 is treated as a double by kernels.
+        If you're using floats, make sure to pass it in as 3.14f to get the expected result.
 
-
-    // should do ifdefs for std::valarray, std::vector, etc.
-    //http://stackoverflow.com/questions/1745942/c-template-parameter-in-array-dimension
-    //^ for C arrays, and how to handle std::array?
-    // void Worker::create_buffer()
-        // size_t array_size = V.size() * sizeof(T);
-    // void dispatch(); // call?
-    // void continue(); // re-use existing buffers/primitives in same order
+        order of arguments matters in chlorine. There's no way for me to warn you ahead of time
+        so as with any other program you write, make sure the arguments you pass to execute are
+        listed in the same order as you listed in the kernel.
+    */
