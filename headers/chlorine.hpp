@@ -14,6 +14,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <array>
 #include <valarray>
 #include <vector>
 
@@ -38,14 +39,20 @@ namespace ch
                 T primitive,
                 Params && ... parameters);
 
+        // Handle STL Arrays
+        template<unsigned int level = 0, class T, size_t N, typename ... Params>
+        void execute(std::string kernel_function,
+                     std::array<T, N> & array,
+                     Params && ... parameters);
+
         // Handle STL Valarrays
-        template<unsigned int level = 0, typename T, typename ... Params>
+        template<unsigned int level = 0, class T, typename ... Params>
         void execute(std::string kernel_function,
                      std::valarray<T> & array,
                      Params && ... parameters);
 
         // Handle STL Vectors
-        template<unsigned int level = 0, typename T, typename ... Params>
+        template<unsigned int level = 0, class T, typename ... Params>
         void execute(std::string kernel_function,
                      std::vector<T> & array,
                      Params && ... parameters);
@@ -132,8 +139,21 @@ namespace ch
         execute<level+1>(kernel_function, parameters...);
     }
 
+    // Handle STL Arrays
+    template<unsigned int level, class T, size_t N, typename ... Params>
+    void Worker::execute(std::string kernel_function,
+                         std::array<T, N> & array,
+                         Params && ... parameters)
+    {
+        size_t array_size = array.size() * sizeof(T);
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(level, buffer);
+        execute<level+1>(kernel_function, parameters...);
+    }
+
     // Handle STL Valarrays
-    template<unsigned int level, typename T, typename ... Params>
+    template<unsigned int level, class T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          std::valarray<T> & array,
                          Params && ... parameters)
@@ -146,7 +166,7 @@ namespace ch
     }
 
     // Handle STL Vectors
-    template<unsigned int level, typename T, typename ... Params>
+    template<unsigned int level, class T, typename ... Params>
     void Worker::execute(std::string kernel_function,
                          std::vector<T> & array,
                          Params && ... parameters)
