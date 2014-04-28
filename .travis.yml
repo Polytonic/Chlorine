@@ -11,7 +11,9 @@ before_install:
   - sudo apt-get install -qq fglrx
   - sudo apt-get install -qq opencl-headers
 
-# Restrict to `master`
-branches:
-  only:
-    - master
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.9; fi
+  - if [ "$CXX" = "g++" ]; then ln -s /usr/bin/g++-4.9 /usr/bin/g++; fi
+
+after_script:
+  - $CXX --version
