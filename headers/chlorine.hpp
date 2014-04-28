@@ -31,34 +31,26 @@ namespace ch
         void set_device(unsigned int device);
         void set_kernel(std::string kernel_source);
 
-        // Handle Primitive Types
-        template<unsigned int level = 0, typename T, typename ... Params>
-        typename std::enable_if<std::is_arithmetic<T>::value>::type
-        execute(std::string kernel_function,
-                T primitive,
-                Params && ... parameters);
-
-        // Handle C-Style Arrays
-        template<unsigned int level = 0, class T, size_t N, typename ... Params>
-        void execute(std::string kernel_function,
-                     T (&array) [N],
-                     Params && ... parameters);
-
-        // Handle STL Arrays
-        template<unsigned int level = 0, class T, size_t N, typename ... Params>
-        void execute(std::string kernel_function,
-                     std::array<T, N> & array,
-                     Params && ... parameters);
-
-        // Handle Other STL Containers
-        template<unsigned int level = 0, template<typename ...> class V, typename T, typename ... Params>
-        void execute(std::string kernel_function,
-                     V<T> & array,
-                     Params && ... parameters);
-
         // Handle the Base Case
         template<unsigned int level = 0>
         void execute(std::string kernel_function);
+
+        // Handle Primitive Types
+        template<unsigned int level = 0, typename T, typename ... Params>
+        typename std::enable_if<std::is_arithmetic<T>::value>::type
+        execute(std::string kernel_function, T primitive, Params && ... parameters);
+
+        // Handle C-Style Arrays
+        template<unsigned int level = 0, class T, size_t N, typename ... Params>
+        void execute(std::string kernel_function, T (&array) [N], Params && ... parameters);
+
+        // Handle STL Arrays
+        template<unsigned int level = 0, class T, size_t N, typename ... Params>
+        void execute(std::string kernel_function, std::array<T, N> & array, Params && ... parameters);
+
+        // Handle Other STL Containers
+        template<unsigned int level = 0, template<typename ...> class V, typename T, typename ... Params>
+        void execute(std::string kernel_function, V<T> & array, Params && ... parameters);
 
     private:
 
@@ -127,56 +119,6 @@ namespace ch
             mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
     }
 
-    // Handle Primitive Types
-    template<unsigned int level, typename T, typename ... Params>
-    typename std::enable_if<std::is_arithmetic<T>::value>::type
-    Worker::execute(std::string kernel_function,
-                    T primitive,
-                    Params && ... parameters)
-    {
-        mKernels[kernel_function].setArg(level, primitive);
-        execute<level+1>(kernel_function, parameters...);
-    }
-
-    // Handle C-Style Arrays
-    template<unsigned int level, class T, size_t N, typename ... Params>
-    void Worker::execute(std::string kernel_function,
-                         T (&array) [N],
-                         Params && ... parameters)
-    {
-        size_t array_size = N * sizeof(array[0]);
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
-        mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(level, buffer);
-        execute<level+1>(kernel_function, parameters...);
-    }
-
-    // Handle STL Arrays
-    template<unsigned int level, class T, size_t N, typename ... Params>
-    void Worker::execute(std::string kernel_function,
-                         std::array<T, N> & array,
-                         Params && ... parameters)
-    {
-        size_t array_size = array.size() * sizeof(T);
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
-        mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(level, buffer);
-        execute<level+1>(kernel_function, parameters...);
-    }
-
-    // Handle Other STL Containers
-    template<unsigned int level, template<typename ...> class V, typename T, typename ... Params>
-    void Worker::execute(std::string kernel_function,
-                         V<T> & array,
-                         Params && ... parameters)
-    {
-        size_t array_size = array.size() * sizeof(T);
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
-        mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(level, buffer);
-        execute<level+1>(kernel_function, parameters...);
-    }
-
     // Handle the Base Case
     template<unsigned int level>
     void Worker::execute(std::string kernel_function)
@@ -190,6 +132,48 @@ namespace ch
             mQueue.enqueueUnmapMemObject(i.first,
             mQueue.enqueueMapBuffer(i.first, CL_TRUE, CL_MAP_READ, 0, i.second));
             mBuffers.clear();
+    }
+
+    // Handle Primitive Types
+    template<unsigned int level, typename T, typename ... Params>
+    typename std::enable_if<std::is_arithmetic<T>::value>::type
+    Worker::execute(std::string kernel_function, T primitive, Params && ... parameters)
+    {
+        mKernels[kernel_function].setArg(level, primitive);
+        execute<level+1>(kernel_function, parameters...);
+    }
+
+    // Handle C-Style Arrays
+    template<unsigned int level, class T, size_t N, typename ... Params>
+    void Worker::execute(std::string kernel_function, T (&array) [N], Params && ... parameters)
+    {
+        size_t array_size = N * sizeof(array[0]);
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(level, buffer);
+        execute<level+1>(kernel_function, parameters...);
+    }
+
+    // Handle STL Arrays
+    template<unsigned int level, class T, size_t N, typename ... Params>
+    void Worker::execute(std::string kernel_function, std::array<T, N> & array, Params && ... parameters)
+    {
+        size_t array_size = array.size() * sizeof(T);
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(level, buffer);
+        execute<level+1>(kernel_function, parameters...);
+    }
+
+    // Handle Other STL Containers
+    template<unsigned int level, template<typename ...> class V, typename T, typename ... Params>
+    void Worker::execute(std::string kernel_function, V<T> & array, Params && ... parameters)
+    {
+        size_t array_size = array.size() * sizeof(T);
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(level, buffer);
+        execute<level+1>(kernel_function, parameters...);
     }
 }
 
