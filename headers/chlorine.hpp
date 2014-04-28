@@ -33,7 +33,8 @@ namespace ch
 
         // Handle Primitive Types
         template<unsigned int level = 0, typename T, typename ... Params>
-        void execute(std::string kernel_function,
+        typename std::enable_if<std::is_arithmetic<T>::value>::type
+        execute(std::string kernel_function,
                      T primitive,
                      Params && ... parameters);
 
@@ -122,7 +123,8 @@ namespace ch
 
     // Handle Primitive Types
     template<unsigned int level, typename T, typename ... Params>
-    void Worker::execute(std::string kernel_function,
+    typename std::enable_if<std::is_arithmetic<T>::value>::type
+    Worker::execute(std::string kernel_function,
                          T primitive,
                          Params && ... parameters)
     {
