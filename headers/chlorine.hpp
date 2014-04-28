@@ -10,11 +10,11 @@
 #pragma GCC diagnostic pop
 
 // Standard Library Headers
+#include <array>
 #include <fstream>
 #include <iostream>
 #include <map>
 #include <string>
-#include <array>
 #include <valarray>
 #include <vector>
 
