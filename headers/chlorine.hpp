@@ -35,8 +35,8 @@ namespace ch
         template<unsigned int level = 0, typename T, typename ... Params>
         typename std::enable_if<std::is_arithmetic<T>::value>::type
         execute(std::string kernel_function,
-                     T primitive,
-                     Params && ... parameters);
+                T primitive,
+                Params && ... parameters);
 
         // Handle STL Valarrays
         template<unsigned int level = 0, typename T, typename ... Params>
@@ -125,8 +125,8 @@ namespace ch
     template<unsigned int level, typename T, typename ... Params>
     typename std::enable_if<std::is_arithmetic<T>::value>::type
     Worker::execute(std::string kernel_function,
-                         T primitive,
-                         Params && ... parameters)
+                    T primitive,
+                    Params && ... parameters)
     {
         mKernels[kernel_function].setArg(level, primitive);
         execute<level+1>(kernel_function, parameters...);
