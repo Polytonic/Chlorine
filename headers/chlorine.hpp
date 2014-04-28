@@ -103,8 +103,7 @@ namespace ch
                           (std::istreambuf_iterator<char>()));
 
         // Build Kernel Using the Current Context
-        cl::Program::Sources source(1, std::make_pair(
-            kernel.c_str(), kernel.length()+1));
+        cl::Program::Sources source(1, std::make_pair(kernel.c_str(), kernel.length()+1));
         mProgram = cl::Program(mContext, source);
         mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>());
 
@@ -120,11 +119,8 @@ namespace ch
     template<unsigned int level>
     void Worker::execute(std::string kernel_function)
     {
-        // Perform the Calculation
-        mQueue.enqueueNDRangeKernel(mKernels[kernel_function],
-                                    mOffset, mGlobal, mLocal);
-
-        // Read Data from Memory Buffers
+        // Perform the Calculation and Read Data from Memory Buffers
+        mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal);
         for (auto &i : mBuffers)
             mQueue.enqueueUnmapMemObject(i.first,
             mQueue.enqueueMapBuffer(i.first, CL_TRUE, CL_MAP_READ, 0, i.second));
