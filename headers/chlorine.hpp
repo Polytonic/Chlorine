@@ -15,7 +15,6 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include <valarray>
 #include <vector>
 
 namespace ch

@@ -1,4 +1,5 @@
 #include "chlorine.hpp"
+#include <valarray>
 
 int main()
 {
@@ -8,7 +9,7 @@ int main()
     std::valarray<float>  bacon (99, 10); // valarray constructor is backwards
     std::array<int, 10> spinach = { 9, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
     int cheese[10] = { 1, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
-    std::cout << bacon[0] << std::endl;
+
     ch::Worker busybot;
     busybot.set_kernel("default.cl");
     busybot.execute("add", spam, bacon, 12.1f, cheese);
@@ -17,3 +18,19 @@ int main()
     std::cout << bacon[0] << std::endl;
     return 0;
 }
+
+
+    // http://stackoverflow.com/questions/21512678/check-at-compile-time-is-a-template-type-a-vector
+    // http://stackoverflow.com/questions/12042824/how-to-write-a-type-trait-is-container-or-is-vector
+    // if array.size() < mGlobal[0]
+    // if array.front().size() < mGlobal[1], etc.
+    // store a reference to the original container?
+
+
+    // should do ifdefs for std::valarray, std::vector, etc.
+    //http://stackoverflow.com/questions/1745942/c-template-parameter-in-array-dimension
+    //^ for C arrays, and how to handle std::array?
+    // void Worker::create_buffer()
+        // size_t array_size = V.size() * sizeof(T);
+    // void dispatch(); // call?
+    // void continue(); // re-use existing buffers/primitives in same order
