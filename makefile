@@ -37,8 +37,8 @@ LFLAGS += -lOpenCL
 endif
 
 # Enable Compiler Warnings
-ifeq ($(CXX), g++)
-CFLAGS += -Wall -Wextra -Wpedantic
-else # Implicitly Clang++
+ifeq ($(CXX), clang++)
 CFLAGS += -Weverything
+else ifeq ($(CXX), g++)
+CFLAGS += -Wall -Wextra -Wpedantic
 endif
