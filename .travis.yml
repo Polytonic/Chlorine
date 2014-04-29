@@ -19,6 +19,11 @@ before_install:
   - sudo apt-get install -qq opencl-headers
   # - sudo pip install cpp-coveralls
 
+# Fix FGLRX Permissions
+before_script:
+  - chmod -R 777 /proc/ati/
+  - fglrxinfo
+
 # Upload Code Coverage Data
 # after_success:
   # - coveralls
