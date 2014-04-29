@@ -12,7 +12,7 @@ WFLAGS = -Wall -Wextra -Wpedantic
 
 # Default Makefile Commands
 default: clean $(CHLORINE) $(CLINFO)
-.PHONY: clean
+.PHONY: test
 clean:
 	@rm -rf chlorine
 	@rm -rf chlorine.gcno
@@ -20,6 +20,9 @@ clean:
 	@rm -rf clinfo
 	@rm -rf clinfo.gcno
 	@rm -rf clinfo.dSYM
+
+test:
+	./chlorine
 
 # Makefile Target: CHLORINE
 $(CHLORINE): $(SOURCE)/chlorine.cpp
@@ -29,6 +32,10 @@ $(CHLORINE): $(SOURCE)/chlorine.cpp
 $(CLINFO): $(SOURCE)/clinfo.cpp
 	$(CXX) $(CFLAGS) $(WFLAGS) $< -o $@ $(LFLAGS)
 
+# TravisCI Configuration Flags
+ifeq ($(TRAVIS), true)
+CFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
+endif
 
 # Darwin Configuration Flags
 ifeq ($(UNAME), Darwin)

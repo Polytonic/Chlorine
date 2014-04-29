@@ -1,6 +1,6 @@
 # Travis Configuration
 language: cpp
-script: make
+script: make && make test
 compiler:
   - clang
   - gcc
@@ -17,6 +17,12 @@ before_install:
   # Install Other Dependencies
   - sudo apt-get install -qq fglrx
   - sudo apt-get install -qq opencl-headers
+  - sudo pip install cpp-coveralls
+
+# Upload Code Coverage Data
+after_success:
+  - coveralls
+
 # Display Compiler Information
 after_script:
   - $CXX --version
