@@ -15,9 +15,13 @@ before_install:
 # Install Chlorine Dependencies
 install:
   - sudo apt-get update  -qq
-  - sudo apt-get install -qq fglrx
+  - sudo apt-get install -qq fglrx=2:8.960-0ubuntu1
   - sudo apt-get install -qq opencl-headers
   - sudo pip install cpp-coveralls
+
+# Output Device Information
+before_script:
+  - fglrxinfo
 
 # Upload Code Coverage Data
 after_success:

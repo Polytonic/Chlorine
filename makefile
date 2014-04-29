@@ -1,9 +1,7 @@
 # Makefile Targets
 CHLORINE = chlorine
 CLINFO   = clinfo
-
-SOURCE = src
-BUILDS = bin
+SOURCE   = source
 
 # Configuration Variables
 UNAME  = $(shell uname -s)
