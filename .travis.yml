@@ -5,16 +5,17 @@ compiler:
   - clang
   - gcc
 
-# Install OpenCL Headers
+# Install Chlorine Dependencies
 before_install:
   - sudo apt-get update  -qq
   - sudo apt-get install -qq fglrx
   - sudo apt-get install -qq opencl-headers
 
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update  -qq
+  # Install GCC 4.8.x
+  - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
   - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8"; fi
 
+# Display Compiler Information
 after_script:
   - $CXX --version
