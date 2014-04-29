@@ -19,10 +19,6 @@ install:
   - sudo apt-get install -qq opencl-headers
   - sudo pip install cpp-coveralls
 
-# Output Device Information
-before_script:
-  - fglrxinfo
-
 # Upload Code Coverage Data
 after_success:
   - coveralls
