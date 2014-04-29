@@ -12,7 +12,7 @@ int main()
 
 
     try{
-        ch::Worker busybot(1,0);
+        ch::Worker busybot(0,0);
         busybot.set_kernel("tests/default.cl");
         busybot.execute("add", spam, bacon, 12.1f, cheese);
     } catch (cl::Error err) { std::cout << err.err() << ":" << err.what() << std::endl; }
