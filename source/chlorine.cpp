@@ -10,9 +10,13 @@ int main()
     std::array<int, 10> spinach = { 9, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
     int cheese[10] = { 1, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
-    ch::Worker busybot;
-    busybot.set_kernel("tests/default.cl");
-    busybot.execute("add", spam, bacon, 12.1f, cheese);
+
+    try{
+        ch::Worker busybot(1,0);
+        busybot.set_kernel("tests/default.cl");
+        busybot.execute("add", spam, bacon, 12.1f, cheese);
+    } catch (cl::Error err) { std::cout << err.err() << ":" << err.what() << std::endl; }
+
     std::cout << spam[0] << std::endl;
     std::cout << eggs[0] << std::endl;
     std::cout << bacon[0] << std::endl;
