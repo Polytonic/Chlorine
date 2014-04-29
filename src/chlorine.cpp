@@ -11,7 +11,7 @@ int main()
     int cheese[10] = { 1, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
     ch::Worker busybot;
-    busybot.set_kernel("default.cl");
+    busybot.set_kernel("test/default.cl");
     busybot.execute("add", spam, bacon, 12.1f, cheese);
     std::cout << spam[0] << std::endl;
     std::cout << eggs[0] << std::endl;
