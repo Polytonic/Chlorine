@@ -5,28 +5,23 @@ compiler:
   - clang
   - gcc
 
-# Install Chlorine Dependencies
+# Install GCC 4.8.x
 before_install:
-
-  # Install GCC 4.8.x
   - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
-  - sudo apt-get update  -qq
+  - if [ "$CXX" = "g++" ]; then sudo apt-get update -qq; fi
   - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8"; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8" GCOV="gcov-4.8"; fi
 
-  # Install Other Dependencies
+# Install Chlorine Dependencies
+install:
+  - sudo apt-get update  -qq
   - sudo apt-get install -qq fglrx
   - sudo apt-get install -qq opencl-headers
-  # - sudo pip install cpp-coveralls
-
-# Fix FGLRX Permissions
-before_script:
-  - chmod -R 777 /proc/ati/
-  - fglrxinfo
+  - sudo pip install cpp-coveralls
 
 # Upload Code Coverage Data
-# after_success:
-  # - coveralls
+after_success:
+  - coveralls
 
 # Display Compiler Information
 after_script:
