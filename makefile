@@ -2,9 +2,8 @@
 CHLORINE = chlorine
 CLINFO   = clinfo
 
-# Target Directories
-SOURCES = sources
-HEADERS = headers
+SOURCE = src
+BUILDS = bin
 
 # Configuration Variables
 UNAME  = $(shell uname -s)
@@ -12,19 +11,18 @@ CFLAGS = -O3 -std=c++11
 
 # Default Makefile Commands
 default: clean $(CHLORINE) $(CLINFO)
+.PHONY: clean
 clean:
-	@rm -rf $(CHLORINE)
-	@rm -rf $(CHLORINE).dSYM
-	@rm -rf $(CLINFO)
-	@rm -rf $(CLINFO).dSYM
+	@rm -rf chlorine
+	@rm -rf clinfo
 
 # Makefile Target: CHLORINE
-$(CHLORINE): $(SOURCES)/$(CHLORINE).cpp
-	$(CXX) $(CFLAGS) -I$(HEADERS) $< -o $@ $(LFLAGS)
+$(CHLORINE): $(SOURCE)/chlorine.cpp
+	$(CXX) $(CFLAGS) $< -o $@ $(LFLAGS)
 
 # Makefile Target: CLINFO
-$(CLINFO): $(SOURCES)/$(CLINFO).cpp
-	$(CXX) $(CFLAGS) -I$(HEADERS) $< -o $@ $(LFLAGS)
+$(CLINFO): $(SOURCE)/clinfo.cpp
+	$(CXX) $(CFLAGS) $< -o $@ $(LFLAGS)
 
 # Darwin Configuration Flags
 ifeq ($(UNAME), Darwin)
