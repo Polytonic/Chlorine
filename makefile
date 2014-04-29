@@ -33,9 +33,9 @@ $(CLINFO): $(SOURCE)/clinfo.cpp
 	$(CXX) $(CFLAGS) $(WFLAGS) $< -o $@ $(LFLAGS)
 
 # TravisCI Configuration Flags
-ifeq ($(TRAVIS), true)
-CFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
-endif
+# ifeq ($(TRAVIS), true)
+# CFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
+# endif
 
 # Darwin Configuration Flags
 ifeq ($(UNAME), Darwin)
