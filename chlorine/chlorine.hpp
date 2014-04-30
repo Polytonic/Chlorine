@@ -66,7 +66,7 @@ namespace ch
         std::map<std::string, cl::Kernel> mKernels;
 
         // Data Ranges
-        cl::NDRange mGlobal = cl::NullRange;
+        cl::NDRange mGlobal = cl::NDRange(0, 0, 0);
         cl::NDRange mLocal  = cl::NullRange;
         cl::NDRange mOffset = cl::NullRange;
 
