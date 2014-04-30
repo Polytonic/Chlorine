@@ -107,7 +107,7 @@ namespace ch
         mProgram = cl::Program(mContext, source);
         try { // Attempt to Build the Program on Available Devices
             mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>());
-        } catch (cl::Error err) { return std::cerr <<
+        } catch (cl::Error err) { std::cerr <<
             mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice);
         } // Print the Build Log on Unsuccessful Compiles
 
@@ -123,6 +123,9 @@ namespace ch
     template<unsigned int level>
     void Worker::execute(std::string kernel_function)
     {
+        std::cout << mGlobal[0] << std::endl;
+        mGlobal = cl::NDRange(100);
+
         // Perform the Calculation and Read Data from Memory Buffers
         mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal);
         for (auto &i : mBuffers)
@@ -145,7 +148,7 @@ namespace ch
     void Worker::execute(std::string kernel_function, T (&array) [N], Params && ... parameters)
     {
         size_t array_size = N * sizeof(array[0]);
-        mGlobal = (array_size > mGlobal[0]) ? cl::NDRange(array_size) : mGlobal;
+
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(level, buffer);
@@ -157,7 +160,7 @@ namespace ch
     void Worker::execute(std::string kernel_function, std::array<T, N> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
-        mGlobal = (array_size > mGlobal[0]) ? cl::NDRange(array_size) : mGlobal;
+
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(level, buffer);
@@ -169,7 +172,7 @@ namespace ch
     void Worker::execute(std::string kernel_function, V<T> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
-        mGlobal = (array_size > mGlobal[0]) ? cl::NDRange(array_size) : mGlobal;
+
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(level, buffer);
