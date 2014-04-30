@@ -32,24 +32,24 @@ namespace ch
         void set_kernel(std::string kernel_source);
 
         // Handle the Base Case
-        template<unsigned int level = 0>
+        template<unsigned int argn = 0>
         void execute(std::string kernel_function);
 
         // Handle Primitive Types
-        template<unsigned int level = 0, typename T, typename ... Params>
+        template<unsigned int argn = 0, typename T, typename ... Params>
         typename std::enable_if<std::is_arithmetic<T>::value>::type
         execute(std::string kernel_function, T primitive, Params && ... parameters);
 
         // Handle C-Style Arrays
-        template<unsigned int level = 0, class T, size_t N, typename ... Params>
+        template<unsigned int argn = 0, class T, size_t N, typename ... Params>
         void execute(std::string kernel_function, T (&array) [N], Params && ... parameters);
 
         // Handle STL Arrays
-        template<unsigned int level = 0, class T, size_t N, typename ... Params>
+        template<unsigned int argn = 0, class T, size_t N, typename ... Params>
         void execute(std::string kernel_function, std::array<T, N> & array, Params && ... parameters);
 
         // Handle Other STL Containers
-        template<unsigned int level = 0, template<typename ...> class V, typename T, typename ... Params>
+        template<unsigned int argn = 0, template<typename ...> class V, typename T, typename ... Params>
         void execute(std::string kernel_function, V<T> & array, Params && ... parameters);
 
     private:
@@ -100,11 +100,8 @@ namespace ch
         // Build Kernel Using the Current Context
         cl::Program::Sources source(1, std::make_pair(kernel_source.c_str(), kernel_source.length()));
         mProgram = cl::Program(mContext, source);
-        try { // Attempt to Build the Program on Available Devices
-            mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>());
-        } catch (cl::Error err) { std::cerr <<
-            mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice);
-        } // Print the Build Log on Unsuccessful Compiles
+        try { mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>()); }
+        catch (cl::Error err) { std::cerr << mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice); }
 
         // Associate Kernel Objects to String Keys
         std::vector<cl::Kernel> kernels;
@@ -115,7 +112,7 @@ namespace ch
     }
 
     // Handle the Base Case
-    template<unsigned int level>
+    template<unsigned int argn>
     void Worker::execute(std::string kernel_function)
     {
         // Perform the Calculation and Read Data from Memory Buffers
@@ -127,48 +124,48 @@ namespace ch
     }
 
     // Handle Primitive Types
-    template<unsigned int level, typename T, typename ... Params>
+    template<unsigned int argn, typename T, typename ... Params>
     typename std::enable_if<std::is_arithmetic<T>::value>::type
     Worker::execute(std::string kernel_function, T primitive, Params && ... parameters)
     {
-        mKernels[kernel_function].setArg(level, primitive);
-        execute<level+1>(kernel_function, parameters...);
+        mKernels[kernel_function].setArg(argn, primitive);
+        execute<argn+1>(kernel_function, parameters...);
     }
 
     // Handle C-Style Arrays
-    template<unsigned int level, class T, size_t N, typename ... Params>
+    template<unsigned int argn, class T, size_t N, typename ... Params>
     void Worker::execute(std::string kernel_function, T (&array) [N], Params && ... parameters)
     {
         size_t array_size = N * sizeof(array[0]);
         if (N > mGlobal[0]) { mGlobal = cl::NDRange(N); }
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(level, buffer);
-        execute<level+1>(kernel_function, parameters...);
+        mKernels[kernel_function].setArg(argn, buffer);
+        execute<argn+1>(kernel_function, parameters...);
     }
 
     // Handle STL Arrays
-    template<unsigned int level, class T, size_t N, typename ... Params>
+    template<unsigned int argn, class T, size_t N, typename ... Params>
     void Worker::execute(std::string kernel_function, std::array<T, N> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(level, buffer);
-        execute<level+1>(kernel_function, parameters...);
+        mKernels[kernel_function].setArg(argn, buffer);
+        execute<argn+1>(kernel_function, parameters...);
     }
 
     // Handle Other STL Containers
-    template<unsigned int level, template<typename ...> class V, typename T, typename ... Params>
+    template<unsigned int argn, template<typename ...> class V, typename T, typename ... Params>
     void Worker::execute(std::string kernel_function, V<T> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(level, buffer);
-        execute<level+1>(kernel_function, parameters...);
+        mKernels[kernel_function].setArg(argn, buffer);
+        execute<argn+1>(kernel_function, parameters...);
     }
 
     // Read the Contents of the Given Filename
