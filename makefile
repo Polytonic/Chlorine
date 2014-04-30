@@ -1,14 +1,11 @@
 # Build Configuration
-PLATFORM  = $(shell uname -s)
-SOURCE 		= chlorine
-OUTPUT 		= builds
-TEST_DIR  = tests
-
+PLATFORM = $(shell uname -s)
+TEST_DIR = tests
+SOURCE = chlorine
+OUTPUT = builds
 #
 TESTSUITE = \
-	robot 		\
-	unicorn		\
-	attack		\
+	vectors	\
 
 # Set Compiler Flags
 CCFLAGS := -O3 -std=c++11
