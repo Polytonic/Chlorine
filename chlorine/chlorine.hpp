@@ -23,8 +23,12 @@ namespace ch
     {
     public:
 
-        // Constructors
+        // Default Constructors
         Worker(unsigned int platform = 0, unsigned int device = 0);
+
+        // Disable Copy and Assignment Constructors
+        Worker(const Worker &) = delete;
+        Worker & operator=(const Worker &) = delete;
 
         // Proposed Class Methods
         void set_platform(unsigned int platform);
