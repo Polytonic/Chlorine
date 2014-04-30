@@ -1,6 +1,9 @@
 # Compiled Makefile Outputs
 builds
 *.dSYM
+*.gcda
+*.gcno
+*.gcov
 
 # Compiled Object Files
 *.slo

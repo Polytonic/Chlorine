@@ -12,6 +12,8 @@ CCFLAGS := -O3 -std=c++11
 CCFLAGS += -Wall -Wextra -Wpedantic
 CCFLAGS += -Wno-unused-parameter
 
+CCFLAGS += -fprofile-arcs -ftest-coverage
+
 # Determine Correct Linking Flag
 UNAME = $(shell uname -s)
 ifeq ($(UNAME), Darwin)
@@ -24,6 +26,7 @@ endif
 default: clean chlorine clinfo
 all: default $(TESTSUITE)
 clean:
+	@rm -rf *.gcda *.gcno *.gcov
 	@rm -rf $(OUTPUT)
 	@rm -rf $(TEST_DIR)/$(OUTPUT)
 .PHONY: chlorine
