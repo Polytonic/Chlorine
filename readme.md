@@ -6,13 +6,35 @@
 Chlorine is a collection of OpenCL utilities to help rapidly prototype parallel processing on graphics processing units.  Chlorine aims to provide a fully functional, generic host, enabling users to focus purely on writing kernels without having to worry about writing boilerplate to connect system and device memory.  Chlorine helpfully displays human-readable exceptions for when things do go horribly wrong.
 
 ## Getting Started
-Download the [Latest Release](https://github.com/Polytonic/Chlorine/archive/master.zip).  Looking for an [Older Version](https://github.com/Polytonic/Chlorine/releases)?
-  ↳ `git clone https://github.com/Polytonic/Chlorine.git`
+Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp). You'll also need the OpenCL C++ bindings header, [cl.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/cl.hpp).
+```c++
+#include "chlorine.hpp" // Include the Chlorine Header
+int main(int argc, char * argv[])
+{
+    // Create Some Data
+    std::vector<float> spam(10, 3.1415f);
+    std::vector<float> eggs(10, 2.7182f);
 
+    // Initialize a Chlorine Worker
+    ch::Worker worker;
+    worker.set_kernel("simple.cl");
+
+    // Call the Swap Function in the Given Kernel
+    worker.execute("swap", spam, eggs);
+
+    // Host Containers Are Automatically Updated
+    std::cout << "Spam: " << spam[0] << "\n"; // 2.7182
+    std::cout << "Eggs: " << eggs[0] << "\n"; // 3.1415
+}
 ```
-make clean
-make all
-./bin/clinfo
+```OpenCL
+__kernel void swap(__global float * spam, __global float * eggs)
+{
+    unsigned int i = get_global_id(0);
+    float swap = spam[i];
+    spam[i] = eggs[i];
+    eggs[i] = swap;
+}
 ```
 
 ## Dependencies
