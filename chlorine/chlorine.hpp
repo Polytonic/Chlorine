@@ -97,13 +97,8 @@ namespace ch
 
     void Worker::set_kernel(std::string kernel_source)
     {
-        // Read Contents of Kernel
-        std::ifstream fd(kernel_source);
-        std::string kernel(std::istreambuf_iterator<char>(fd),
-                          (std::istreambuf_iterator<char>()));
-
         // Build Kernel Using the Current Context
-        cl::Program::Sources source(1, std::make_pair(kernel.c_str(), kernel.length()));
+        cl::Program::Sources source(1, std::make_pair(kernel_source.c_str(), kernel_source.length()));
         mProgram = cl::Program(mContext, source);
         try { // Attempt to Build the Program on Available Devices
             mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>());
@@ -174,6 +169,16 @@ namespace ch
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(level, buffer);
         execute<level+1>(kernel_function, parameters...);
+    }
+
+    // Read the Contents of the Given Filename
+    std::string read(std::string filename)
+    {
+        // Read Contents of Kernel
+        std::ifstream fd(filename);
+        std::string contents(std::istreambuf_iterator<char>(fd),
+                            (std::istreambuf_iterator<char>()));
+        return contents;
     }
 }
 
