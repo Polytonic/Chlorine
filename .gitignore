@@ -1,6 +1,5 @@
 # Compiled Makefile Outputs
-chlorine
-clinfo
+build/
 *.dSYM
 
 # Compiled Object Files

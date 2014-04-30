@@ -1,39 +1,34 @@
 # Makefile Targets
 CHLORINE = chlorine
 CLINFO   = clinfo
-SOURCE   = source
 
+SOURCE = chlorine
+OUTPUT = build
 # Configuration Variables
 UNAME  = $(shell uname -s)
 CFLAGS = -O3 -std=c++11
 WFLAGS = -Wall -Wextra -Wpedantic
 
 # Default Makefile Commands
+.PHONY: chlorine clinfo clean test
 default: clean $(CHLORINE) $(CLINFO)
-.PHONY: test
 clean:
-	@rm -rf chlorine
-	@rm -rf chlorine.gcno
-	@rm -rf chlorine.dSYM
-	@rm -rf clinfo
-	@rm -rf clinfo.gcno
-	@rm -rf clinfo.dSYM
-
+	@rm -rf $(OUTPUT) && mkdir $(OUTPUT)
 test:
-	./chlorine
+	./$(OUTPUT)/chlorine
 
 # Makefile Target: CHLORINE
 $(CHLORINE): $(SOURCE)/chlorine.cpp
-	$(CXX) $(CFLAGS) $(WFLAGS) $< -o $@ $(LFLAGS)
+	$(CXX) $(CFLAGS) $(WFLAGS) $< -o $(OUTPUT)/$@ $(LFLAGS)
 
 # Makefile Target: CLINFO
 $(CLINFO): $(SOURCE)/clinfo.cpp
-	$(CXX) $(CFLAGS) $(WFLAGS) $< -o $@ $(LFLAGS)
+	$(CXX) $(CFLAGS) $(WFLAGS) $< -o $(OUTPUT)/$@ $(LFLAGS)
 
 # TravisCI Configuration Flags
-# ifeq ($(TRAVIS), true)
-# CFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
-# endif
+ifeq ($(TRAVIS), true)
+CFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
+endif
 
 # Darwin Configuration Flags
 ifeq ($(UNAME), Darwin)
