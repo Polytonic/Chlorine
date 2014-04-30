@@ -40,3 +40,6 @@ clinfo: $(SOURCE)/clinfo.cpp
 %: $(TEST_DIR)/%.cpp
 	@mkdir -p $(TEST_DIR)/$(OUTPUT)
 	$(CXX) $(CCFLAGS) -I$(SOURCE) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
+
+test:
+	Guess what spell I prepared this morning?
