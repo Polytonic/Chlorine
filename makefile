@@ -1,49 +1,45 @@
-# Makefile Targets
-CHLORINE = chlorine
-CLINFO   = clinfo
+# Build Configuration
+PLATFORM  = $(shell uname -s)
+SOURCE 		= chlorine
+OUTPUT 		= builds
+TEST_DIR  = tests
 
-SOURCE = chlorine
-OUTPUT = build
-# Configuration Variables
-UNAME  = $(shell uname -s)
-CFLAGS = -O3 -std=c++11
-WFLAGS = -Wall -Wextra -Wpedantic
+#
+TESTSUITE = \
+	robot 		\
+	unicorn		\
+	attack		\
 
-# Default Makefile Commands
-.PHONY: chlorine clinfo clean test
-default: clean $(CHLORINE) $(CLINFO)
-clean:
-	@rm -rf $(OUTPUT) && mkdir $(OUTPUT)
-test:
-	./$(OUTPUT)/chlorine
+# Set Compiler Flags
+CCFLAGS := -O3 -std=c++11
+CCFLAGS += -Wall -Wextra -Wpedantic
 
-# Makefile Target: CHLORINE
-$(CHLORINE): $(SOURCE)/chlorine.cpp
-	$(CXX) $(CFLAGS) $(WFLAGS) $< -o $(OUTPUT)/$@ $(LFLAGS)
-
-# Makefile Target: CLINFO
-$(CLINFO): $(SOURCE)/clinfo.cpp
-	$(CXX) $(CFLAGS) $(WFLAGS) $< -o $(OUTPUT)/$@ $(LFLAGS)
-
-# # TravisCI Configuration Flags
-# ifeq ($(TRAVIS), true)
-# CFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
-# endif
-
-# Darwin Configuration Flags
+# Determine Correct Linking Flag
+UNAME = $(shell uname -s)
 ifeq ($(UNAME), Darwin)
-LFLAGS += -framework OpenCL
-ifeq ($(CXX), c++)
-CXX=clang++
-endif
-endif
-
-# Linux Compiler Flags
-ifeq ($(UNAME), Linux)
-LFLAGS += -lOpenCL
+LDFLAGS = -framework OpenCL
+else ifeq ($(UNAME), Linux)
+LDFLAGS = -lOpenCL
 endif
 
-# Enable Compiler Warnings
-ifeq ($(CXX), clang++)
-WFLAGS += -Weverything
-endif
+# Define Makefile Aliases
+default: clean chlorine clinfo
+all: default $(TESTSUITE)
+clean:
+	@rm -rf $(OUTPUT)
+	@rm -rf $(TEST_DIR)/$(OUTPUT)
+.PHONY: chlorine
+
+# Build the Chlorine CLI Executable
+chlorine: $(SOURCE)/chlorine.cpp
+	@mkdir -p $(OUTPUT)
+	$(CXX) $(CCFLAGS) $< -o $(OUTPUT)/$@ $(LDFLAGS)
+
+# Build the clinfo Diagnostic Utility
+clinfo: $(SOURCE)/clinfo.cpp
+	@mkdir -p $(OUTPUT)
+	$(CXX) $(CCFLAGS) $< -o $(OUTPUT)/$@ $(LDFLAGS)
+
+%: $(TEST_DIR)/%.cpp
+	@mkdir -p $(TEST_DIR)/$(OUTPUT)
+	$(CXX) $(CCFLAGS) -I$(SOURCE) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
