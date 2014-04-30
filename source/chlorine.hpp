@@ -103,9 +103,13 @@ namespace ch
                           (std::istreambuf_iterator<char>()));
 
         // Build Kernel Using the Current Context
-        cl::Program::Sources source(1, std::make_pair(kernel.c_str(), kernel.length()+1));
-        mProgram = cl::Program(mContext, source);
-        mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>());
+        try {
+            cl::Program::Sources source(1, std::make_pair(kernel.c_str(), kernel.length()));
+            mProgram = cl::Program(mContext, source);
+            mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>());
+        } catch (cl::Error err) {
+            std::cerr << mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice);
+        }
 
         // Associate Kernel Objects to String Keys
         std::vector<cl::Kernel> kernels;
