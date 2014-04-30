@@ -12,7 +12,10 @@ CCFLAGS := -O3 -std=c++11
 CCFLAGS += -Wall -Wextra -Wpedantic
 CCFLAGS += -Wno-unused-parameter
 
+# Enable Code Coverage
+ifeq ($(TRAVIS), true)
 CCFLAGS += -fprofile-arcs -ftest-coverage
+endif
 
 # Determine Correct Linking Flag
 UNAME = $(shell uname -s)
