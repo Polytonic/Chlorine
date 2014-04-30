@@ -10,6 +10,7 @@ TESTSUITE = \
 # Set Compiler Flags
 CCFLAGS := -O3 -std=c++11
 CCFLAGS += -Wall -Wextra -Wpedantic
+CCFLAGS += -Wno-unused-parameter
 
 # Determine Correct Linking Flag
 UNAME = $(shell uname -s)
@@ -42,4 +43,4 @@ clinfo: $(SOURCE)/clinfo.cpp
 	$(CXX) $(CCFLAGS) -I$(SOURCE) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
 
 test:
-	echo Guess what spell I prepared this morning?
+	./$(OUTPUT)/chlorine
