@@ -1,9 +1,11 @@
 # Build Configuration
 PLATFORM = $(shell uname -s)
-TEST_DIR = tests
 SOURCE = chlorine
 OUTPUT = builds
-#
+
+# Set Test Configuration
+TEST_DIR = tests
+TEST_LIB = $(TEST_DIR)/googletest/include/
 TESTSUITE = \
 	vectors	\
 
@@ -46,7 +48,8 @@ clinfo: $(SOURCE)/clinfo.cpp
 
 %: $(TEST_DIR)/%.cpp
 	@mkdir -p $(TEST_DIR)/$(OUTPUT)
-	$(CXX) $(CCFLAGS) -I$(SOURCE) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
+	$(CXX) $(CCFLAGS) -I$(SOURCE) -I$(TEST_LIB) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
 
 test:
 	./$(OUTPUT)/chlorine
+	./$(TEST_DIR)/$(OUTPUT)/vectors
