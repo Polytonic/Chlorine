@@ -1,6 +1,6 @@
 # Travis Configuration
 language: cpp
-script: make && make test
+script: make all && make test
 compiler:
   - clang
   - gcc
