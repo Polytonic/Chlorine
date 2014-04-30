@@ -25,10 +25,10 @@ $(CHLORINE): $(SOURCE)/chlorine.cpp
 $(CLINFO): $(SOURCE)/clinfo.cpp
 	$(CXX) $(CFLAGS) $(WFLAGS) $< -o $(OUTPUT)/$@ $(LFLAGS)
 
-# TravisCI Configuration Flags
-ifeq ($(TRAVIS), true)
-CFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
-endif
+# # TravisCI Configuration Flags
+# ifeq ($(TRAVIS), true)
+# CFLAGS += -g --coverage -fprofile-arcs -ftest-coverage
+# endif
 
 # Darwin Configuration Flags
 ifeq ($(UNAME), Darwin)
