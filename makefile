@@ -42,4 +42,4 @@ clinfo: $(SOURCE)/clinfo.cpp
 	$(CXX) $(CCFLAGS) -I$(SOURCE) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
 
 test:
-	Guess what spell I prepared this morning?
+	echo Guess what spell I prepared this morning?

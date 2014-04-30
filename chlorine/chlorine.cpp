@@ -1,5 +1,6 @@
 #include "chlorine.hpp"
 #include <valarray>
+#include <fstream>
 
 int main()
 {
@@ -10,13 +11,12 @@ int main()
     std::vector<float>  eggs  (10, 2.7182f);
     std::valarray<float>  bacon (3.1415f, 10); // valarray constructor is backwards
 
-    std::array<int, 10> spinach = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
+    std::array<int, 10> spinach = {{ 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 }};
     int cheese[10] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
-
     try{
-        ch::Worker busybot(0,0);
-        busybot.set_kernel("tests/default.cl");
+        ch::Worker busybot;
+        busybot.set_kernel("tests/kernels/default.cl");
         busybot.execute("add", spam, ham, 1, eggs, bacon, 1.0f, spinach, cheese);
     } catch (cl::Error err) { std::cout << err.err() << ":" << err.what() << std::endl; }
 
