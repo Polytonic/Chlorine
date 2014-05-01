@@ -23,7 +23,7 @@ namespace ch
     {
     public:
 
-        // Available Worker Constructors
+        // Worker Constructors
         Worker(std::string filename, unsigned int platform = 0, unsigned int device = 0);
         Worker(  /* No Filename */   unsigned int platform = 0, unsigned int device = 0);
 
@@ -31,10 +31,10 @@ namespace ch
         Worker(const Worker &) = delete;
         Worker & operator=(const Worker &) = delete;
 
-        // Proposed Class Methods
+        // Class Methods
         void set_platform(unsigned int platform);
         void set_device(unsigned int device);
-        void set_kernel(std::string kernel_source);
+        std::string build_kernel(std::string kernel_source);
 
         // Handle the Base Case
         template<unsigned int argn = 0>
@@ -87,7 +87,7 @@ namespace ch
     // Overload Stream Operator >> to Accept Kernel Strings
     Worker & operator>>(Worker & worker, const std::string kernel_source)
     {
-        worker.set_kernel(kernel_source);
+        worker.build_kernel(kernel_source);
         return worker;
     }
 
@@ -106,7 +106,7 @@ namespace ch
     {
         set_platform(platform);
         set_device(device);
-        set_kernel(read(filename));
+        std::cerr << build_kernel(read(filename));
     }
 
     // Default Constructor
@@ -132,13 +132,13 @@ namespace ch
         mQueue = cl::CommandQueue(mContext, mDevice, CL_QUEUE_PROFILING_ENABLE);
     }
 
-    void Worker::set_kernel(std::string kernel_source)
+    std::string Worker::build_kernel(std::string kernel_source)
     {
         // Build Kernel Using the Current Context
         cl::Program::Sources source(1, std::make_pair(kernel_source.c_str(), kernel_source.length()));
         mProgram = cl::Program(mContext, source);
         try { mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>()); }
-        catch (cl::Error err) { std::cerr << mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice); }
+        catch (cl::Error err) { return mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice); }
 
         // Associate Kernel Objects to String Keys
         std::vector<cl::Kernel> kernels;
