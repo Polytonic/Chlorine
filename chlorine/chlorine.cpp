@@ -15,8 +15,7 @@ int main()
     int cheese[10] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 
     try{
-        ch::Worker busybot;
-        busybot.set_kernel("tests/kernels/default.cl");
+        ch::Worker busybot("tests/kernels/default.cl");
         busybot.execute("add", spam, ham, 1, eggs, bacon, 1.0f, spinach, cheese);
     } catch (cl::Error err) { std::cout << err.err() << ":" << err.what() << std::endl; }
 
