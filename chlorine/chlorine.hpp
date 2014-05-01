@@ -46,11 +46,11 @@ namespace ch
         execute(std::string const & kernel_function, T primitive, Params && ... parameters);
 
         // Handle C-Style Arrays
-        template<unsigned int const argn = 0, class T, size_t N, typename ... Params>
+        template<unsigned int const argn = 0, class T, size_t const N, typename ... Params>
         void execute(std::string const & kernel_function, T (&array) [N], Params && ... parameters);
 
         // Handle STL Arrays
-        template<unsigned int const argn = 0, class T, size_t N, typename ... Params>
+        template<unsigned int const argn = 0, class T, size_t const N, typename ... Params>
         void execute(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters);
 
         // Handle Other STL Containers
@@ -174,7 +174,7 @@ namespace ch
     }
 
     // Handle C-Style Arrays
-    template<unsigned int const argn, class T, size_t N, typename ... Params>
+    template<unsigned int const argn, class T, size_t const N, typename ... Params>
     void Worker::execute(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
     {
         size_t array_size = N * sizeof(array[0]);
@@ -186,7 +186,7 @@ namespace ch
     }
 
     // Handle STL Arrays
-    template<unsigned int const argn, class T, size_t N, typename ... Params>
+    template<unsigned int const argn, class T, size_t const N, typename ... Params>
     void Worker::execute(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
