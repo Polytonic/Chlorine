@@ -52,4 +52,4 @@ clinfo: $(SOURCE)/clinfo.cpp
 
 test:
 	./$(OUTPUT)/chlorine
-	./$(TEST_DIR)/$(OUTPUT)/vectors --success
+	./$(TEST_DIR)/$(OUTPUT)/vectors --success --reporter compact
