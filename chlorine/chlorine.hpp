@@ -146,6 +146,7 @@ namespace ch
         mKernels.clear();
         for (auto &i : kernels)
             mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
+        return "";
     }
 
     // Handle the Base Case
