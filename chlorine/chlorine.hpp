@@ -116,6 +116,7 @@ namespace ch
         set_device(device);
     }
 
+    // Selects the Specified OpenCL Platform
     void Worker::set_platform(unsigned int const platform)
     {
         std::vector<cl::Platform> platforms;
@@ -123,6 +124,7 @@ namespace ch
         mPlatform = platforms[platform];
     }
 
+    // Selects the Specified OpenCL Device
     void Worker::set_device(unsigned int const device)
     {
         std::vector<cl::Device> devices;
@@ -132,6 +134,7 @@ namespace ch
         mQueue = cl::CommandQueue(mContext, mDevice, CL_QUEUE_PROFILING_ENABLE);
     }
 
+    // Builds an OpenCL Kernel from a Program String
     std::string Worker::build_kernel(std::string const & kernel_source)
     {
         // Build Kernel Using the Current Context
