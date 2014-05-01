@@ -24,38 +24,38 @@ namespace ch
     public:
 
         // Worker Constructors
-        Worker(std::string filename, unsigned int platform = 0, unsigned int device = 0);
-        Worker(  /* No Filename */   unsigned int platform = 0, unsigned int device = 0);
+        Worker(std::string const & filename, unsigned int const platform = 0, unsigned int const device = 0);
+        Worker(      /* No Filename */       unsigned int const platform = 0, unsigned int const device = 0);
 
         // Disable Copy and Assignment Constructors
-        Worker(const Worker &) = delete;
-        Worker & operator=(const Worker &) = delete;
+        Worker(Worker const &) = delete;
+        Worker & operator=(Worker const &) = delete;
 
         // Class Methods
-        void set_platform(unsigned int platform);
-        void set_device(unsigned int device);
-        std::string build_kernel(std::string kernel_source);
+        void set_platform(unsigned int const platform);
+        void set_device(unsigned int const device);
+        std::string build_kernel(std::string const & kernel_source);
 
         // Handle the Base Case
-        template<unsigned int argn = 0>
-        void execute(std::string kernel_function);
+        template<unsigned int const argn = 0>
+        void execute(std::string const & kernel_function);
 
         // Handle Primitive Types
-        template<unsigned int argn = 0, typename T, typename ... Params>
+        template<unsigned int const argn = 0, typename T, typename ... Params>
         typename std::enable_if<std::is_arithmetic<T>::value>::type
-        execute(std::string kernel_function, T primitive, Params && ... parameters);
+        execute(std::string const & kernel_function, T primitive, Params && ... parameters);
 
         // Handle C-Style Arrays
-        template<unsigned int argn = 0, class T, size_t N, typename ... Params>
-        void execute(std::string kernel_function, T (&array) [N], Params && ... parameters);
+        template<unsigned int const argn = 0, class T, size_t N, typename ... Params>
+        void execute(std::string const & kernel_function, T (&array) [N], Params && ... parameters);
 
         // Handle STL Arrays
-        template<unsigned int argn = 0, class T, size_t N, typename ... Params>
-        void execute(std::string kernel_function, std::array<T, N> & array, Params && ... parameters);
+        template<unsigned int const argn = 0, class T, size_t N, typename ... Params>
+        void execute(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters);
 
         // Handle Other STL Containers
-        template<unsigned int argn = 0, template<typename ...> class V, typename T, typename ... Params>
-        void execute(std::string kernel_function, V<T> & array, Params && ... parameters);
+        template<unsigned int const argn = 0, template<typename ...> class V, typename T, typename ... Params>
+        void execute(std::string const & kernel_function, V<T> & array, Params && ... parameters);
 
     private:
 
@@ -85,14 +85,14 @@ namespace ch
     }
 
     // Overload Stream Operator >> to Accept Kernel Strings
-    Worker & operator>>(Worker & worker, const std::string kernel_source)
+    Worker & operator>>(Worker & worker, std::string const & kernel_source)
     {
         worker.build_kernel(kernel_source);
         return worker;
     }
 
     // Read the Contents of the Given Filename
-    std::string read(std::string filename)
+    std::string read(std::string const & filename)
     {
         // Read Contents of Kernel
         std::ifstream fd(filename);
@@ -102,7 +102,7 @@ namespace ch
     }
 
     // Filename Constructor
-    Worker::Worker(std::string filename, unsigned int platform, unsigned int device)
+    Worker::Worker(std::string const & filename, unsigned int const platform, unsigned int const device)
     {
         set_platform(platform);
         set_device(device);
@@ -110,20 +110,20 @@ namespace ch
     }
 
     // Default Constructor
-    Worker::Worker(unsigned int platform, unsigned int device)
+    Worker::Worker(unsigned int const platform, unsigned int const device)
     {
         set_platform(platform);
         set_device(device);
     }
 
-    void Worker::set_platform(unsigned int platform)
+    void Worker::set_platform(unsigned int const platform)
     {
         std::vector<cl::Platform> platforms;
         cl::Platform::get(& platforms);
         mPlatform = platforms[platform];
     }
 
-    void Worker::set_device(unsigned int device)
+    void Worker::set_device(unsigned int const device)
     {
         std::vector<cl::Device> devices;
         mPlatform.getDevices(CL_DEVICE_TYPE_DEFAULT, & devices);
@@ -132,7 +132,7 @@ namespace ch
         mQueue = cl::CommandQueue(mContext, mDevice, CL_QUEUE_PROFILING_ENABLE);
     }
 
-    std::string Worker::build_kernel(std::string kernel_source)
+    std::string Worker::build_kernel(std::string const & kernel_source)
     {
         // Build Kernel Using the Current Context
         cl::Program::Sources source(1, std::make_pair(kernel_source.c_str(), kernel_source.length()));
@@ -149,8 +149,8 @@ namespace ch
     }
 
     // Handle the Base Case
-    template<unsigned int argn>
-    void Worker::execute(std::string kernel_function)
+    template<unsigned int const argn>
+    void Worker::execute(std::string const & kernel_function)
     {
         // Perform the Calculation and Read Data from Memory Buffers
         mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal);
@@ -161,17 +161,17 @@ namespace ch
     }
 
     // Handle Primitive Types
-    template<unsigned int argn, typename T, typename ... Params>
+    template<unsigned int const argn, typename T, typename ... Params>
     typename std::enable_if<std::is_arithmetic<T>::value>::type
-    Worker::execute(std::string kernel_function, T primitive, Params && ... parameters)
+    Worker::execute(std::string const & kernel_function, T primitive, Params && ... parameters)
     {
         mKernels[kernel_function].setArg(argn, primitive);
         execute<argn+1>(kernel_function, parameters...);
     }
 
     // Handle C-Style Arrays
-    template<unsigned int argn, class T, size_t N, typename ... Params>
-    void Worker::execute(std::string kernel_function, T (&array) [N], Params && ... parameters)
+    template<unsigned int const argn, class T, size_t N, typename ... Params>
+    void Worker::execute(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
     {
         size_t array_size = N * sizeof(array[0]);
         if (N > mGlobal[0]) { mGlobal = cl::NDRange(N); }
@@ -182,8 +182,8 @@ namespace ch
     }
 
     // Handle STL Arrays
-    template<unsigned int argn, class T, size_t N, typename ... Params>
-    void Worker::execute(std::string kernel_function, std::array<T, N> & array, Params && ... parameters)
+    template<unsigned int const argn, class T, size_t N, typename ... Params>
+    void Worker::execute(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
@@ -194,8 +194,8 @@ namespace ch
     }
 
     // Handle Other STL Containers
-    template<unsigned int argn, template<typename ...> class V, typename T, typename ... Params>
-    void Worker::execute(std::string kernel_function, V<T> & array, Params && ... parameters)
+    template<unsigned int const argn, template<typename ...> class V, typename T, typename ... Params>
+    void Worker::execute(std::string const & kernel_function, V<T> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
