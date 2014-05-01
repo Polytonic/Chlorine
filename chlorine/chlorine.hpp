@@ -23,8 +23,9 @@ namespace ch
     {
     public:
 
-        // Default Constructors
-        Worker(unsigned int platform = 0, unsigned int device = 0);
+        // Available Worker Constructors
+        Worker(std::string filename, unsigned int platform = 0, unsigned int device = 0);
+        Worker(  /* No Filename */   unsigned int platform = 0, unsigned int device = 0);
 
         // Disable Copy and Assignment Constructors
         Worker(const Worker &) = delete;
@@ -75,6 +76,38 @@ namespace ch
         cl::NDRange mOffset = cl::NullRange;
 
     };
+
+    // Overload Stream Operator << to Print Build Information
+    std::ostream& operator<<(std::ostream& os, const Worker & w)
+    {
+        os << "Hello World" << std::endl;
+        return os;
+    }
+
+    // Overload Stream Operator >> to Accept Kernel Strings
+    Worker & operator>>(Worker & worker, const std::string kernel_source)
+    {
+        worker.set_kernel(kernel_source);
+        return worker;
+    }
+
+    // Read the Contents of the Given Filename
+    std::string read(std::string filename)
+    {
+        // Read Contents of Kernel
+        std::ifstream fd(filename);
+        std::string contents(std::istreambuf_iterator<char>(fd),
+                            (std::istreambuf_iterator<char>()));
+        return contents;
+    }
+
+    // Filename Constructor
+    Worker::Worker(std::string filename, unsigned int platform, unsigned int device)
+    {
+        set_platform(platform);
+        set_device(device);
+        set_kernel(read(filename));
+    }
 
     // Default Constructor
     Worker::Worker(unsigned int platform, unsigned int device)
@@ -171,16 +204,6 @@ namespace ch
         mKernels[kernel_function].setArg(argn, buffer);
         execute<argn+1>(kernel_function, parameters...);
     }
-
-    // Read the Contents of the Given Filename
-    std::string read(std::string filename)
-    {
-        // Read Contents of Kernel
-        std::ifstream fd(filename);
-        std::string contents(std::istreambuf_iterator<char>(fd),
-                            (std::istreambuf_iterator<char>()));
-        return contents;
-    }
-}
+};
 
 #endif

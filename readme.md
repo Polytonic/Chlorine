@@ -19,8 +19,7 @@ int main(int argc, char * argv[])
     std::vector<float> eggs(10, 2.7182f);
 
     // Initialize a Chlorine Worker
-    ch::Worker worker;
-    worker.set_kernel("simple.cl");
+    ch::Worker worker("simple.cl");
 
     // Call the Swap Function in the Given Kernel
     worker.execute("swap", spam, eggs);
