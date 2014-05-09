@@ -30,6 +30,10 @@ namespace ch
         Worker(Worker const &) = delete;
         Worker & operator=(Worker const &) = delete;
 
+        // Overloaded Stream Operators
+        friend std::ostream & operator<<(std::ostream& os, const Worker & w);
+        friend Worker       & operator>>(Worker & worker, std::string const & kernel_source);
+
         // Class Methods
         void set_platform(unsigned int const platform);
         void set_device(unsigned int const device);
@@ -77,16 +81,15 @@ namespace ch
     };
 
     // Overload Stream Operator << to Print Build Information
-    std::ostream& operator<<(std::ostream& os, const Worker & w)
+    std::ostream & operator<<(std::ostream& os, const Worker & w)
     {
-        os << "Hello World" << std::endl;
-        return os;
+        return os << w.mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(w.mDevice) << std::endl;
     }
 
     // Overload Stream Operator >> to Accept Kernel Strings
     Worker & operator>>(Worker & worker, std::string const & kernel_source)
     {
-        worker.build_kernel(kernel_source);
+        std::cout << worker.build_kernel(kernel_source);
         return worker;
     }
 
@@ -104,7 +107,7 @@ namespace ch
     {
         set_platform(platform);
         set_device(device);
-        std::cerr << build_kernel(read(filename));
+        std::cout << build_kernel(read(filename));
     }
 
     // Default Constructor
