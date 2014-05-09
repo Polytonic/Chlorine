@@ -1,4 +1,4 @@
-# [Chlorine]()
+# [Chlorine](http://polytonic.github.io/Chlorine/)
 [![Build Status](http://img.shields.io/travis/Polytonic/Chlorine.svg?style=flat)](https://travis-ci.org/Polytonic/Chlorine)
 [![Coverage Status](http://img.shields.io/coveralls/Polytonic/Chlorine.svg?style=flat)](https://coveralls.io/r/Polytonic/Chlorine)
 
@@ -40,6 +40,7 @@ __kernel void swap(__global float * spam, __global float * eggs)
 }
 ```
 
+## Documentation
 The Chlorine Worker takes care of mapping arguments passed on the host to kernel functions on the device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix primitives and vector types as needed. The following types are supported:
 
 - [Arithmetic Primitives](http://www.cplusplus.com/reference/type_traits/is_arithmetic/)
@@ -49,9 +50,6 @@ The Chlorine Worker takes care of mapping arguments passed on the host to kernel
 - [STL Vectors](http://www.cplusplus.com/reference/vector/vector/)
 
 Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, `3.14` vs. `3.14f`.
-
-## Documentation
-Advanced usage coming soon!
 
 ## License
 ```
