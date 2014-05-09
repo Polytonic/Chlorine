@@ -5,7 +5,6 @@
 // Include OpenCL C++ Bindings
 #pragma GCC diagnostic push
 #pragma GCC system_header
-#define __CL_ENABLE_EXCEPTIONS
 #include "cl.hpp"
 #pragma GCC diagnostic pop
 
@@ -96,9 +95,8 @@ namespace ch
     {
         // Read Contents of Kernel
         std::ifstream fd(filename);
-        std::string contents(std::istreambuf_iterator<char>(fd),
-                            (std::istreambuf_iterator<char>()));
-        return contents;
+        return std::string(std::istreambuf_iterator<char>(fd),
+                          (std::istreambuf_iterator<char>()));
     }
 
     // Filename Constructor
@@ -140,8 +138,7 @@ namespace ch
         // Build Kernel Using the Current Context
         cl::Program::Sources source(1, std::make_pair(kernel_source.c_str(), kernel_source.length()));
         mProgram = cl::Program(mContext, source);
-        try { mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>()); }
-        catch (cl::Error err) { return mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice); }
+        mProgram.build(mContext.getInfo<CL_CONTEXT_DEVICES>());
 
         // Associate Kernel Objects to String Keys
         std::vector<cl::Kernel> kernels;
@@ -149,7 +146,9 @@ namespace ch
         mKernels.clear();
         for (auto &i : kernels)
             mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
-        return "";
+
+        // Return the Kernel Build Log
+        return mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice);
     }
 
     // Handle the Base Case
