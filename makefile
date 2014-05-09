@@ -6,8 +6,7 @@ OUTPUT = builds
 # Set Test Configuration
 TEST_DIR = tests
 TEST_LIB = $(TEST_DIR)/catch/single_include/
-TESTSUITE = \
-	vectors	\
+TESTSUITE = testsuite
 
 # Set Compiler Flags
 CCFLAGS := -O3 -std=c++11
@@ -52,4 +51,4 @@ clinfo: $(SOURCE)/clinfo.cpp
 
 test:
 	./$(OUTPUT)/chlorine
-	./$(TEST_DIR)/$(OUTPUT)/vectors --success --reporter compact
+	./$(TEST_DIR)/$(OUTPUT)/$(TESTSUITE) --success --reporter compact
