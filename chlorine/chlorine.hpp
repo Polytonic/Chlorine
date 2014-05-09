@@ -32,7 +32,7 @@ namespace ch
 
         // Overloaded Stream Operators
         friend std::ostream & operator<<(std::ostream& os, Worker const & w);
-        friend Worker       & operator>>(Worker const & worker, std::string const & kernel_source);
+        friend Worker       & operator>>(Worker & worker, std::string const & kernel_source);
 
         // Class Methods
         void set_platform(unsigned int const platform);
@@ -87,7 +87,7 @@ namespace ch
     }
 
     // Overload Stream Operator >> to Accept Kernel Strings
-    Worker & operator>>(Worker const & worker, std::string const & kernel_source)
+    Worker & operator>>(Worker & worker, std::string const & kernel_source)
     {
         std::cout << worker.build_kernel(kernel_source);
         return worker;
