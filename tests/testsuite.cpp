@@ -3,6 +3,11 @@
 #include "chlorine.hpp"
 #include "catch.hpp"
 
+// Load the Helper Test Sections
+TEST_CASE("Test Helper Functions", "[helpers]") {
+    #include "helpers.hpp"
+}
+
 // Load the Integer Test Sections
 TEST_CASE("Test Integer Compatibility", "[ints]") {
     #include "integers.hpp"
