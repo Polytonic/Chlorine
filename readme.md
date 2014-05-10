@@ -51,6 +51,16 @@ The Chlorine Worker takes care of mapping arguments passed on the host to kernel
 
 Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, `3.14` vs. `3.14f`.
 
+## Roadmap
+- [ ] Additional Documentation
+- [ ] Additional Examples
+- [ ] Add Missing Overloaded Stream Operator Tests
+- [ ] Command Line Tools `chlorine`, `clinfo`, `clstat`
+- [ ] Handle `primitiveN` (`int2`, `float3`, etc.) Wide Data Types
+- [ ] Implement Global/Local/Offset Control (for 2D/3D Arrays)
+- [ ] Implement OpenCL Error Handling
+- [ ] Implement OpenCL Event Profiling
+
 ## License
 >The MIT License (MIT)
 
