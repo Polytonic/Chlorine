@@ -1,3 +1,6 @@
+// Include STL Containers
+#include <valarray>
+
 // Include Testsuite Dependencies
 #define CATCH_CONFIG_MAIN
 #include "chlorine.hpp"
