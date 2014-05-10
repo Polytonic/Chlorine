@@ -1,16 +1,14 @@
+// Include Testsuite Dependencies
 #define CATCH_CONFIG_MAIN
 #include "chlorine.hpp"
 #include "catch.hpp"
 
-unsigned int Factorial( unsigned int number ) {
-    return number <= 1 ? number : Factorial(number-1)*number;
+// Load the Integer Test Sections
+TEST_CASE("Test Integer Compatibility", "[ints]") {
+    #include "integers.hpp"
 }
 
-TEST_CASE("Worker Default Constructor") {
-
-    ch::Worker worker("tests/kernels/default.cl");
-
-    CHECK( Factorial(1) == 1);
-    CHECK( Factorial(2) == 2);
-    CHECK( Factorial(3) == 6);
+// Load the Float Test Sections
+TEST_CASE("Test Float Compatibility", "[floats]") {
+    #include "floats.hpp"
 }
