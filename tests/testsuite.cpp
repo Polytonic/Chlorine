@@ -3,6 +3,11 @@
 #include "chlorine.hpp"
 #include "catch.hpp"
 
+// Load the Container Test Sections
+TEST_CASE("Workers are Compatible With Containers", "[containers]") {
+    #include "containers.hpp"
+}
+
 // Load the Helper Test Sections
 TEST_CASE("Test Helper Functions", "[helpers]") {
     #include "helpers.hpp"
