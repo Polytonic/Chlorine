@@ -1,44 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Chlorine by Polytonic</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Chlorine : Parallel Processing Made Simple" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Chlorine</title>
   </head>
+
   <body>
 
-      <header>
-        <h1>Chlorine</h1>
-        <p>Parallel Processing Made Simple</p>
-      </header>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Polytonic/Chlorine">View on GitHub</a>
 
-      <div id="banner">
-        <span id="logo"></span>
+          <h1 id="project_title">Chlorine</h1>
+          <h2 id="project_tagline">Parallel Processing Made Simple</h2>
 
-        <a href="https://github.com/Polytonic/Chlorine" class="button fork"><strong>View On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/Polytonic/Chlorine/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/Polytonic/Chlorine/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
-      </div><!-- end banner -->
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Polytonic/Chlorine/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Polytonic/Chlorine/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
 
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
-      <section>
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>
 <a name="chlorine" class="anchor" href="#chlorine"><span class="octicon octicon-link"></span></a><a href="http://polytonic.github.io/Chlorine/">Chlorine</a>
 </h1>
@@ -103,6 +95,19 @@
 </ul><p>Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, <code>3.14</code> vs. <code>3.14f</code>.</p>
 
 <h2>
+<a name="roadmap" class="anchor" href="#roadmap"><span class="octicon octicon-link"></span></a>Roadmap</h2>
+
+<ul>
+<li>[ ] Additional Documentation</li>
+<li>[ ] Additional Examples</li>
+<li>[ ] Add Missing Overloaded Stream Operator Tests</li>
+<li>[ ] Command Line Tools <code>chlorine</code>, <code>clinfo</code>, <code>clstat</code>
+</li>
+<li>[ ] Handle <code>primitiveN</code> (<code>int2</code>, <code>float3</code>, etc.) Wide Data Types</li>
+<li>[ ] Implement Global/Local/Offset Control (for 2D/3D Arrays)</li>
+<li>[ ] Implement OpenCL Error Handling</li>
+<li>[ ] Implement OpenCL Event Profiling</li>
+</ul><h2>
 <a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
 
 <blockquote>
@@ -117,12 +122,17 @@
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
 </blockquote>
       </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/Polytonic">Polytonic</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Chlorine maintained by <a href="https://github.com/Polytonic">Polytonic</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+
     
+
   </body>
 </html>
