@@ -22,7 +22,7 @@ int main(int argc, char * argv[])
     ch::Worker worker("simple.cl");
 
     // Call the Swap Function in the Given Kernel
-    worker.execute("swap", spam, eggs);
+    worker.call("swap", spam, eggs);
 
     // Host Containers Are Automatically Updated
     std::cout << "Spam: " << spam[0] << "\n"; // 2.7182

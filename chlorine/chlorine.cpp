@@ -16,7 +16,7 @@ int main()
 
     ch::Worker busybot("tests/kernels/default.cl");
     busybot >> ch::read("tests/kernels/default.cl");
-    busybot.execute("add", spam, ham, 1, eggs, bacon, 1.0f, spinach, cheese);
+    busybot.call("add", spam, ham, 1, eggs, bacon, 1.0f, spinach, cheese);
 
     std::cout << spam[0] << std::endl;  // Should Print 4
     std::cout << eggs[0] << std::endl;  // Should Print 6.8597

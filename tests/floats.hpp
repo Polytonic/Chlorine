@@ -8,7 +8,7 @@ SECTION("Worker Successfully Writes and Reads Float Arrays")
     std::vector<float> eggs(5, 1.0f);
 
     // Swap the Contents of Two Arrays
-    worker.execute("swap", spam, eggs);
+    worker.call("swap", spam, eggs);
 
     // Assert the Data was Correctly Swapped
     for (unsigned int i = 0; i < spam.size(); i++)
@@ -26,7 +26,7 @@ SECTION("Worker Successfully Handles Float Primitives")
     float cheese = 3.0f;
 
     // Add a Float Primitive
-    worker.execute("add", milk, cheese);
+    worker.call("add", milk, cheese);
 
     // Assert the Data Was Correctly Added
     for (unsigned int i = 0; i < milk.size(); i++)

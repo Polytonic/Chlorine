@@ -8,7 +8,7 @@ SECTION("Worker is Compatible With C-Style Arrays")
     float eggs[5] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
     // Swap the Contents of Two Arrays
-    worker.execute("swap", spam, eggs);
+    worker.call("swap", spam, eggs);
 
     // Assert the Data was Correctly Swapped
     for (unsigned int i = 0; i < 5; i++)
@@ -29,7 +29,7 @@ SECTION("Worker is Compatible With STL Arrays")
     std::array<float, 5> eggs = {{ 0.0f, 0.0f, 0.0f, 0.0f, 0.0f }};
 
     // Swap the Contents of Two Arrays
-    worker.execute("swap", spam, eggs);
+    worker.call("swap", spam, eggs);
 
     // Assert the Data was Correctly Swapped
     for (unsigned int i = 0; i < spam.size(); i++)
@@ -50,7 +50,7 @@ SECTION("Worker is Compatible With STL Valarrays")
     std::valarray<float> eggs(1.0f, 5);
 
     // Swap the Contents of Two Arrays
-    worker.execute("swap", spam, eggs);
+    worker.call("swap", spam, eggs);
 
     // Assert the Data was Correctly Swapped
     for (unsigned int i = 0; i < spam.size(); i++)
@@ -68,7 +68,7 @@ SECTION("Worker is Compatible With STL Vectors")
     std::vector<float> eggs(5, 1.0f);
 
     // Swap the Contents of Two Arrays
-    worker.execute("swap", spam, eggs);
+    worker.call("swap", spam, eggs);
 
     // Assert the Data was Correctly Swapped
     for (unsigned int i = 0; i < spam.size(); i++)

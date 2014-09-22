@@ -41,24 +41,24 @@ namespace ch
 
         // Handle the Base Case
         template<unsigned int const argn = 0>
-        void execute(std::string const & kernel_function);
+        void call(std::string const & kernel_function);
 
         // Handle Primitive Types
         template<unsigned int const argn = 0, typename T, typename ... Params>
         typename std::enable_if<std::is_arithmetic<T>::value>::type
-        execute(std::string const & kernel_function, T primitive, Params && ... parameters);
+        call(std::string const & kernel_function, T primitive, Params && ... parameters);
 
         // Handle C-Style Arrays
         template<unsigned int const argn = 0, class T, size_t const N, typename ... Params>
-        void execute(std::string const & kernel_function, T (&array) [N], Params && ... parameters);
+        void call(std::string const & kernel_function, T (&array) [N], Params && ... parameters);
 
         // Handle STL Arrays
         template<unsigned int const argn = 0, class T, size_t const N, typename ... Params>
-        void execute(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters);
+        void call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters);
 
         // Handle Other STL Containers
         template<unsigned int const argn = 0, template<typename ...> class V, typename T, typename ... Params>
-        void execute(std::string const & kernel_function, V<T> & array, Params && ... parameters);
+        void call(std::string const & kernel_function, V<T> & array, Params && ... parameters);
 
     private:
 
@@ -156,7 +156,7 @@ namespace ch
 
     // Handle the Base Case
     template<unsigned int const argn>
-    void Worker::execute(std::string const & kernel_function)
+    void Worker::call(std::string const & kernel_function)
     {
         // Perform the Calculation and Read Data from Memory Buffers
         mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal);
@@ -169,46 +169,46 @@ namespace ch
     // Handle Primitive Types
     template<unsigned int const argn, typename T, typename ... Params>
     typename std::enable_if<std::is_arithmetic<T>::value>::type
-    Worker::execute(std::string const & kernel_function, T primitive, Params && ... parameters)
+    Worker::call(std::string const & kernel_function, T primitive, Params && ... parameters)
     {
         mKernels[kernel_function].setArg(argn, primitive);
-        execute<argn+1>(kernel_function, parameters...);
+        call<argn+1>(kernel_function, parameters...);
     }
 
     // Handle C-Style Arrays
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
-    void Worker::execute(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
+    void Worker::call(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
     {
         size_t array_size = N * sizeof(array[0]);
         if (N > mGlobal[0]) { mGlobal = cl::NDRange(N); }
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
-        execute<argn+1>(kernel_function, parameters...);
+        call<argn+1>(kernel_function, parameters...);
     }
 
     // Handle STL Arrays
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
-    void Worker::execute(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
+    void Worker::call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
-        execute<argn+1>(kernel_function, parameters...);
+        call<argn+1>(kernel_function, parameters...);
     }
 
     // Handle Other STL Containers
     template<unsigned int const argn, template<typename ...> class V, typename T, typename ... Params>
-    void Worker::execute(std::string const & kernel_function, V<T> & array, Params && ... parameters)
+    void Worker::call(std::string const & kernel_function, V<T> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
-        execute<argn+1>(kernel_function, parameters...);
+        call<argn+1>(kernel_function, parameters...);
     }
 };
 
