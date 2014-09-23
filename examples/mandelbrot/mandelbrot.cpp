@@ -69,7 +69,7 @@ void ppm_draw(std::string const & filename,
 int main(int argc, char* argv[])
 {
     // Define Mandelbrot Settings
-    int iterations = 10000;
+    int iterations = 2000;
     float x_min  = -2;
     float x_max  =  2;
     float y_min  = -1.5f;
@@ -78,7 +78,6 @@ int main(int argc, char* argv[])
     float y_step = .002f;
 
     // Create Linear Vector of Coordinates
-    unsigned int stride = (x_max - x_min) / x_step + 1;
     std::vector<float> reals;
     std::vector<float> imags;
     for(float y = y_min; y < y_max; y += y_step)
@@ -87,6 +86,11 @@ int main(int argc, char* argv[])
         reals.push_back(x);
         imags.push_back(y);
     }
+
+    // Compute Stride to Avoid Floating Point Errors
+    unsigned int stride = 0;
+    for(float x = x_min; x < x_max; x += x_step)
+        stride++;
 
     // Compute the Mandelbrot Set on the CPU
     std::vector<int> cpu_ans(reals.size());
