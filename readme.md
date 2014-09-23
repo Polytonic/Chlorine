@@ -19,7 +19,7 @@ int main(int argc, char * argv[])
     std::vector<float> eggs(10, 2.7182f);
 
     // Initialize a Chlorine Worker
-    ch::Worker worker("simple.cl");
+    ch::Worker worker("swap.cl");
 
     // Call the Swap Function in the Given Kernel
     worker.call("swap", spam, eggs);
@@ -29,7 +29,7 @@ int main(int argc, char * argv[])
     std::cout << "Eggs: " << eggs[0] << "\n"; // 3.1415
 }
 ```
-**simple.cl**
+**swap.cl**
 ```c
 __kernel void swap(__global float * spam, __global float * eggs)
 {
