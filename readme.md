@@ -1,7 +1,7 @@
 # [Chlorine](http://polytonic.github.io/Chlorine/)
 [![Build Status](http://img.shields.io/travis/Polytonic/Chlorine.svg?style=flat-square)](https://travis-ci.org/Polytonic/Chlorine)
 [![Coverage Status](http://img.shields.io/coveralls/Polytonic/Chlorine.svg?style=flat-square)](https://coveralls.io/r/Polytonic/Chlorine)
-[![OpenCL Version](http://img.shields.io/badge/OpenCL-1.1%2B-green.svg?style=flat-square)](https://www.khronos.org/opencl/)
+[![OpenCL Version](http://img.shields.io/badge/OpenCL-1.1%2B-brightgreen.svg?style=flat-square)](https://www.khronos.org/opencl/)
 
 ## Summary
 Chlorine is a simple way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. You can rapidly *prototype* parallel processing on graphics processing units using a generic worker implementation that abstracts away much of the boilerplate involved with writing OpenCL applications.
