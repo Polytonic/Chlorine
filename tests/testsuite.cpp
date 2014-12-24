@@ -25,9 +25,9 @@ void test(T val)
     std::vector   <T>    stl_vector(n);
 
     worker.call("add", a, b, raw_array);
-    // worker.call("add", a, b, stl_array);
-    // worker.call("add", a, b, stl_valarray);
-    // worker.call("add", a, b, stl_vector);
+    worker.call("add", a, b, stl_array);
+    worker.call("add", a, b, stl_valarray);
+    worker.call("add", a, b, stl_vector);
 
     for (unsigned int i = 0; i < n; i++)
     {
