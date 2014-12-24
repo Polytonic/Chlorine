@@ -1,15 +1,21 @@
-// Swap the Contents of Two Arrays
-__kernel void swap(__global int * a, __global int *b)
+// Adds Two Integers
+__kernel void add(__global int * a, __global int * b, __global int * c)
 {
     unsigned int i = get_global_id(0);
-    int swap = a[i];
-    a[i] = b[i];
-    b[i] = swap;
+    c[i] = a[i] + b[i];
 }
 
-// Add Primitive to Each Element in Given Array
-__kernel void add(__global int * a, int b)
-{
-    unsigned int i = get_global_id(0);
-    a[i] += b;
-}
+/*
+
+    test<int, float>()
+        array<int>, array<float>
+        array<int>, valarray<float>
+        valarray<int>, valarray<float>
+
+
+    test<valarray>
+
+        valarray<int>, <int>
+        valarray<int>, <float>
+
+*/
