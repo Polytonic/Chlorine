@@ -146,7 +146,6 @@ namespace ch
         // Associate Kernel Objects to String Keys
         std::vector<cl::Kernel> kernels;
         mProgram.createKernels(& kernels);
-        mKernels.clear();
         for (auto &i : kernels)
             mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
 
