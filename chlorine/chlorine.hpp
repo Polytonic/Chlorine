@@ -31,7 +31,7 @@ namespace ch
         Worker & operator=(Worker const &) = delete;
 
         // Overloaded Stream Operators
-        friend std::ostream & operator<<(std::ostream& os, Worker const & w);
+        friend std::ostream & operator<<(std::ostream & os, Worker const & w);
         friend Worker       & operator>>(Worker & worker, std::string const & kernel_source);
 
         // Class Methods
@@ -81,7 +81,7 @@ namespace ch
     };
 
     // Overload Stream Operator << to Print Build Information
-    std::ostream & operator<<(std::ostream& os, Worker const & w)
+    std::ostream & operator<<(std::ostream & os, Worker const & w)
     {
         return os << w.mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(w.mDevice) << std::endl;
     }
