@@ -21,7 +21,7 @@ install:
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls --exclude chlorine/cl.hpp --exclude tests/catch
+  - coveralls --exclude chlorine/cl.hpp  --exclude examples --exclude tests
 
 # Display Compiler Information
 after_script:
