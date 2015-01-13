@@ -21,7 +21,9 @@ install:
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls --gcov "$(which $GCOV)" --exclude chlorine/cl.hpp  --exclude examples --exclude tests
+  - export COV="--exclude chlorine/cl.hpp  --exclude examples --exclude tests"
+  - coveralls --gcov "$(which $GCOV)" "$COV"
+  - coveralls "$COV"
 
 # Display Compiler Information
 after_script:
