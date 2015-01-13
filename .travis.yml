@@ -21,7 +21,7 @@ install:
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls --exclude chlorine/cl.hpp  --exclude examples --exclude tests
+  - if [ "$CXX" = "g++" ]; coveralls --exclude chlorine/cl.hpp  --exclude examples --exclude tests; fi
 
 # Display Compiler Information
 after_script:
