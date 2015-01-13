@@ -21,7 +21,7 @@ TEST_CASE("Multiplies Floats", "[float, mul]") { test<float>("floats", "mul"); }
 TEST_CASE("Primitives", "[primitives]")
 {
     // Create a Worker and Load the Correct Types Kernel
-    ch::Worker worker; worker >> ch::read("tests/test_primitives.cl");
+    ch::Worker worker("tests/test_primitives.cl");
     srand(static_cast<unsigned>(time(0)));
     size_t const n = 5;
 
@@ -45,5 +45,26 @@ TEST_CASE("Primitives", "[primitives]")
         for (unsigned int i = 0; i < a.size(); i++)
             CHECK(a[i] == b);
         std::cerr << std::endl;
+    }
+}
+
+TEST_CASE("Helpers", "[helpers]")
+{
+    SECTION("ch::read() Returns File Contents")
+    {
+        // Read Kernel Source
+        std::string kernel = ch::read("tests/test_helpers.cl");
+
+        // Define String Literal to Match
+        std::string match =
+            "// Test the Kernel Read Function\n"
+            "__kernel void read(__global int * a)\n"
+            "{\n"
+            "    unsigned int i = get_global_id(0);\n"
+            "    a[i] = 0;\n"
+            "}\n";
+
+        // Assert Kernel Source is Equivalent
+        CHECK(kernel == match);
     }
 }
