@@ -36,7 +36,7 @@ void test(std::string const & type, std::string const & instr, T val = 1)
         T raw_array[n];
         worker.call(instr, a, b, raw_array);
         for (unsigned int i = 0; i < n; i++)
-            CHECK(raw_array[i] == test_ops(instr, a[i], b[i]));
+            CHECK(test_ops(instr, a[i], b[i]) == raw_array[i]);
         std::cerr << std::endl;
     }
 
@@ -45,7 +45,7 @@ void test(std::string const & type, std::string const & instr, T val = 1)
     //     T * mem_array = new T[n];
     //     worker.call(instr, a, b, mem_array);
     //     for (unsigned int i = 0; i < n; i++)
-    //         CHECK(mem_array[i] == test_ops(instr, a[i], b[i]));
+    //    test_ops(instr, a[i], b[i]) ==      CHECK(mem_array[i]);
     //     delete [] mem_array;
     // }
 
@@ -54,7 +54,7 @@ void test(std::string const & type, std::string const & instr, T val = 1)
         std::array<T, n> stl_array;
         worker.call(instr, a, b, stl_array);
         for (unsigned int i = 0; i < n; i++)
-            CHECK(stl_array[i] == test_ops(instr, a[i], b[i]));
+            CHECK(test_ops(instr, a[i], b[i]) == stl_array[i]);
         std::cerr << std::endl;
     }
 
@@ -63,7 +63,7 @@ void test(std::string const & type, std::string const & instr, T val = 1)
         std::valarray<T> stl_valarray(n);
         worker.call(instr, a, b, stl_valarray);
         for (unsigned int i = 0; i < n; i++)
-            CHECK(stl_valarray[i] == test_ops(instr, a[i], b[i]));
+            CHECK(test_ops(instr, a[i], b[i]) == stl_valarray[i]);
         std::cerr << std::endl;
     }
 
@@ -72,7 +72,7 @@ void test(std::string const & type, std::string const & instr, T val = 1)
         std::vector<T> stl_vector(n);
         worker.call(instr, a, b, stl_vector);
         for (unsigned int i = 0; i < n; i++)
-            CHECK(stl_vector[i] == test_ops(instr, a[i], b[i]));
+            CHECK(test_ops(instr, a[i], b[i]) == stl_vector[i]);
         std::cerr << std::endl;
     }
 
