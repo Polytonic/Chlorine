@@ -1,4 +1,5 @@
 // Local Dependencies
+#include "catch.hpp"
 #include "chlorine.hpp"
 
 // Standard Library Headers
@@ -18,11 +19,11 @@ T test_ops(std::string const & instr, T a, T b)
 
 // Parameterize Tests Across Types
 template<typename T>
-void test(std::string const & instr, T val = 1)
+void test(std::string const & type, std::string const & instr, T val = 1)
 {
     // Create a Worker and Load the Correct Types Kernel
     std::cerr << "Testing Function: " << instr << typeid(T).name() << "\n";
-    ch::Worker worker; worker >> ch::read("tests/test_integers.cl");
+    ch::Worker worker; worker >> ch::read("tests/test_" + type + ".cl");
 
     // Define Two Vectors of Test Data
     size_t const n = 5;
@@ -59,7 +60,7 @@ void test(std::string const & instr, T val = 1)
 
     SECTION("Worker Accepts STL Valarrays")
     {
-        std::valarray<T> stl_valarray(0, n);
+        std::valarray<T> stl_valarray(n);
         worker.call(instr, a, b, stl_valarray);
         for (unsigned int i = 0; i < n; i++)
             CHECK(stl_valarray[i] == test_ops(instr, a[i], b[i]));
@@ -75,7 +76,7 @@ void test(std::string const & instr, T val = 1)
         std::cerr << std::endl;
     }
 
-    // SECTION("Worker Accepts STL Smart-Pointers")
+    // SECTION("Worker Accepts STL Shared/Unique-Pointers")
     // {
     //     std::
     // }
