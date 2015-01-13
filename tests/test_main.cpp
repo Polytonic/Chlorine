@@ -2,13 +2,6 @@
 #define CATCH_CONFIG_MAIN
 #include "test_suite.hpp"
 
-// Verifies the Default Case for Code Coverage Purposes
-TEST_CASE("Test Operations Selector, [dummy, ops]")
-{
-    CHECK(test_ops<int>("add", 1, 2) ==  3);
-    CHECK(test_ops<int>("___", 0, 0) == -1);
-}
-
 /*
     We define repeated test cases since Catch doesn't support templated tests.
     Refer to https://github.com/philsquared/Catch/issues/46 for details.
