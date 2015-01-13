@@ -5,12 +5,12 @@ compiler:
   - clang
   - gcc
 
-# Install GCC 4.8.x
+# Install GCC 4.6.x
 before_install:
   - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
   - if [ "$CXX" = "g++" ]; then sudo apt-get update -qq; fi
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8" GCOV="gcov-4.8"; fi
+  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.6; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.6" CC="gcc-4.6" GCOV="gcov-4.6"; fi
 
 # Install Chlorine Dependencies
 install:
@@ -21,9 +21,7 @@ install:
 
 # Upload Code Coverage Data
 after_success:
-  - export COV="--exclude chlorine/cl.hpp  --exclude examples --exclude tests"
-  - coveralls --gcov "$(which $GCOV)" "$COV"
-  - coveralls "$COV"
+  - coveralls --exclude chlorine/cl.hpp  --exclude examples --exclude tests
 
 # Display Compiler Information
 after_script:
