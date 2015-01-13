@@ -6,7 +6,7 @@ OUTPUT = builds
 # Set Test Configuration
 TEST_DIR = tests
 TEST_LIB = $(TEST_DIR)/catch/single_include/
-TESTSUITE = testsuite
+TESTSUITE = test_main
 
 # Set Compiler Flags
 CCFLAGS := -O3 -std=c++11
