@@ -40,15 +40,6 @@ void test(std::string const & type, std::string const & instr, T val = 1)
         std::cerr << std::endl;
     }
 
-    // SECTION("Worker Accepts Heap Allocated Arrays")
-    // {
-    //     T * mem_array = new T[n];
-    //     worker.call(instr, a, b, mem_array);
-    //     for (unsigned int i = 0; i < n; i++)
-    //    test_ops(instr, a[i], b[i]) ==      CHECK(mem_array[i]);
-    //     delete [] mem_array;
-    // }
-
     SECTION("Worker Accepts STL Arrays")
     {
         std::array<T, n> stl_array;
@@ -75,9 +66,4 @@ void test(std::string const & type, std::string const & instr, T val = 1)
             CHECK(test_ops(instr, a[i], b[i]) == stl_vector[i]);
         std::cerr << std::endl;
     }
-
-    // SECTION("Worker Accepts STL Shared/Unique-Pointers")
-    // {
-    //     std::
-    // }
 }
