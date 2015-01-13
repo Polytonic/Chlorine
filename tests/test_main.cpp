@@ -1,4 +1,5 @@
 // Include Testsuite Dependencies
+#define __CL_ENABLE_EXCEPTIONS
 #define CATCH_CONFIG_MAIN
 #include "test_suite.hpp"
 
@@ -23,7 +24,7 @@ TEST_CASE("Primitives", "[primitives]")
     // Create a Worker and Load the Correct Types Kernel
     ch::Worker worker("tests/test_primitives.cl");
     srand(static_cast<unsigned>(time(0)));
-    size_t const n = 5;
+    size_t const n = 10;
 
     SECTION("Scalar Integers")
     {
@@ -48,6 +49,7 @@ TEST_CASE("Primitives", "[primitives]")
     }
 }
 
+// Test Chlorine Worker Helpers
 TEST_CASE("Helpers", "[helpers]")
 {
     SECTION("ch::read() Returns File Contents")
@@ -66,5 +68,18 @@ TEST_CASE("Helpers", "[helpers]")
 
         // Assert Kernel Source is Equivalent
         CHECK(kernel == match);
+    }
+
+    SECTION("Operator >> Accepts Kernel Strings")
+    {
+        ch::Worker worker;
+        REQUIRE_NOTHROW(worker >> ch::read("tests/test_helpers.cl"));
+    }
+
+    SECTION("Operator << Prints the Build Log")
+    {
+        ch::Worker worker;
+        REQUIRE_THROWS(worker >> ch::read("tests/test_operators.cl"));
+        std::cout << worker;
     }
 }

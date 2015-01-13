@@ -26,7 +26,7 @@ void test(std::string const & type, std::string const & instr, T val = 1)
     ch::Worker worker; worker >> ch::read("tests/test_" + type + ".cl");
 
     // Define Two Vectors of Test Data
-    size_t const n = 5;
+    size_t const n = 10;
     std::vector<T> a(n, val);
     std::iota(a.begin(), a.end(), val);
     std::vector<T> b(a);
