@@ -42,7 +42,7 @@ __kernel void swap(__global float * spam, __global float * eggs)
 ```
 
 ## Documentation
-The core philosophy in Chlorine is that you should **work with your data**, instead of spending time fighting an API. To that end, Chlorine acts as a lightweight interface to OpenCL, automatically mapping arguments passed on the host to kernel functions running on a device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix scalar and vector types as needed. The following types are supported:
+The core philosophy in Chlorine is that you should *work with your data*, instead of spending time fighting an API. To that end, Chlorine acts as a lightweight interface to OpenCL, automatically mapping arguments passed on the host to kernel functions running on a device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix scalar and vector types as needed. The following types are supported:
 
 - [Arithmetic Primitives](http://www.cplusplus.com/reference/type_traits/is_arithmetic/)
 - [C-Style Arrays](http://www.cplusplus.com/doc/tutorial/arrays/)
