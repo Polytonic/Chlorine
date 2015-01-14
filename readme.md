@@ -42,6 +42,7 @@ __kernel void swap(__global float * spam, __global float * eggs)
 ```
 
 You can build all of the samples by invoking `make examples`, or you can examine and build individual samples in the [examples](https://github.com/Polytonic/Chlorine/tree/master/examples) subdirectory.
+
 ## Documentation
 The core philosophy in Chlorine is that you should *work with your data*, instead of spending time fighting an API. To that end, Chlorine acts as a lightweight interface to OpenCL, automatically mapping arguments passed on the host to kernel functions running on a device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix scalar and vector types as needed. The following types are supported:
 
@@ -54,17 +55,7 @@ The core philosophy in Chlorine is that you should *work with your data*, instea
 
 Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, `3.14` vs. `3.14f`.
 
-For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it by invoking `make`, and optionally, `make install`.
-
-## Roadmap
-- Additional Examples
-    - [ ] Hash Cracking
-    - [ ] Parallel-Recursive Raytracer
-    - [ ] Fast-Fourier Transforms
-    - [ ] OpenGL Interop.
-- [ ] Global/Local/Offset Control (for 2D/3D Arrays)
-- [ ] OpenCL Event Profiling
-- [ ] Test More [Math Functions](https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/mathFunctions.html)
+For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it by invoking `make`, and optionally, `make install` to copy it to your system.
 
 ## License
 >The MIT License (MIT)
