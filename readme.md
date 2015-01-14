@@ -7,7 +7,7 @@
 Chlorine is a simple way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. You can rapidly *prototype* parallel processing on graphics processing units using a generic worker implementation that abstracts away much of the boilerplate involved with writing OpenCL applications.
 
 ## Getting Started
-Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp) and a compiler with `C++11` support.
+Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp) and a compiler with `C++11` support. An example of how to use Chlorine is shown below, or read the [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap).
 
 **main.cpp**
 ```c++
@@ -41,7 +41,7 @@ __kernel void swap(__global float * spam, __global float * eggs)
 }
 ```
 
-You can build all of the samples by invoking `make examples`, or you can examine and build individual samples in the [examples](https://github.com/Polytonic/Chlorine/tree/master/examples) subdirectory.
+You can build all of the samples by invoking `make examples`, or you can examine and build individual samples from their respective [examples](https://github.com/Polytonic/Chlorine/tree/master/examples) subdirectories.
 
 ## Documentation
 The core philosophy in Chlorine is that you should *work with your data*, instead of spending time fighting an API. To that end, Chlorine acts as a lightweight interface to OpenCL, automatically mapping arguments passed on the host to kernel functions running on a device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix scalar and vector types as needed. The following types are supported:
