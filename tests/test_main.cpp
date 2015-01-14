@@ -28,24 +28,22 @@ TEST_CASE("Primitives", "[primitives]")
 
     SECTION("Scalar Integers")
     {
-        std::cerr << "Testing Scalar Function: ifill\n";
+        INFO("Testing Scalar Function: ifill");
         int b = rand();
         std::vector<int> a(n);
         worker.call("ifill", a, b);
         for (unsigned int i = 0; i < a.size(); i++)
             CHECK(a[i] == b);
-        std::cerr << std::endl;
     }
 
     SECTION("Scalar Floats")
     {
-        std::cerr << "Testing Scalar Function: ffill\n";
+        INFO("Testing Scalar Function: ffill");
         float b = rand() / static_cast<float>(RAND_MAX) * 100.0f;
         std::vector<float> a(n);
         worker.call("ffill", a, b);
         for (unsigned int i = 0; i < a.size(); i++)
             CHECK(a[i] == b);
-        std::cerr << std::endl;
     }
 }
 
@@ -80,6 +78,6 @@ TEST_CASE("Helpers", "[helpers]")
     {
         ch::Worker worker;
         REQUIRE_THROWS(worker >> ch::read("tests/test_operators.cl"));
-        std::cout << worker;
+        INFO("Build Log" << worker);
     }
 }

@@ -51,4 +51,4 @@ clinfo: $(SOURCE)/clinfo.cpp
 
 test:
 	# ./$(OUTPUT)/chlorine
-	./$(TEST_DIR)/$(OUTPUT)/$(TESTSUITE) --success --reporter compact
+	./$(TEST_DIR)/$(OUTPUT)/$(TESTSUITE) --reporter compact
