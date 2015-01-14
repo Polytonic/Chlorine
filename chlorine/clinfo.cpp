@@ -7,6 +7,7 @@
 #include <string>
 #include <sstream>
 
+// Splits a String by Whitespace Delimiter
 std::vector<std::string> tokenize(std::string const & str)
 {
     std::string buffer = "";
@@ -17,12 +18,15 @@ std::vector<std::string> tokenize(std::string const & str)
     return tokens;
 }
 
+// Prints Basic OpenCL Runtime Information
 int main(int argc, char * argv[])
 {
+    // Print a Section Break
     for(unsigned int i = 0; i < 80; i++)
         printf("=");
         printf("\n");
 
+    // Enumerate Platform Information
     std::vector<cl::Platform> platforms;
     cl::Platform::get(& platforms);
     for (auto &platform : platforms)
@@ -64,6 +68,7 @@ int main(int argc, char * argv[])
                 printf("\n");
         }
 
+        // Print a Section Break
         for(unsigned int i = 0; i < 80; i++)
             printf("=");
             printf("\n");
