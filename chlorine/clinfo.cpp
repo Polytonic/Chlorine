@@ -54,7 +54,6 @@ int main(int argc, char * argv[])
                 case CL_DEVICE_TYPE_CPU: printf("CPU");                 break;
                 case CL_DEVICE_TYPE_GPU: printf("GPU");                 break;
                 case CL_DEVICE_TYPE_ACCELERATOR: printf("Accelerator"); break;
-                case CL_DEVICE_TYPE_CUSTOM: printf("Custom");           break;
                 default: printf("Unknown");
             }   printf(" (%d-bit @ %d MHz)\n",
                     device.getInfo<CL_DEVICE_ADDRESS_BITS>(),
