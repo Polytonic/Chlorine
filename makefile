@@ -28,7 +28,7 @@ endif
 
 # Define Makefile Aliases
 default: clean clinfo
-all: default $(TESTSUITE)
+all: default examples $(TESTSUITE)
 clean:
 	@rm -rf *.gcda *.gcno *.gcov
 	@rm -rf $(OUTPUT)
@@ -45,11 +45,18 @@ clinfo: $(SOURCE)/clinfo.cpp
 	@mkdir -p $(OUTPUT)
 	$(CXX) $(CCFLAGS) $< -o $(OUTPUT)/$@ $(LDFLAGS)
 
+# Build the Test Suite
 %: $(TEST_DIR)/%.cpp
 	@mkdir -p $(TEST_DIR)/$(OUTPUT)
 	$(CXX) $(CIFLAGS) $(CCFLAGS) -I$(SOURCE) -I$(TEST_LIB) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
 
+# Run the Test Suite
 test:
 	# ./$(OUTPUT)/chlorine
-	./$(OUTPUT)/clinfo
+	./$(OUTPUT)/clinfo > /dev/null
 	./$(TEST_DIR)/$(OUTPUT)/$(TESTSUITE) --reporter compact
+
+# Build All Examples
+examples: subsystem
+subsystem:
+	$(MAKE) -C examples/
