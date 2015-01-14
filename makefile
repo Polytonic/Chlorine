@@ -27,7 +27,7 @@ LDFLAGS = -lOpenCL
 endif
 
 # Define Makefile Aliases
-default: clean
+default: clean clinfo
 all: default $(TESTSUITE)
 clean:
 	@rm -rf *.gcda *.gcno *.gcov
@@ -51,4 +51,5 @@ clinfo: $(SOURCE)/clinfo.cpp
 
 test:
 	# ./$(OUTPUT)/chlorine
+	./$(OUTPUT)/clinfo
 	./$(TEST_DIR)/$(OUTPUT)/$(TESTSUITE) --reporter compact
