@@ -91,7 +91,7 @@ For the CPU, we first make an output vector to pass into the function. We then r
     clock_t cpu_end = clock();
 ```
 
-We first create a worker that will load the OpenCL runtime and compile the kernel code. Note that calling Chlorine is very similar to calling traditional functions: the function name is passed into the "call" function instead of being called directly. Everything else is exactly the same.
+We first create a worker that will load the OpenCL runtime and compile the kernel code. Note that calling Chlorine is very similar to calling traditional functions: the function name is passed to the `call()` function instead of being called directly. Everything else is exactly the same.
 
 ```cpp
     // Compute the Mandelbrot Set Using Chlorine
