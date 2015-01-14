@@ -1,13 +1,13 @@
 # [Chlorine](http://polytonic.github.io/Chlorine/)
 [![Build Status](http://img.shields.io/travis/Polytonic/Chlorine.svg?style=flat-square)](https://travis-ci.org/Polytonic/Chlorine)
 [![Coverage Status](http://img.shields.io/coveralls/Polytonic/Chlorine.svg?style=flat-square)](https://coveralls.io/r/Polytonic/Chlorine)
-[![OpenCL Version](http://img.shields.io/badge/OpenCL-1.1%2B-brightgreen.svg?style=flat-square)](https://www.khronos.org/opencl/)
+[![OpenCL Version](http://img.shields.io/badge/OpenCL-1.2%2B-brightgreen.svg?style=flat-square)](https://www.khronos.org/opencl/)
 
 ## Summary
 Chlorine is a simple way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. You can rapidly *prototype* parallel processing on graphics processing units using a generic worker implementation that abstracts away much of the boilerplate involved with writing OpenCL applications.
 
 ## Getting Started
-Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.1/cl.hpp) and a compiler with `C++11` support.
+Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp) and a compiler with `C++11` support. Here is a short example:
 
 **main.cpp**
 ```c++
@@ -41,10 +41,13 @@ __kernel void swap(__global float * spam, __global float * eggs)
 }
 ```
 
-## Documentation
-The Chlorine Worker takes care of mapping arguments passed on the host to kernel functions on the device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix primitives and vector types as needed. The following types are supported:
+You can build all of the samples by invoking `make examples`, or you can examine and build individual samples in the [examples](https://github.com/Polytonic/Chlorine/tree/master/examples) subdirectory.
 
-- [Arithmetic Primitives](http://www.cplusplus.com/reference/type_traits/is_arithmetic/)
+## Documentation
+The core philosophy in Chlorine is that you should *work with your data*, instead of spending time fighting an API. To that end, Chlorine acts as a lightweight interface to OpenCL, automatically mapping arguments passed on the host to kernel functions running on a device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix scalar and vector types as needed. The following types are supported:
+
+- [Arithmetic Scalar Types](http://www.cplusplus.com/reference/type_traits/is_arithmetic/)
+- [OpenCL Vector Types](https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/vectorDataTypes.html)
 - [C-Style Arrays](http://www.cplusplus.com/doc/tutorial/arrays/)
 - [STL Arrays](http://www.cplusplus.com/reference/array/array/)
 - [STL Valarrays](http://www.cplusplus.com/reference/valarray/)
@@ -52,22 +55,7 @@ The Chlorine Worker takes care of mapping arguments passed on the host to kernel
 
 Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, `3.14` vs. `3.14f`.
 
-## Advanced Usage
-TODO: Implement the Chlorine Binary and `clinfo`/`clstat` utilities ...
-
-## Roadmap
-- Additional Examples
-    - [ ] Hash Cracking
-    - [ ] Parallel-Recursive Raytracer
-    - [ ] Fast-Fourier Transforms
-    - [ ] OpenGL Interop.
-- [ ] Scalar Types Test (`int2`, `float3`, etc.)
-- [ ] Global/Local/Offset Control (for 2D/3D Arrays)
-- [ ] OpenCL Error Handling
-- [ ] OpenCL Event Profiling
-- [ ] Test More [Math Functions](https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/mathFunctions.html)
-- [ ] What happens if you init multiple platforms/devices? same binary? different binaries?
-- [ ] cl::Program::Sources(1 // what does this 1 do)
+For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it by invoking `make`, and optionally, `make install` to copy it to your system.
 
 ## License
 >The MIT License (MIT)

@@ -22,7 +22,7 @@ template<typename T>
 void test(std::string const & type, std::string const & instr, T val = 1)
 {
     // Create a Worker and Load the Correct Types Kernel
-    std::cerr << "Testing Function: " << instr << typeid(T).name() << "\n";
+    INFO("Testing Function: " << instr << typeid(T).name());
     ch::Worker worker; worker >> ch::read("tests/test_" + type + ".cl");
 
     // Define Two Vectors of Test Data
@@ -37,17 +37,7 @@ void test(std::string const & type, std::string const & instr, T val = 1)
         worker.call(instr, a, b, raw_array);
         for (unsigned int i = 0; i < n; i++)
             CHECK(test_ops(instr, a[i], b[i]) == raw_array[i]);
-        std::cerr << std::endl;
     }
-
-    // SECTION("Worker Accepts Heap Allocated Arrays")
-    // {
-    //     T * mem_array = new T[n];
-    //     worker.call(instr, a, b, mem_array);
-    //     for (unsigned int i = 0; i < n; i++)
-    //    test_ops(instr, a[i], b[i]) ==      CHECK(mem_array[i]);
-    //     delete [] mem_array;
-    // }
 
     SECTION("Worker Accepts STL Arrays")
     {
@@ -55,7 +45,6 @@ void test(std::string const & type, std::string const & instr, T val = 1)
         worker.call(instr, a, b, stl_array);
         for (unsigned int i = 0; i < n; i++)
             CHECK(test_ops(instr, a[i], b[i]) == stl_array[i]);
-        std::cerr << std::endl;
     }
 
     SECTION("Worker Accepts STL Valarrays")
@@ -64,7 +53,6 @@ void test(std::string const & type, std::string const & instr, T val = 1)
         worker.call(instr, a, b, stl_valarray);
         for (unsigned int i = 0; i < n; i++)
             CHECK(test_ops(instr, a[i], b[i]) == stl_valarray[i]);
-        std::cerr << std::endl;
     }
 
     SECTION("Worker Accepts STL Vectors")
@@ -73,11 +61,5 @@ void test(std::string const & type, std::string const & instr, T val = 1)
         worker.call(instr, a, b, stl_vector);
         for (unsigned int i = 0; i < n; i++)
             CHECK(test_ops(instr, a[i], b[i]) == stl_vector[i]);
-        std::cerr << std::endl;
     }
-
-    // SECTION("Worker Accepts STL Shared/Unique-Pointers")
-    // {
-    //     std::
-    // }
 }

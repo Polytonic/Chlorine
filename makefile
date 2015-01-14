@@ -2,6 +2,7 @@
 PLATFORM = $(shell uname -s)
 SOURCE = chlorine
 OUTPUT = builds
+INSTALLER = /usr/local/bin
 
 # Set Test Configuration
 TEST_DIR = tests
@@ -15,7 +16,7 @@ CCFLAGS += -Wno-unused-parameter
 
 # Enable Code Coverage
 ifeq ($(TRAVIS), true)
-CCFLAGS += -fprofile-arcs -ftest-coverage
+CIFLAGS := -fprofile-arcs -ftest-coverage
 endif
 
 # Determine Correct Linking Flag
@@ -27,28 +28,38 @@ LDFLAGS = -lOpenCL
 endif
 
 # Define Makefile Aliases
-default: clean
-all: default $(TESTSUITE)
+default: clean clinfo
+all: default examples $(TESTSUITE)
 clean:
 	@rm -rf *.gcda *.gcno *.gcov
 	@rm -rf $(OUTPUT)
 	@rm -rf $(TEST_DIR)/$(OUTPUT)
-.PHONY: chlorine
-
-# Build the Chlorine CLI Executable
-chlorine: $(SOURCE)/chlorine.cpp
-	@mkdir -p $(OUTPUT)
-	$(CXX) $(CCFLAGS) $< -o $(OUTPUT)/$@ $(LDFLAGS)
+.PHONY: all
 
 # Build the clinfo Diagnostic Utility
 clinfo: $(SOURCE)/clinfo.cpp
 	@mkdir -p $(OUTPUT)
 	$(CXX) $(CCFLAGS) $< -o $(OUTPUT)/$@ $(LDFLAGS)
 
+# Install Binaries
+install:
+	cp $(OUTPUT)/clinfo $(INSTALLER)
+
+# Uninstall Binaries
+uninstall:
+	rm -vf $(INSTALLER)/clinfo
+
+# Build the Test Suite
 %: $(TEST_DIR)/%.cpp
 	@mkdir -p $(TEST_DIR)/$(OUTPUT)
-	$(CXX) $(CCFLAGS) -I$(SOURCE) -I$(TEST_LIB) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
+	$(CXX) $(CIFLAGS) $(CCFLAGS) -I$(SOURCE) -I$(TEST_LIB) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
 
+# Run the Test Suite
 test:
-	# ./$(OUTPUT)/chlorine
-	./$(TEST_DIR)/$(OUTPUT)/$(TESTSUITE) --success --reporter compact
+	./$(OUTPUT)/clinfo > /dev/null
+	./$(TEST_DIR)/$(OUTPUT)/$(TESTSUITE) --reporter compact
+
+# Build All Examples
+examples: subsystem
+subsystem:
+	$(MAKE) -C examples/
