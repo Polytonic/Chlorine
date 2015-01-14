@@ -15,7 +15,7 @@ CCFLAGS += -Wno-unused-parameter
 
 # Enable Code Coverage
 ifeq ($(TRAVIS), true)
-CCFLAGS += -fprofile-arcs -ftest-coverage
+CIFLAGS := -fprofile-arcs -ftest-coverage
 endif
 
 # Determine Correct Linking Flag
@@ -47,7 +47,7 @@ clinfo: $(SOURCE)/clinfo.cpp
 
 %: $(TEST_DIR)/%.cpp
 	@mkdir -p $(TEST_DIR)/$(OUTPUT)
-	$(CXX) $(CCFLAGS) -I$(SOURCE) -I$(TEST_LIB) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
+	$(CXX) $(CIFLAGS) $(CCFLAGS) -I$(SOURCE) -I$(TEST_LIB) $< -o $(TEST_DIR)/$(OUTPUT)/$@ $(LDFLAGS)
 
 test:
 	# ./$(OUTPUT)/chlorine
