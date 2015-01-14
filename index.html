@@ -1,114 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Chlorine : Parallel Processing Made Simple" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Chlorine by Polytonic</title>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Chlorine</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-
   <body>
+    <div class="wrapper">
+      <header>
+        <h1>Chlorine</h1>
+        <p>Parallel Processing Made Simple</p>
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Polytonic/Chlorine">View on GitHub</a>
+        <p class="view"><a href="https://github.com/Polytonic/Chlorine">View the Project on GitHub <small>Polytonic/Chlorine</small></a></p>
 
-          <h1 id="project_title">Chlorine</h1>
-          <h2 id="project_tagline">Parallel Processing Made Simple</h2>
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/Polytonic/Chlorine/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/Polytonic/Chlorine/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+        <ul>
+          <li><a href="https://github.com/Polytonic/Chlorine/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/Polytonic/Chlorine/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/Polytonic/Chlorine">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
         <h1>
-<a name="chlorine" class="anchor" href="#chlorine"><span class="octicon octicon-link"></span></a><a href="http://polytonic.github.io/Chlorine/">Chlorine</a>
+<a id="chlorine" class="anchor" href="#chlorine" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="http://polytonic.github.io/Chlorine/">Chlorine</a>
 </h1>
 
-<p><a href="https://travis-ci.org/Polytonic/Chlorine"><img src="http://img.shields.io/travis/Polytonic/Chlorine.svg?style=flat" alt="Build Status"></a>
-<a href="https://coveralls.io/r/Polytonic/Chlorine"><img src="http://img.shields.io/coveralls/Polytonic/Chlorine.svg?style=flat" alt="Coverage Status"></a></p>
+<p><a href="https://travis-ci.org/Polytonic/Chlorine"><img src="http://img.shields.io/travis/Polytonic/Chlorine.svg?style=flat-square" alt="Build Status"></a>
+<a href="https://coveralls.io/r/Polytonic/Chlorine"><img src="http://img.shields.io/coveralls/Polytonic/Chlorine.svg?style=flat-square" alt="Coverage Status"></a>
+<a href="https://www.khronos.org/opencl/"><img src="http://img.shields.io/badge/OpenCL-1.2%2B-brightgreen.svg?style=flat-square" alt="OpenCL Version"></a></p>
 
 <h2>
-<a name="summary" class="anchor" href="#summary"><span class="octicon octicon-link"></span></a>Summary</h2>
+<a id="summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary</h2>
 
-<p>Chlorine is a simple way to interact with OpenCL-enabled devices. You can rapidly <em>prototype</em> parallel processing on graphics processing units using a generic worker implementation that abstracts away much of the boilerplate involved with writing OpenCL applications.</p>
+<p>Chlorine is a simple way to interact with <a href="https://www.khronos.org/opencl/">OpenCL</a> compatible devices. You can rapidly <em>prototype</em> parallel processing on graphics processing units using a generic worker implementation that abstracts away much of the boilerplate involved with writing OpenCL applications.</p>
 
 <h2>
-<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
-<p>Chlorine is distributed as a single header: <a href="https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp">chlorine.hpp</a>. You'll also need any version of the <a href="http://www.khronos.org/registry/cl/api/1.1/cl.hpp">OpenCL C++ Bindings</a> and a compiler with <code>C++11</code> support.</p>
+<p>Chlorine is distributed as a single header: <a href="https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp">chlorine.hpp</a>. You'll also need any version of the <a href="http://www.khronos.org/registry/cl/api/1.2/cl.hpp">OpenCL C++ Bindings</a> and a compiler with <code>C++11</code> support. Here is a short example:</p>
 
 <p><strong>main.cpp</strong></p>
 
-<div class="highlight highlight-c++"><pre><span class="c1">// Include the Chlorine Header</span>
-<span class="cp">#include "chlorine.hpp"</span>
-<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
-<span class="p">{</span>
-    <span class="c1">// Create Some Data</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">spam</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">3.1415f</span><span class="p">);</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span> <span class="n">eggs</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">2.7182f</span><span class="p">);</span>
+<div class="highlight highlight-c++"><pre><span class="pl-c">// Include the Chlorine Header</span>
+#<span class="pl-k">include</span> <span class="pl-s1"><span class="pl-pds">"</span>chlorine.hpp<span class="pl-pds">"</span></span>
+<span class="pl-st">int</span> <span class="pl-en">main</span>(<span class="pl-st">int</span> argc, <span class="pl-st">char</span> * argv[])
+{
+    <span class="pl-c">// Create Some Data</span>
+    std::vector&lt;<span class="pl-st">float</span>&gt; <span class="pl-s3">spam</span>(<span class="pl-c1">10</span>, <span class="pl-c1">3</span>.<span class="pl-c1">1415f</span>);
+    std::vector&lt;<span class="pl-st">float</span>&gt; <span class="pl-s3">eggs</span>(<span class="pl-c1">10</span>, <span class="pl-c1">2</span>.<span class="pl-c1">7182f</span>);
 
-    <span class="c1">// Initialize a Chlorine Worker</span>
-    <span class="n">ch</span><span class="o">::</span><span class="n">Worker</span> <span class="n">worker</span><span class="p">(</span><span class="s">"simple.cl"</span><span class="p">);</span>
+    <span class="pl-c">// Initialize a Chlorine Worker</span>
+    ch::Worker <span class="pl-vo">worker</span>(<span class="pl-s1"><span class="pl-pds">"</span>swap.cl<span class="pl-pds">"</span></span>);
 
-    <span class="c1">// Call the Swap Function in the Given Kernel</span>
-    <span class="n">worker</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s">"swap"</span><span class="p">,</span> <span class="n">spam</span><span class="p">,</span> <span class="n">eggs</span><span class="p">);</span>
+    <span class="pl-c">// Call the Swap Function in the Given Kernel</span>
+    worker.<span class="pl-s3">call</span>(<span class="pl-s1"><span class="pl-pds">"</span>swap<span class="pl-pds">"</span></span>, spam, eggs);
 
-    <span class="c1">// Host Containers Are Automatically Updated</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Spam: "</span> <span class="o">&lt;&lt;</span> <span class="n">spam</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span> <span class="c1">// 2.7182</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Eggs: "</span> <span class="o">&lt;&lt;</span> <span class="n">eggs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span> <span class="c1">// 3.1415</span>
-<span class="p">}</span>
-</pre></div>
+    <span class="pl-c">// Host Containers Are Automatically Updated</span>
+    std::cout &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>Spam: <span class="pl-pds">"</span></span> &lt;&lt; spam[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 2.7182</span>
+    std::cout &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>Eggs: <span class="pl-pds">"</span></span> &lt;&lt; eggs[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 3.1415</span>
+}</pre></div>
 
-<p><strong>simple.cl</strong></p>
+<p><strong>swap.cl</strong></p>
 
-<div class="highlight highlight-c"><pre><span class="n">__kernel</span> <span class="kt">void</span> <span class="nf">swap</span><span class="p">(</span><span class="n">__global</span> <span class="kt">float</span> <span class="o">*</span> <span class="n">spam</span><span class="p">,</span> <span class="n">__global</span> <span class="kt">float</span> <span class="o">*</span> <span class="n">eggs</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">get_global_id</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-    <span class="kt">float</span> <span class="n">swap</span> <span class="o">=</span> <span class="n">spam</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-    <span class="n">spam</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">eggs</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-    <span class="n">eggs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">swap</span><span class="p">;</span>
-<span class="p">}</span>
-</pre></div>
+<div class="highlight highlight-c"><pre>__kernel <span class="pl-st">void</span> <span class="pl-en">swap</span>(__global <span class="pl-st">float</span> * spam, __global <span class="pl-st">float</span> * eggs)
+{
+    <span class="pl-st">unsigned</span> <span class="pl-st">int</span> i = <span class="pl-s3">get_global_id</span>(<span class="pl-c1">0</span>);
+    <span class="pl-st">float</span> swap = spam[i];
+    spam[i] = eggs[i];
+    eggs[i] = swap;
+}</pre></div>
+
+<p>You can build all of the samples by invoking <code>make examples</code>, or you can examine and build individual samples in the <a href="https://github.com/Polytonic/Chlorine/tree/master/examples">examples</a> subdirectory.</p>
 
 <h2>
-<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+<a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
 
-<p>The Chlorine Worker takes care of mapping arguments passed on the host to kernel functions on the device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix primitives and vector types as needed. The following types are supported:</p>
+<p>The core philosophy in Chlorine is that you should <em>work with your data</em>, instead of spending time fighting an API. To that end, Chlorine acts as a lightweight interface to OpenCL, automatically mapping arguments passed on the host to kernel functions running on a device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix scalar and vector types as needed. The following types are supported:</p>
 
 <ul>
-<li><a href="http://www.cplusplus.com/reference/type_traits/is_arithmetic/">Arithmetic Primitives</a></li>
+<li><a href="http://www.cplusplus.com/reference/type_traits/is_arithmetic/">Arithmetic Scalar Types</a></li>
+<li><a href="https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/vectorDataTypes.html">OpenCL Vector Types</a></li>
 <li><a href="http://www.cplusplus.com/doc/tutorial/arrays/">C-Style Arrays</a></li>
 <li><a href="http://www.cplusplus.com/reference/array/array/">STL Arrays</a></li>
 <li><a href="http://www.cplusplus.com/reference/valarray/">STL Valarrays</a></li>
 <li><a href="http://www.cplusplus.com/reference/vector/vector/">STL Vectors</a></li>
-</ul><p>Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, <code>3.14</code> vs. <code>3.14f</code>.</p>
+</ul>
+
+<p>Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, <code>3.14</code> vs. <code>3.14f</code>.</p>
+
+<p>For convenience, Chlorine also provides a simple version of <code>clinfo</code>, allowing you to print basic information about OpenCL devices on your computer. You can build it by invoking <code>make</code>, and optionally, <code>make install</code> to copy it to your system.</p>
 
 <h2>
-<a name="roadmap" class="anchor" href="#roadmap"><span class="octicon octicon-link"></span></a>Roadmap</h2>
-
-<ul>
-<li>[ ] Additional Documentation</li>
-<li>[ ] Additional Examples</li>
-<li>[ ] Add Missing Overloaded Stream Operator Tests</li>
-<li>[ ] Command Line Tools <code>chlorine</code>, <code>clinfo</code>, <code>clstat</code>
-</li>
-<li>[ ] Handle <code>primitiveN</code> (<code>int2</code>, <code>float3</code>, etc.) Wide Data Types</li>
-<li>[ ] Implement Global/Local/Offset Control (for 2D/3D Arrays)</li>
-<li>[ ] Implement OpenCL Error Handling</li>
-<li>[ ] Implement OpenCL Event Profiling</li>
-</ul><h2>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
 <blockquote>
 <p>The MIT License (MIT)</p>
@@ -122,17 +112,12 @@
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
 </blockquote>
       </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Chlorine maintained by <a href="https://github.com/Polytonic">Polytonic</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/Polytonic">Polytonic</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
-
+    <script src="javascripts/scale.fix.js"></script>
     
-
   </body>
 </html>
