@@ -38,7 +38,6 @@ int main(int argc, char * argv[])
             printf("\t%s\n", extension.c_str());
             printf("\n");
 
-
         printf("Available Devices:\n\n");
         std::vector<cl::Device> devices;
         platform.getDevices(CL_DEVICE_TYPE_ALL, & devices);
