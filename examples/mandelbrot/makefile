@@ -21,6 +21,7 @@ default: clean $(TARGET)
 all: default
 clean:
 	@rm -rf *.gcda *.gcno *.gcov
+	@rm -rf *.ppm
 	@rm -rf $(TARGET)
 .PHONY: $(TARGET)
 
