@@ -19,10 +19,10 @@ TEST_CASE("Subtracts  Floats", "[float, sub]") { test<float>("floats", "sub"); }
 TEST_CASE("Multiplies Floats", "[float, mul]") { test<float>("floats", "mul"); }
 
 // Chlorine Scalar Primitives Test
-TEST_CASE("Primitives", "[primitives]")
+TEST_CASE("Scalars", "[arithmetic, scalars]")
 {
     // Create a Worker and Load the Correct Types Kernel
-    ch::Worker worker("tests/test_primitives.cl");
+    ch::Worker worker("tests/test_scalars.cl");
     srand(static_cast<unsigned>(time(0)));
     size_t const n = 10;
 
@@ -44,6 +44,34 @@ TEST_CASE("Primitives", "[primitives]")
         worker.call("ffill", a, b);
         for (unsigned int i = 0; i < a.size(); i++)
             CHECK(a[i] == b);
+    }
+}
+
+// Chlorine Vector Primitives Test
+TEST_CASE("Vectors", "[arithmetic, vectors]")
+{
+    // Create a Worker and Load the Correct Types Kernel
+    ch::Worker worker("tests/test_vectors.cl");
+    size_t const n = 10;
+
+    SECTION("Vector Integers")
+    {
+        INFO("Testing Vector Function: ifill");
+        std::vector<cl_int4> a(n);
+        worker.call("ifill", a);
+        for (unsigned int i = 0; i < a.size(); i++)
+            for (unsigned int j = 0; j < 4; j++)
+                CHECK(a[i].s[j] == j);
+    }
+
+    SECTION("Vector Floats")
+    {
+        INFO("Testing Vector Function: ffill");
+        std::vector<cl_float4> a(n);
+        worker.call("ffill", a);
+        for (unsigned int i = 0; i < a.size(); i++)
+            for (unsigned int j = 0; j < 4; j++)
+                CHECK(a[i].s[j] == static_cast<float>(j));
     }
 }
 

@@ -44,7 +44,8 @@ __kernel void swap(__global float * spam, __global float * eggs)
 ## Documentation
 The core philosophy in Chlorine is that you should *work with your data*, instead of spending time fighting an API. To that end, Chlorine acts as a lightweight interface to OpenCL, automatically mapping arguments passed on the host to kernel functions running on a device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix scalar and vector types as needed. The following types are supported:
 
-- [Arithmetic Primitives](http://www.cplusplus.com/reference/type_traits/is_arithmetic/)
+- [Arithmetic Scalar Types](http://www.cplusplus.com/reference/type_traits/is_arithmetic/)
+- [OpenCL Vector Types](https://www.khronos.org/registry/cl/sdk/1.1/docs/man/xhtml/vectorDataTypes.html)
 - [C-Style Arrays](http://www.cplusplus.com/doc/tutorial/arrays/)
 - [STL Arrays](http://www.cplusplus.com/reference/array/array/)
 - [STL Valarrays](http://www.cplusplus.com/reference/valarray/)
@@ -61,7 +62,6 @@ TODO: Implement the Chlorine Binary and `clinfo`/`clstat` utilities ...
     - [ ] Parallel-Recursive Raytracer
     - [ ] Fast-Fourier Transforms
     - [ ] OpenGL Interop.
-- [ ] Scalar Types Test (`int2`, `float3`, etc.)
 - [ ] Global/Local/Offset Control (for 2D/3D Arrays)
 - [ ] OpenCL Error Handling
 - [ ] OpenCL Event Profiling
