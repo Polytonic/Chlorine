@@ -2,6 +2,7 @@
 PLATFORM = $(shell uname -s)
 SOURCE = chlorine
 OUTPUT = builds
+INSTALLER = /usr/local/bin
 
 # Set Test Configuration
 TEST_DIR = tests
@@ -33,17 +34,20 @@ clean:
 	@rm -rf *.gcda *.gcno *.gcov
 	@rm -rf $(OUTPUT)
 	@rm -rf $(TEST_DIR)/$(OUTPUT)
-.PHONY: chlorine
-
-# Build the Chlorine CLI Executable
-chlorine: $(SOURCE)/chlorine.cpp
-	@mkdir -p $(OUTPUT)
-	$(CXX) $(CCFLAGS) $< -o $(OUTPUT)/$@ $(LDFLAGS)
+.PHONY: all
 
 # Build the clinfo Diagnostic Utility
 clinfo: $(SOURCE)/clinfo.cpp
 	@mkdir -p $(OUTPUT)
 	$(CXX) $(CCFLAGS) $< -o $(OUTPUT)/$@ $(LDFLAGS)
+
+# Install Binaries
+install:
+	cp $(OUTPUT)/clinfo $(INSTALLER)
+
+# Uninstall Binaries
+uninstall:
+	rm -vf $(INSTALLER)/clinfo
 
 # Build the Test Suite
 %: $(TEST_DIR)/%.cpp
@@ -52,7 +56,6 @@ clinfo: $(SOURCE)/clinfo.cpp
 
 # Run the Test Suite
 test:
-	# ./$(OUTPUT)/chlorine
 	./$(OUTPUT)/clinfo > /dev/null
 	./$(TEST_DIR)/$(OUTPUT)/$(TESTSUITE) --reporter compact
 
