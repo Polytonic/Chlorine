@@ -7,7 +7,7 @@
 Chlorine is a simple way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. You can rapidly *prototype* parallel processing on graphics processing units using a generic worker implementation that abstracts away much of the boilerplate involved with writing OpenCL applications.
 
 ## Getting Started
-Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp) and a compiler with `C++11` support. An example of how to use Chlorine is shown below, or read the [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap).
+Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp) and a compiler with `C++11` support. An example of how to use Chlorine is shown below. You can also read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
 
 **main.cpp**
 ```c++
