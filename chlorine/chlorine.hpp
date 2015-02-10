@@ -41,24 +41,24 @@ namespace ch
 
         // Handle the Base Case
         template<unsigned int const argn = 0>
-        void call(std::string const & kernel_function);
+        cl::Event call(std::string const & kernel_function);
 
         // Handle Primitive Types
-        template<unsigned int const argn = 0, typename T, typename ... Params>
-        typename std::enable_if<std::is_arithmetic<T>::value>::type
-        call(std::string const & kernel_function, T primitive, Params && ... parameters);
+        template<unsigned int const argn = 0, typename T,
+                 typename std::enable_if<std::is_arithmetic<T>::value>::type* = nullptr, typename ... Params>
+        cl::Event call(std::string const & kernel_function, T primitive, Params && ... parameters);
 
         // Handle C-Style Arrays
         template<unsigned int const argn = 0, class T, size_t const N, typename ... Params>
-        void call(std::string const & kernel_function, T (&array) [N], Params && ... parameters);
+        cl::Event call(std::string const & kernel_function, T (&array) [N], Params && ... parameters);
 
         // Handle STL Arrays
         template<unsigned int const argn = 0, class T, size_t const N, typename ... Params>
-        void call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters);
+        cl::Event call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters);
 
         // Handle Other STL Containers
         template<unsigned int const argn = 0, template<typename ...> class V, typename T, typename ... Params>
-        void call(std::string const & kernel_function, V<T> & array, Params && ... parameters);
+        cl::Event call(std::string const & kernel_function, V<T> & array, Params && ... parameters);
 
     private:
 
@@ -66,6 +66,7 @@ namespace ch
         cl::CommandQueue mQueue;
         cl::Context      mContext;
         cl::Device       mDevice;
+        cl::Event        mEvent;
         cl::Platform     mPlatform;
         cl::Program      mProgram;
 
@@ -91,6 +92,13 @@ namespace ch
     {
         std::cout << worker.build_kernel(kernel_source);
         return worker;
+    }
+
+    // Determine the Elapsed Computation Time (ns)
+    unsigned int elapsed(cl::Event const & event)
+    {
+        return event.getProfilingInfo<CL_PROFILING_COMMAND_END>()
+             - event.getProfilingInfo<CL_PROFILING_COMMAND_START>();
     }
 
     // Read the Contents of the Given Filename
@@ -155,59 +163,62 @@ namespace ch
 
     // Handle the Base Case
     template<unsigned int const argn>
-    void Worker::call(std::string const & kernel_function)
+    cl::Event Worker::call(std::string const & kernel_function)
     {
         // Perform the Calculation and Read Data from Memory Buffers
-        mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal);
+        mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal, NULL, & mEvent);
         for (auto &i : mBuffers)
             mQueue.enqueueUnmapMemObject(i.first,
             mQueue.enqueueMapBuffer(i.first, CL_TRUE, CL_MAP_READ, 0, i.second));
             mBuffers.clear();
+
+        // Return OpenCL Event Object Containing Profiling Data
+        return mEvent;
     }
 
     // Handle Primitive Types
-    template<unsigned int const argn, typename T, typename ... Params>
-    typename std::enable_if<std::is_arithmetic<T>::value>::type
-    Worker::call(std::string const & kernel_function, T primitive, Params && ... parameters)
+    template<unsigned int const argn, typename T,
+             typename std::enable_if<std::is_arithmetic<T>::value>::type*, typename ... Params>
+    cl::Event Worker::call(std::string const & kernel_function, T primitive, Params && ... parameters)
     {
         mKernels[kernel_function].setArg(argn, primitive);
-        call<argn+1>(kernel_function, parameters...);
+        return call<argn+1>(kernel_function, parameters...);
     }
 
     // Handle C-Style Arrays
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
-    void Worker::call(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
+    cl::Event Worker::call(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
     {
         size_t array_size = N * sizeof(array[0]);
         if (N > mGlobal[0]) { mGlobal = cl::NDRange(N); }
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
-        call<argn+1>(kernel_function, parameters...);
+        return call<argn+1>(kernel_function, parameters...);
     }
 
     // Handle STL Arrays
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
-    void Worker::call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
+    cl::Event Worker::call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
-        call<argn+1>(kernel_function, parameters...);
+        return call<argn+1>(kernel_function, parameters...);
     }
 
     // Handle Other STL Containers
     template<unsigned int const argn, template<typename ...> class V, typename T, typename ... Params>
-    void Worker::call(std::string const & kernel_function, V<T> & array, Params && ... parameters)
+    cl::Event Worker::call(std::string const & kernel_function, V<T> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
         cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
-        call<argn+1>(kernel_function, parameters...);
+        return call<argn+1>(kernel_function, parameters...);
     }
 };
 

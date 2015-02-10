@@ -53,3 +53,22 @@ $ clang++ -std=c++11 swap.cpp -lOpenCL
 ```
 
 Kernel files are written in a variant of the C programming language. While I won't go into detail about it here, I hope this serves as a valuable demonstration in how Chlorine may be used to easily port code to run in parallel.
+
+### Profiling
+
+```
+// Original Call
+worker.call("swap", spam, eggs);
+
+// New Call
+auto event = worker.call("swap", spam, eggs);
+```
+
+As of 1d776984a11466cfd742bec2af0ff7b278a4479a, Chlorine now returns the OpenCL event associated with the kernel function call. This allows you to recover profiling data, such as how much time was spent executing the kernel function, as well as the idling time. For simplicity, we return the entire OpenCL object rather than adding a new function call to our API. This should be a non-breaking change for the most part.
+
+```
+// Print Some Profiling Data
+std::cout << "Elapsed Time: " << ch::elapsed(event) << "ns\n";
+```
+
+To make things easier, we also added a new helper function `ch::elapsed()` which accepts an OpenCL event and returns the elapsed time spent on your kernel function. This helper preserves the nanosecond resolution offered by the OpenCL API and is merely a convenience wrapper.
