@@ -78,6 +78,16 @@ TEST_CASE("Vectors", "[arithmetic, vectors]")
 // Test Chlorine Worker Helpers
 TEST_CASE("Helpers", "[helpers]")
 {
+    SECTION("ch::elapsed() Returns an Elapsed Time")
+    {
+        ch::Worker worker("tests/test_helpers.cl");
+        std::vector<int> a(100, 100);
+        auto event = worker.call("fill", a);
+        for (unsigned int i = 0; i < a.size(); i++)
+            CHECK(a[i] == 1);
+        CHECK(ch::elapsed(event) > 0);
+    }
+
     SECTION("ch::read() Returns File Contents")
     {
         // Read Kernel Source
@@ -86,10 +96,10 @@ TEST_CASE("Helpers", "[helpers]")
         // Define String Literal to Match
         std::string match =
             "// Test the Kernel Read Function\n"
-            "__kernel void read(__global int * a)\n"
+            "__kernel void fill(__global int * a)\n"
             "{\n"
             "    unsigned int i = get_global_id(0);\n"
-            "    a[i] = 0;\n"
+            "    a[i] = 1;\n"
             "}\n";
 
         // Assert Kernel Source is Equivalent
