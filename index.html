@@ -60,11 +60,14 @@
     ch::Worker <span class="pl-vo">worker</span>(<span class="pl-s1"><span class="pl-pds">"</span>swap.cl<span class="pl-pds">"</span></span>);
 
     <span class="pl-c">// Call the Swap Function in the Given Kernel</span>
-    worker.<span class="pl-s3">call</span>(<span class="pl-s1"><span class="pl-pds">"</span>swap<span class="pl-pds">"</span></span>, spam, eggs);
+    <span class="pl-st">auto</span> event = worker.<span class="pl-s3">call</span>(<span class="pl-s1"><span class="pl-pds">"</span>swap<span class="pl-pds">"</span></span>, spam, eggs);
 
     <span class="pl-c">// Host Containers Are Automatically Updated</span>
     std::cout &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>Spam: <span class="pl-pds">"</span></span> &lt;&lt; spam[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 2.7182</span>
     std::cout &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>Eggs: <span class="pl-pds">"</span></span> &lt;&lt; eggs[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 3.1415</span>
+
+    <span class="pl-c">// Print Some Profiling Data</span>
+    std::cout &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>Elapsed Time: <span class="pl-pds">"</span></span> &lt;&lt; <span class="pl-s3">ch::elapsed</span>(event) &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>ns<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>;
 }</pre></div>
 
 <p><strong>swap.cl</strong></p>
