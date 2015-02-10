@@ -94,6 +94,13 @@ namespace ch
         return worker;
     }
 
+    // Determine the Elapsed Computation Time (ns)
+    unsigned int elapsed(cl::Event const & event)
+    {
+        return event.getProfilingInfo<CL_PROFILING_COMMAND_END>()
+             - event.getProfilingInfo<CL_PROFILING_COMMAND_START>();
+    }
+
     // Read the Contents of the Given Filename
     std::string read(std::string const & filename)
     {
