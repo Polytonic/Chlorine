@@ -64,7 +64,7 @@ worker.call("swap", spam, eggs);
 auto event = worker.call("swap", spam, eggs);
 ```
 
-As of 1d776984a11466cfd742bec2af0ff7b278a4479a, Chlorine now returns the OpenCL event associated with the kernel function call. This allows you to recover profiling data, such as how much time was spent executing the kernel function, as well as the idling time. For simplicity, we return the entire OpenCL object rather than adding a new function call to our API. This should be a non-breaking change for the most part.
+As of [1d7769](https://github.com/Polytonic/Chlorine/tree/1d776984a11466cfd742bec2af0ff7b278a4479a), Chlorine now returns the OpenCL event associated with the kernel function call. This allows you to recover profiling data, such as how much time was spent executing the kernel function, as well as the idling time. For simplicity, we return the entire OpenCL object rather than adding a new function call to our API. This should be a non-breaking change for the most part.
 
 ```c++
 // Print Some Profiling Data
