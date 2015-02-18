@@ -62,4 +62,4 @@ test:
 # Build All Examples
 examples: subsystem
 subsystem:
-	$(MAKE) -C examples/
+	make -C examples/
