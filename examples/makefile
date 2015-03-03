@@ -4,4 +4,4 @@ default: all
 all: $(SUBDIRS)
 .PHONY: $(SUBDIRS)
 $(SUBDIRS):
-	$(MAKE) -C $@
+	make -C $@
