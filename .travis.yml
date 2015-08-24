@@ -1,23 +1,17 @@
 # Travis Configuration
+sudo: false
 language: cpp
 script: make all && make test
 compiler:
   - clang
   - gcc
 
-# Install GCC 4.8.x
-before_install:
-  - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
-  - if [ "$CXX" = "g++" ]; then sudo apt-get update -qq; fi
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8" GCOV="gcov-4.8"; fi
-
-# Install Chlorine Dependencies
-install:
-  - sudo apt-get update  -qq
-  - sudo apt-get install -qq fglrx=2:8.960-0ubuntu1
-  - sudo apt-get install -qq opencl-headers
-  - sudo pip install cpp-coveralls
+addons:
+  apt:
+    packages:
+      - fglrx=2:8.960-0ubuntu1
+      - g++-4.8
+      - opencl-headers
 
 # Upload Code Coverage Data
 after_success:
