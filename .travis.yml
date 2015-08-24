@@ -8,6 +8,8 @@ compiler:
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
       - fglrx=2:8.960-0ubuntu1
       - g++-4.8
