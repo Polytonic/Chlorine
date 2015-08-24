@@ -1,5 +1,5 @@
 # [Chlorine](http://polytonic.github.io/Chlorine/)
-[![Build Status](http://img.shields.io/travis/Polytonic/Chlorine.svg?style=flat-square)](https://travis-ci.org/Polytonic/Chlorine)
+[![Build Status](http://img.shields.io/travis/Polytonic/Chlorine/master.svg?style=flat-square)](https://travis-ci.org/Polytonic/Chlorine)
 [![Coverage Status](http://img.shields.io/coveralls/Polytonic/Chlorine.svg?style=flat-square)](https://coveralls.io/r/Polytonic/Chlorine)
 [![OpenCL Version](http://img.shields.io/badge/OpenCL-1.2%2B-brightgreen.svg?style=flat-square)](https://www.khronos.org/opencl/)
 
