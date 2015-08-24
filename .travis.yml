@@ -6,14 +6,20 @@ compiler:
   - clang
   - gcc
 
+# Install Container Dependencies
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - fglrx=2:8.960-0ubuntu1
+      - fglrx-dev # (TravisCI: #4228, apt-package-whitelist: #383)
       - g++-4.8
       - opencl-headers
+
+# Install Coveralls (TravisCI: #3563)
+before_script:
+  - export PATH=$HOME/.local/bin:$PATH
+  - pip install cpp-coveralls --user `whoami`
 
 # Upload Code Coverage Data
 after_success:
