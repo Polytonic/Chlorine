@@ -1,5 +1,8 @@
 // Include OpenCL C++ Bindings
+#pragma GCC diagnostic push
+#pragma GCC system_header
 #include "cl.hpp"
+#pragma GCC diagnostic pop
 
 // Standard Library Dependencies
 #include <iostream>
