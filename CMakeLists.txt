@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++1y")
 endif()
 
 find_package(OpenCL REQUIRED)
-include_directories(chlorine/include)
+include_directories(chlorine/include ${OpenCL_INCLUDE_DIR})
 file(GLOB PROJECT_HEADERS chlorine/include/*.hpp)
 file(GLOB PROJECT_SOURCES chlorine/src/*.cpp)
 file(GLOB PROJECT_CONFIGS readme.md
