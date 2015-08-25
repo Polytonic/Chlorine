@@ -1,6 +1,6 @@
 // Local Dependencies
-#include "catch.hpp"
 #include "chlorine.hpp"
+#include <catch.hpp>
 
 // Standard Library Headers
 #include <memory>
