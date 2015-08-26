@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2015 The Khronos Group Inc.
+ * Copyright (c) 2008-2013 The Khronos Group Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and/or associated documentation files (the
@@ -23,24 +23,24 @@
 
 /*! \file
  *
- *   \brief C++ bindings for OpenCL 1.0 (rev 48), OpenCL 1.1 (rev 33) and 
- *       OpenCL 1.2 (rev 15)    
+ *   \brief C++ bindings for OpenCL 1.0 (rev 48), OpenCL 1.1 (rev 33) and
+ *       OpenCL 1.2 (rev 15)
  *   \author Benedict R. Gaster, Laurent Morichetti and Lee Howes
- *   
+ *
  *   Additions and fixes from:
- *       Brian Cole, March 3rd 2010 and April 2012 
+ *       Brian Cole, March 3rd 2010 and April 2012
  *       Matt Gruenke, April 2012.
  *       Bruce Merry, February 2013.
  *       Tom Deakin and Simon McIntosh-Smith, July 2013
- *   
- *   \version 1.2.7
- *   \date January 2015
+ *
+ *   \version 1.2.6
+ *   \date August 2013
  *
  *   Optional extension support
  *
  *         cl
  *         cl_ext_device_fission
- *				#define USE_CL_DEVICE_FISSION
+ *              #define USE_CL_DEVICE_FISSION
  */
 
 /*! \mainpage
@@ -72,7 +72,7 @@
  *
  * \code
  * #define __CL_ENABLE_EXCEPTIONS
- * 
+ *
  * #if defined(__APPLE__) || defined(__MACOSX)
  * #include <OpenCL/cl.hpp>
  * #else
@@ -81,13 +81,13 @@
  * #include <cstdio>
  * #include <cstdlib>
  * #include <iostream>
- * 
+ *
  *  const char * helloStr  = "__kernel void "
  *                           "hello(void) "
  *                           "{ "
  *                           "  "
  *                           "} ";
- * 
+ *
  *  int
  *  main(void)
  *  {
@@ -101,33 +101,33 @@
  *           return -1;
  *       }
  *
- *       cl_context_properties properties[] = 
+ *       cl_context_properties properties[] =
  *          { CL_CONTEXT_PLATFORM, (cl_context_properties)(platforms[0])(), 0};
- *       cl::Context context(CL_DEVICE_TYPE_CPU, properties); 
- * 
+ *       cl::Context context(CL_DEVICE_TYPE_CPU, properties);
+ *
  *       std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
- * 
+ *
  *       cl::Program::Sources source(1,
  *           std::make_pair(helloStr,strlen(helloStr)));
  *       cl::Program program_ = cl::Program(context, source);
  *       program_.build(devices);
- * 
+ *
  *       cl::Kernel kernel(program_, "hello", &err);
- * 
+ *
  *       cl::Event event;
  *       cl::CommandQueue queue(context, devices[0], 0, &err);
  *       queue.enqueueNDRangeKernel(
- *           kernel, 
- *           cl::NullRange, 
+ *           kernel,
+ *           cl::NullRange,
  *           cl::NDRange(4,4),
  *           cl::NullRange,
  *           NULL,
- *           &event); 
- * 
+ *           &event);
+ *
  *       event.wait();
  *     }
  *     catch (cl::Error err) {
- *        std::cerr 
+ *        std::cerr
  *           << "ERROR: "
  *           << err.what()
  *           << "("
@@ -135,10 +135,10 @@
  *           << ")"
  *           << std::endl;
  *     }
- * 
+ *
  *    return EXIT_SUCCESS;
  *  }
- * 
+ *
  * \endcode
  *
  */
@@ -147,41 +147,36 @@
 
 #ifdef _WIN32
 
+#include <windows.h>
 #include <malloc.h>
+#include <iterator>
+#include <intrin.h>
 
+#if defined(__CL_ENABLE_EXCEPTIONS)
+#include <exception>
+#endif // #if defined(__CL_ENABLE_EXCEPTIONS)
+
+#pragma push_macro("max")
+#undef max
 #if defined(USE_DX_INTEROP)
 #include <CL/cl_d3d10.h>
 #include <CL/cl_dx9_media_sharing.h>
 #endif
 #endif // _WIN32
 
-#if defined(_MSC_VER)
-#include <intrin.h>
-#endif // _MSC_VER
-
-// 
+//
 #if defined(USE_CL_DEVICE_FISSION)
 #include <CL/cl_ext.h>
 #endif
 
 #if defined(__APPLE__) || defined(__MACOSX)
+#include <OpenGL/OpenGL.h>
 #include <OpenCL/opencl.h>
+#include <libkern/OSAtomic.h>
 #else
+#include <GL/gl.h>
 #include <CL/opencl.h>
 #endif // !__APPLE__
-
-#if (_MSC_VER >= 1700) || (__cplusplus >= 201103L)
-#define CL_HPP_RVALUE_REFERENCES_SUPPORTED
-#define CL_HPP_CPP11_ATOMICS_SUPPORTED
-#include <atomic>
-#endif
-
-#if (__cplusplus >= 201103L)
-#define CL_HPP_NOEXCEPT noexcept
-#else
-#define CL_HPP_NOEXCEPT
-#endif
-
 
 // To avoid accidentally taking ownership of core OpenCL types
 // such as cl_kernel constructors are made explicit
@@ -189,13 +184,13 @@
 #if defined(CL_VERSION_1_2) && !defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS)
 #define __CL_EXPLICIT_CONSTRUCTORS explicit
 #else // #if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS)
-#define __CL_EXPLICIT_CONSTRUCTORS 
+#define __CL_EXPLICIT_CONSTRUCTORS
 #endif // #if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS)
 
 // Define deprecated prefixes and suffixes to ensure compilation
 // in case they are not pre-defined
 #if !defined(CL_EXT_PREFIX__VERSION_1_1_DEPRECATED)
-#define CL_EXT_PREFIX__VERSION_1_1_DEPRECATED  
+#define CL_EXT_PREFIX__VERSION_1_1_DEPRECATED
 #endif // #if !defined(CL_EXT_PREFIX__VERSION_1_1_DEPRECATED)
 #if !defined(CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED)
 #define CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED
@@ -207,11 +202,6 @@
 
 #include <utility>
 #include <limits>
-#include <iterator>
-
-#if defined(__CL_ENABLE_EXCEPTIONS)
-#include <exception>
-#endif // #if defined(__CL_ENABLE_EXCEPTIONS)
 
 #if !defined(__NO_STD_VECTOR)
 #include <vector>
@@ -219,10 +209,13 @@
 
 #if !defined(__NO_STD_STRING)
 #include <string>
-#endif 
+#endif
 
-#if defined(__ANDROID__) || defined(linux) || defined(__APPLE__) || defined(__MACOSX)
+#if defined(linux) || defined(__APPLE__) || defined(__MACOSX)
 #include <alloca.h>
+
+#include <emmintrin.h>
+#include <xmmintrin.h>
 #endif // linux
 
 #include <cstring>
@@ -240,7 +233,7 @@ class Memory;
 /**
  * Deprecated APIs for 1.2
  */
-#if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS) || (defined(CL_VERSION_1_1) && !defined(CL_VERSION_1_2)) 
+#if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS) || (defined(CL_VERSION_1_1) && !defined(CL_VERSION_1_2))
 #define __INIT_CL_EXT_FCN_PTR(name) \
     if(!pfn_##name) { \
         pfn_##name = (PFN_##name) \
@@ -268,8 +261,8 @@ class Memory;
 class Buffer;
 
 #if defined(__CL_ENABLE_EXCEPTIONS)
-/*! \brief Exception class 
- * 
+/*! \brief Exception class
+ *
  *  This may be thrown by API functions when __CL_ENABLE_EXCEPTIONS is defined.
  */
 class Error : public std::exception
@@ -280,7 +273,7 @@ private:
 public:
     /*! \brief Create a new CL error exception for a given error code
      *  and corresponding message.
-     * 
+     *
      *  \param err error code value.
      *
      *  \param errStr a descriptive string that must remain in scope until
@@ -396,7 +389,7 @@ static inline cl_int errHandler (cl_int err, const char * errStr = NULL)
 #define __BUILD_PROGRAM_ERR                 __ERR_STR(clBuildProgram)
 #if defined(CL_VERSION_1_2)
 #define __COMPILE_PROGRAM_ERR                  __ERR_STR(clCompileProgram)
-#define __LINK_PROGRAM_ERR                  __ERR_STR(clLinkProgram)
+
 #endif // #if defined(CL_VERSION_1_2)
 #define __CREATE_KERNELS_IN_PROGRAM_ERR     __ERR_STR(clCreateKernelsInProgram)
 
@@ -447,7 +440,7 @@ static inline cl_int errHandler (cl_int err, const char * errStr = NULL)
 /**
  * Deprecated APIs for 1.2
  */
-#if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS) || (defined(CL_VERSION_1_1) && !defined(CL_VERSION_1_2)) 
+#if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS) || (defined(CL_VERSION_1_1) && !defined(CL_VERSION_1_2))
 #define __ENQUEUE_MARKER_ERR                __ERR_STR(clEnqueueMarker)
 #define __ENQUEUE_WAIT_FOR_EVENTS_ERR       __ERR_STR(clEnqueueWaitForEvents)
 #define __ENQUEUE_BARRIER_ERR               __ERR_STR(clEnqueueBarrier)
@@ -471,12 +464,12 @@ static inline cl_int errHandler (cl_int err, const char * errStr = NULL)
 
 #if !defined(__USE_DEV_STRING) && !defined(__NO_STD_STRING)
 typedef std::string STRING_CLASS;
-#elif !defined(__USE_DEV_STRING) 
+#elif !defined(__USE_DEV_STRING)
 
 /*! \class string
  * \brief Simple string class, that provides a limited subset of std::string
  * functionality but avoids many of the issues that come with that class.
- 
+
  *  \note Deprecated. Please use std::string as default or
  *  re-define the string class to match the std::string
  *  interface by defining STRING_CLASS
@@ -494,10 +487,10 @@ public:
 
     /*! \brief Constructs a string populated from an arbitrary value of
      *  specified size.
-     * 
+     *
      *  An extra '\0' is added, in case none was contained in str.
      *
-     *  \param str the initial value of the string instance.  Note that '\0'     
+     *  \param str the initial value of the string instance.  Note that '\0'
      *             characters receive no special treatment.  If NULL,
      *             the string is left empty, with a size of 0.
      *
@@ -550,15 +543,15 @@ public:
             }
             str_ = NULL;
             size_ = 0;
-        } 
+        }
         else {
             char *newString = new char[n + 1];
-            ::size_t copySize = n;
+            int copySize = n;
             if( size_ < n ) {
                 copySize = size_;
             }
             size_ = n;
-            
+
             if(str_) {
                 memcpy(newString, str_, (copySize + 1) * sizeof(char));
             }
@@ -603,11 +596,11 @@ public:
         if (rhs.size_ == 0 || rhs.str_ == NULL) {
             str_ = NULL;
             size_ = 0;
-        } 
+        }
         else {
             str_ = new char[rhs.size_ + 1];
             size_ = rhs.size_;
-            
+
             if (str_ != NULL) {
                 memcpy(str_, rhs.str_, (size_ + 1) * sizeof(char));
             }
@@ -636,7 +629,7 @@ public:
         delete[] str_;
         str_ = NULL;
     }
-    
+
     //! \brief Queries the length of the string, excluding any added '\0's.
     ::size_t size(void) const   { return size_; }
 
@@ -649,19 +642,19 @@ public:
     const char * c_str(void) const { return (str_) ? str_ : "";}
 };
 typedef cl::string STRING_CLASS;
-#endif // #elif !defined(__USE_DEV_STRING) 
+#endif // #elif !defined(__USE_DEV_STRING)
 
 #if !defined(__USE_DEV_VECTOR) && !defined(__NO_STD_VECTOR)
 #define VECTOR_CLASS std::vector
-#elif !defined(__USE_DEV_VECTOR) 
-#define VECTOR_CLASS cl::vector 
+#elif !defined(__USE_DEV_VECTOR)
+#define VECTOR_CLASS cl::vector
 
 #if !defined(__MAX_DEFAULT_VECTOR_SIZE)
 #define __MAX_DEFAULT_VECTOR_SIZE 10
 #endif
 
 /*! \class vector
- * \brief Fixed sized vector implementation that mirroring 
+ * \brief Fixed sized vector implementation that mirroring
  *
  *  \note Deprecated. Please use std::vector as default or
  *  re-define the vector class to match the std::vector
@@ -683,7 +676,7 @@ typedef cl::string STRING_CLASS;
  *  \param N maximum size of the vector.
  */
 template <typename T, unsigned int N = __MAX_DEFAULT_VECTOR_SIZE>
-class CL_EXT_PREFIX__VERSION_1_1_DEPRECATED vector
+class CL_EXT_PREFIX__VERSION_1_1_DEPRECATED vector CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED
 {
 private:
     T data_[N];
@@ -691,12 +684,12 @@ private:
 
 public:
     //! \brief Constructs an empty vector with no memory allocated.
-    vector() :  
+    vector() :
         size_(static_cast<unsigned int>(0))
     {}
 
     //! \brief Deallocates the vector's memory and destroys all of its elements.
-    ~vector() 
+    ~vector()
     {
         clear();
     }
@@ -706,7 +699,7 @@ public:
     {
         return size_;
     }
-    
+
     /*! \brief Empties the vector of all elements.
      *  \note
      *  This does not deallocate memory but will invoke destructors
@@ -720,11 +713,11 @@ public:
     }
 
     /*! \brief Appends an element after the last valid element.
-     * Calling this on a vector that has reached capacity will throw an 
+     * Calling this on a vector that has reached capacity will throw an
      * exception if exceptions are enabled.
      */
     void push_back (const T& x)
-    { 
+    {
         if (size() < N) {
             new (&data_[size_]) T(x);
             size_++;
@@ -751,13 +744,13 @@ public:
      *
      *  \param vec the vector to copy.
      */
-    vector(const vector<T, N>& vec) : 
+    vector(const vector<T, N>& vec) :
         size_(vec.size_)
     {
         if (size_ != 0) {
             assign(vec.begin(), vec.end());
         }
-    } 
+    }
 
     /*! \brief Constructs with a specified number of initial elements.
      *
@@ -786,7 +779,7 @@ public:
             return *this;
         }
 
-        if (rhs.size_ != 0) {	
+        if (rhs.size_ != 0) {
             assign(rhs.begin(), rhs.end());
         } else {
             clear();
@@ -812,19 +805,19 @@ public:
         }
         return true;
     }
-  
+
     //! \brief Conversion operator to T*.
     operator T* ()             { return data_; }
 
     //! \brief Conversion operator to const T*.
     operator const T* () const { return data_; }
-   
+
     //! \brief Tests whether this instance has any elements.
     bool empty (void) const
     {
         return size_==0;
     }
-  
+
     //! \brief Returns the maximum number of elements this instance can hold.
     unsigned int max_size (void) const
     {
@@ -837,28 +830,6 @@ public:
         return N;
     }
 
-    //! \brief Resizes the vector to the given size
-    void resize(unsigned int newSize, T fill = T())
-    {
-        if (newSize > N)
-        {
-            detail::errHandler(CL_MEM_OBJECT_ALLOCATION_FAILURE, __VECTOR_CAPACITY_ERR);
-        }
-        else
-        {
-            while (size_ < newSize)
-            {
-                new (&data_[size_]) T(fill);
-                size_++;
-            }
-            while (size_ > newSize)
-            {
-                --size_;
-                data_[size_].~T();
-            }
-        }
-    }
-
     /*! \brief Returns a reference to a given element.
      *
      *  \param index which element to access.     *
@@ -869,7 +840,7 @@ public:
     {
         return data_[index];
     }
-  
+
     /*! \brief Returns a const reference to a given element.
      *
      *  \param index which element to access.
@@ -881,7 +852,7 @@ public:
     {
         return data_[index];
     }
-  
+
     /*! \brief Assigns elements of the vector based on a source iterator range.
      *
      *  \param start Beginning iterator of source range
@@ -893,7 +864,7 @@ public:
     template<class I>
     void assign(I start, I end)
     {
-        clear();   
+        clear();
         while(start != end) {
             push_back(*start);
             start++;
@@ -911,12 +882,12 @@ public:
 
         /**
          * Internal iterator constructor to capture reference
-         * to the vector it iterates over rather than taking 
+         * to the vector it iterates over rather than taking
          * the vector by copy.
          */
         iterator (const vector<T,N> &vec, int index) :
             vec_(&vec)
-        {            
+        {
             if( !vec.empty() ) {
                 index_ = index;
             } else {
@@ -925,7 +896,7 @@ public:
         }
 
     public:
-        iterator(void) : 
+        iterator(void) :
             index_(-1),
             vec_(NULL)
         {
@@ -952,10 +923,10 @@ public:
 
             return i;
         }
-    
+
         bool operator==(iterator i)
         {
-            return ((vec_ == i.vec_) && 
+            return ((vec_ == i.vec_) &&
                     (index_ == i.index_));
         }
 
@@ -1035,7 +1006,7 @@ public:
     {
         return data_[size_-1];
     }
-} CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED;
+};
 #endif // #if !defined(__USE_DEV_VECTOR) && !defined(__NO_STD_VECTOR)
 
 
@@ -1043,55 +1014,41 @@ public:
 
 
 namespace detail {
-#define __DEFAULT_NOT_INITIALIZED 1 
+#define __DEFAULT_NOT_INITIALIZED 1
 #define __DEFAULT_BEING_INITIALIZED 2
 #define __DEFAULT_INITIALIZED 4
 
     /*
      * Compare and exchange primitives are needed for handling of defaults
     */
-
-#ifdef CL_HPP_CPP11_ATOMICS_SUPPORTED
-    inline int compare_exchange(std::atomic<int> * dest, int exchange, int comparand)
-#else // !CL_HPP_CPP11_ATOMICS_SUPPORTED
     inline int compare_exchange(volatile int * dest, int exchange, int comparand)
-#endif // !CL_HPP_CPP11_ATOMICS_SUPPORTED
     {
-#ifdef CL_HPP_CPP11_ATOMICS_SUPPORTED
-        std::atomic_compare_exchange_strong(dest, &comparand, exchange);
-        return comparand;
-#elif _MSC_VER
-        return (int)(_InterlockedCompareExchange(
-            (volatile long*)dest,
-            (long)exchange,
-            (long)comparand));
-#else // !_MSC_VER && !CL_HPP_CPP11_ATOMICS_SUPPORTED
+#ifdef _WIN32
+        return (int)(InterlockedCompareExchange(
+           (volatile long*)dest,
+           (long)exchange,
+           (long)comparand));
+#elif defined(__APPLE__) || defined(__MACOSX)
+        return OSAtomicOr32Orig((uint32_t)exchange, (volatile uint32_t*)dest);
+#else // !_WIN32 || defined(__APPLE__) || defined(__MACOSX)
         return (__sync_val_compare_and_swap(
             dest,
             comparand,
             exchange));
-#endif // !CL_HPP_CPP11_ATOMICS_SUPPORTED
+#endif // !_WIN32
     }
 
-    inline void fence() {
-#ifdef CL_HPP_CPP11_ATOMICS_SUPPORTED
-        std::atomic_thread_fence(std::memory_order_seq_cst);
-#elif _MSC_VER // !CL_HPP_CPP11_ATOMICS_SUPPORTED
-        _ReadWriteBarrier();
-#else // !_MSC_VER && !CL_HPP_CPP11_ATOMICS_SUPPORTED
-        __sync_synchronize();
-#endif // !CL_HPP_CPP11_ATOMICS_SUPPORTED
-    }
-} // namespace detail
+    inline void fence() { _mm_mfence(); }
+}; // namespace detail
 
-    
+
 /*! \brief class used to interface between C++ and
  *  OpenCL C calls that require arrays of size_t values, whose
  *  size is known statically.
  */
 template <int N>
 class size_t
-{ 
+{
 private:
     ::size_t data_[N];
 
@@ -1212,16 +1169,13 @@ inline cl_int getInfoHelper(Func f, cl_uint name, STRING_CLASS* param, long)
         return err;
     }
 
-    // std::string has a constant data member
-    // a char vector does not
-    VECTOR_CLASS<char> value(required);
-    err = f(name, required, value.data(), NULL);
+    char* value = (char*) alloca(required);
+    err = f(name, required, value, NULL);
     if (err != CL_SUCCESS) {
         return err;
     }
-    if (param) {
-        param->assign(value.begin(), value.end());
-    }
+
+    *param = value;
     return CL_SUCCESS;
 }
 
@@ -1340,7 +1294,7 @@ inline cl_int getInfoHelper(Func f, cl_uint name, T* param, int, typename T::cl_
     F(cl_event_info, CL_EVENT_COMMAND_QUEUE, cl::CommandQueue) \
     F(cl_event_info, CL_EVENT_COMMAND_TYPE, cl_command_type) \
     F(cl_event_info, CL_EVENT_REFERENCE_COUNT, cl_uint) \
-    F(cl_event_info, CL_EVENT_COMMAND_EXECUTION_STATUS, cl_int) \
+    F(cl_event_info, CL_EVENT_COMMAND_EXECUTION_STATUS, cl_uint) \
     \
     F(cl_profiling_info, CL_PROFILING_COMMAND_QUEUED, cl_ulong) \
     F(cl_profiling_info, CL_PROFILING_COMMAND_SUBMIT, cl_ulong) \
@@ -1421,7 +1375,7 @@ inline cl_int getInfoHelper(Func f, cl_uint name, T* param, int, typename T::cl_
     F(cl_event_info, CL_EVENT_CONTEXT, cl::Context)
 #endif // CL_VERSION_1_1
 
-    
+
 #if defined(CL_VERSION_1_2)
 #define __PARAM_NAME_INFO_1_2(F) \
     F(cl_image_info, CL_IMAGE_BUFFER, cl::Buffer) \
@@ -1598,7 +1552,7 @@ struct ReferenceHandler<cl_device_id>
     /**
      * Retain the device.
      * \param device A valid device created using createSubDevices
-     * \return 
+     * \return
      *   CL_SUCCESS if the function executed successfully.
      *   CL_INVALID_DEVICE if device was not a valid subdevice
      *   CL_OUT_OF_RESOURCES
@@ -1609,7 +1563,7 @@ struct ReferenceHandler<cl_device_id>
     /**
      * Retain the device.
      * \param device A valid device created using createSubDevices
-     * \return 
+     * \return
      *   CL_SUCCESS if the function executed successfully.
      *   CL_INVALID_DEVICE if device was not a valid subdevice
      *   CL_OUT_OF_RESOURCES
@@ -1721,7 +1675,7 @@ static cl_uint getVersion(const char *versionInfo)
         ++index;
     }
     ++index;
-    while(versionInfo[index] != ' ' &&  versionInfo[index] != '\0') {
+    while(versionInfo[index] != ' ' ) {
         lowVersion *= 10;
         lowVersion += versionInfo[index]-'0';
         ++index;
@@ -1785,35 +1739,13 @@ public:
         if (object_ != NULL) { detail::errHandler(retain(), __RETAIN_ERR); }
     }
 
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    Wrapper(Wrapper<cl_type>&& rhs) CL_HPP_NOEXCEPT
-    {
-        object_ = rhs.object_;
-        rhs.object_ = NULL;
-    }
-#endif
-
     Wrapper<cl_type>& operator = (const Wrapper<cl_type>& rhs)
     {
-        if (this != &rhs) {
-            if (object_ != NULL) { detail::errHandler(release(), __RELEASE_ERR); }
-            object_ = rhs.object_;
-            if (object_ != NULL) { detail::errHandler(retain(), __RETAIN_ERR); }
-        }
+        if (object_ != NULL) { detail::errHandler(release(), __RELEASE_ERR); }
+        object_ = rhs.object_;
+        if (object_ != NULL) { detail::errHandler(retain(), __RETAIN_ERR); }
         return *this;
     }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    Wrapper<cl_type>& operator = (Wrapper<cl_type>&& rhs)
-    {
-        if (this != &rhs) {
-            if (object_ != NULL) { detail::errHandler(release(), __RELEASE_ERR); }
-            object_ = rhs.object_;
-            rhs.object_ = NULL;
-        }
-        return *this;
-    }
-#endif
 
     Wrapper<cl_type>& operator = (const cl_type &rhs)
     {
@@ -1864,67 +1796,41 @@ protected:
     }
 
 public:
-    Wrapper() : object_(NULL), referenceCountable_(false) 
-    { 
-    }
-    
-    Wrapper(const cl_type &obj) : object_(obj), referenceCountable_(false) 
+    Wrapper() : object_(NULL), referenceCountable_(false)
     {
-        referenceCountable_ = isReferenceCountable(obj); 
+    }
+
+    Wrapper(const cl_type &obj) : object_(obj), referenceCountable_(false)
+    {
+        referenceCountable_ = isReferenceCountable(obj);
     }
 
     ~Wrapper()
     {
         if (object_ != NULL) { release(); }
     }
-    
+
     Wrapper(const Wrapper<cl_type>& rhs)
     {
         object_ = rhs.object_;
-        referenceCountable_ = isReferenceCountable(object_); 
+        referenceCountable_ = isReferenceCountable(object_);
         if (object_ != NULL) { detail::errHandler(retain(), __RETAIN_ERR); }
     }
 
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    Wrapper(Wrapper<cl_type>&& rhs) CL_HPP_NOEXCEPT
-    {
-        object_ = rhs.object_;
-        referenceCountable_ = rhs.referenceCountable_;
-        rhs.object_ = NULL;
-        rhs.referenceCountable_ = false;
-    }
-#endif
-
     Wrapper<cl_type>& operator = (const Wrapper<cl_type>& rhs)
     {
-        if (this != &rhs) {
-            if (object_ != NULL) { detail::errHandler(release(), __RELEASE_ERR); }
-            object_ = rhs.object_;
-            referenceCountable_ = rhs.referenceCountable_;
-            if (object_ != NULL) { detail::errHandler(retain(), __RETAIN_ERR); }
-        }
+        if (object_ != NULL) { detail::errHandler(release(), __RELEASE_ERR); }
+        object_ = rhs.object_;
+        referenceCountable_ = rhs.referenceCountable_;
+        if (object_ != NULL) { detail::errHandler(retain(), __RETAIN_ERR); }
         return *this;
     }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    Wrapper<cl_type>& operator = (Wrapper<cl_type>&& rhs)
-    {
-        if (this != &rhs) {
-            if (object_ != NULL) { detail::errHandler(release(), __RELEASE_ERR); }
-            object_ = rhs.object_;
-            referenceCountable_ = rhs.referenceCountable_;
-            rhs.object_ = NULL;
-            rhs.referenceCountable_ = false;
-        }
-        return *this;
-    }
-#endif
 
     Wrapper<cl_type>& operator = (const cl_type &rhs)
     {
         if (object_ != NULL) { detail::errHandler(release(), __RELEASE_ERR); }
         object_ = rhs;
-        referenceCountable_ = isReferenceCountable(object_); 
+        referenceCountable_ = isReferenceCountable(object_);
         return *this;
     }
 
@@ -2004,11 +1910,17 @@ public:
     //! \brief Default constructor - initializes to NULL.
     Device() : detail::Wrapper<cl_type>() { }
 
-    /*! \brief Constructor from cl_device_id.
-     * 
+    /*! \brief Copy constructor.
+     *
      *  This simply copies the device ID value, which is an inexpensive operation.
      */
-    __CL_EXPLICIT_CONSTRUCTORS Device(const cl_device_id &device) : detail::Wrapper<cl_type>(device) { }
+    Device(const Device& device) : detail::Wrapper<cl_type>(device) { }
+
+    /*! \brief Constructor from cl_device_id.
+     *
+     *  This simply copies the device ID value, which is an inexpensive operation.
+     */
+    Device(const cl_device_id &device) : detail::Wrapper<cl_type>(device) { }
 
     /*! \brief Returns the first device on the default context.
      *
@@ -2016,8 +1928,20 @@ public:
      */
     static Device getDefault(cl_int * err = NULL);
 
+    /*! \brief Assignment operator from Device.
+     *
+     *  This simply copies the device ID value, which is an inexpensive operation.
+     */
+    Device& operator = (const Device& rhs)
+    {
+        if (this != &rhs) {
+            detail::Wrapper<cl_type>::operator=(rhs);
+        }
+        return *this;
+    }
+
     /*! \brief Assignment operator from cl_device_id.
-     * 
+     *
      *  This simply copies the device ID value, which is an inexpensive operation.
      */
     Device& operator = (const cl_device_id& rhs)
@@ -2025,36 +1949,6 @@ public:
         detail::Wrapper<cl_type>::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Device(const Device& dev) : detail::Wrapper<cl_type>(dev) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Device& operator = (const Device &dev)
-    {
-        detail::Wrapper<cl_type>::operator=(dev);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Device(Device&& dev) CL_HPP_NOEXCEPT : detail::Wrapper<cl_type>(std::move(dev)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Device& operator = (Device &&dev)
-    {
-        detail::Wrapper<cl_type>::operator=(std::move(dev));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 
     //! \brief Wrapper for clGetDeviceInfo().
     template <typename T>
@@ -2114,7 +2008,7 @@ public:
         const cl_device_partition_property_ext * properties,
         VECTOR_CLASS<Device>* devices)
     {
-        typedef CL_API_ENTRY cl_int 
+        typedef CL_API_ENTRY cl_int
             ( CL_API_CALL * PFN_clCreateSubDevicesEXT)(
                 cl_device_id /*in_device*/,
                 const cl_device_partition_property_ext * /* properties */,
@@ -2157,14 +2051,32 @@ public:
     //! \brief Default constructor - initializes to NULL.
     Platform() : detail::Wrapper<cl_type>()  { }
 
-    /*! \brief Constructor from cl_platform_id.
-     * 
+    /*! \brief Copy constructor.
+     *
      *  This simply copies the platform ID value, which is an inexpensive operation.
      */
-    __CL_EXPLICIT_CONSTRUCTORS Platform(const cl_platform_id &platform) : detail::Wrapper<cl_type>(platform) { }
+    Platform(const Platform& platform) : detail::Wrapper<cl_type>(platform) { }
+
+    /*! \brief Constructor from cl_platform_id.
+     *
+     *  This simply copies the platform ID value, which is an inexpensive operation.
+     */
+    Platform(const cl_platform_id &platform) : detail::Wrapper<cl_type>(platform) { }
+
+    /*! \brief Assignment operator from Platform.
+     *
+     *  This simply copies the platform ID value, which is an inexpensive operation.
+     */
+    Platform& operator = (const Platform& rhs)
+    {
+        if (this != &rhs) {
+            detail::Wrapper<cl_type>::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment operator from cl_platform_id.
-     * 
+     *
      *  This simply copies the platform ID value, which is an inexpensive operation.
      */
     Platform& operator = (const cl_platform_id& rhs)
@@ -2196,7 +2108,7 @@ public:
     }
 
     /*! \brief Gets a list of devices for this platform.
-     * 
+     *
      *  Wraps clGetDeviceIDs().
      */
     cl_int getDevices(
@@ -2253,8 +2165,8 @@ public:
         VECTOR_CLASS<Device>* devices) const
     {
         typedef CL_API_ENTRY cl_int (CL_API_CALL *PFN_clGetDeviceIDsFromD3D10KHR)(
-            cl_platform_id platform, 
-            cl_d3d10_device_source_khr d3d_device_source, 
+            cl_platform_id platform,
+            cl_d3d10_device_source_khr d3d_device_source,
             void * d3d_object,
             cl_d3d10_device_set_khr d3d_device_set,
             cl_uint num_entries,
@@ -2270,12 +2182,12 @@ public:
 
         cl_uint n = 0;
         cl_int err = pfn_clGetDeviceIDsFromD3D10KHR(
-            object_, 
-            d3d_device_source, 
+            object_,
+            d3d_device_source,
             d3d_object,
-            d3d_device_set, 
-            0, 
-            NULL, 
+            d3d_device_set,
+            0,
+            NULL,
             &n);
         if (err != CL_SUCCESS) {
             return detail::errHandler(err, __GET_DEVICE_IDS_ERR);
@@ -2283,12 +2195,12 @@ public:
 
         cl_device_id* ids = (cl_device_id*) alloca(n * sizeof(cl_device_id));
         err = pfn_clGetDeviceIDsFromD3D10KHR(
-            object_, 
-            d3d_device_source, 
+            object_,
+            d3d_device_source,
             d3d_object,
             d3d_device_set,
-            n, 
-            ids, 
+            n,
+            ids,
             NULL);
         if (err != CL_SUCCESS) {
             return detail::errHandler(err, __GET_DEVICE_IDS_ERR);
@@ -2300,7 +2212,7 @@ public:
 #endif
 
     /*! \brief Gets a list of available platforms.
-     * 
+     *
      *  Wraps clGetPlatformIDs().
      */
     static cl_int get(
@@ -2329,7 +2241,7 @@ public:
     }
 
     /*! \brief Gets the first available platform.
-     * 
+     *
      *  Wraps clGetPlatformIDs(), returning the first result.
      */
     static cl_int get(
@@ -2358,7 +2270,7 @@ public:
     }
 
     /*! \brief Gets the first available platform, returning it by value.
-     * 
+     *
      *  Wraps clGetPlatformIDs(), returning the first result.
      */
     static Platform get(
@@ -2372,7 +2284,6 @@ public:
             if (errResult != NULL) {
                 *errResult = err;
             }
-            return Platform();
         }
 
         cl_platform_id* ids = (cl_platform_id*) alloca(
@@ -2381,23 +2292,22 @@ public:
 
         if (err != CL_SUCCESS) {
             detail::errHandler(err, __GET_PLATFORM_IDS_ERR);
-            if (errResult != NULL) {
-                *errResult = err;
-            }
-            return Platform();
         }
 
-        
-        return Platform(ids[0]);
+        if (errResult != NULL) {
+            *errResult = err;
+        }
+
+        return ids[0];
     }
 
-    static Platform getDefault( 
+    static Platform getDefault(
         cl_int *errResult = NULL )
     {
         return get(errResult);
     }
 
-    
+
 #if defined(CL_VERSION_1_2)
     //! \brief Wrapper for clUnloadCompiler().
     cl_int
@@ -2433,19 +2343,20 @@ UnloadCompiler()
  *
  *  \see cl_context
  */
-class Context 
+class Context
     : public detail::Wrapper<cl_context>
 {
 private:
-
-#ifdef CL_HPP_CPP11_ATOMICS_SUPPORTED
-    static std::atomic<int> default_initialized_;
-#else // !CL_HPP_CPP11_ATOMICS_SUPPORTED
     static volatile int default_initialized_;
-#endif // !CL_HPP_CPP11_ATOMICS_SUPPORTED
     static Context default_;
     static volatile cl_int default_error_;
 public:
+    /*! \brief Destructor.
+     *
+     *  This calls clReleaseContext() on the value held by this instance.
+     */
+    ~Context() { }
+
     /*! \brief Constructs a context including a list of specified devices.
      *
      *  Wraps clCreateContext().
@@ -2523,7 +2434,7 @@ public:
     {
         cl_int error;
 
-#if !defined(__APPLE__) && !defined(__MACOS)
+#if !defined(__APPLE__) || !defined(__MACOS)
         cl_context_properties prop[4] = {CL_CONTEXT_PLATFORM, 0, 0, 0 };
 
         if (properties == NULL) {
@@ -2591,46 +2502,16 @@ public:
         }
     }
 
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Context(const Context& ctx) : detail::Wrapper<cl_type>(ctx) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Context& operator = (const Context &ctx)
-    {
-        detail::Wrapper<cl_type>::operator=(ctx);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Context(Context&& ctx) CL_HPP_NOEXCEPT : detail::Wrapper<cl_type>(std::move(ctx)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Context& operator = (Context &&ctx)
-    {
-        detail::Wrapper<cl_type>::operator=(std::move(ctx));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-
     /*! \brief Returns a singleton context including all devices of CL_DEVICE_TYPE_DEFAULT.
      *
      *  \note All calls to this function return the same cl_context as the first.
      */
-    static Context getDefault(cl_int * err = NULL) 
+    static Context getDefault(cl_int * err = NULL)
     {
         int state = detail::compare_exchange(
-            &default_initialized_, 
+            &default_initialized_,
             __DEFAULT_BEING_INITIALIZED, __DEFAULT_NOT_INITIALIZED);
-        
+
         if (state & __DEFAULT_INITIALIZED) {
             if (err != NULL) {
                 *err = default_error_;
@@ -2676,15 +2557,34 @@ public:
     //! \brief Default constructor - initializes to NULL.
     Context() : detail::Wrapper<cl_type>() { }
 
+    /*! \brief Copy constructor.
+     *
+     *  This calls clRetainContext() on the parameter's cl_context.
+     */
+    Context(const Context& context) : detail::Wrapper<cl_type>(context) { }
+
     /*! \brief Constructor from cl_context - takes ownership.
-     * 
+     *
      *  This effectively transfers ownership of a refcount on the cl_context
      *  into the new Context object.
      */
     __CL_EXPLICIT_CONSTRUCTORS Context(const cl_context& context) : detail::Wrapper<cl_type>(context) { }
 
+    /*! \brief Assignment operator from Context.
+     *
+     *  This calls clRetainContext() on the parameter and clReleaseContext() on
+     *  the previous value held by this instance.
+     */
+    Context& operator = (const Context& rhs)
+    {
+        if (this != &rhs) {
+            detail::Wrapper<cl_type>::operator=(rhs);
+        }
+        return *this;
+    }
+
     /*! \brief Assignment operator from cl_context - takes ownership.
-     * 
+     *
      *  This effectively transfers ownership of a refcount on the rhs and calls
      *  clReleaseContext() on the value previously held by this instance.
      */
@@ -2718,7 +2618,7 @@ public:
     }
 
     /*! \brief Gets a list of supported image formats.
-     *  
+     *
      *  Wraps clGetSupportedImageFormats().
      */
     cl_int getSupportedImageFormats(
@@ -2728,11 +2628,11 @@ public:
     {
         cl_uint numEntries;
         cl_int err = ::clGetSupportedImageFormats(
-           object_, 
+           object_,
            flags,
-           type, 
-           0, 
-           NULL, 
+           type,
+           0,
+           NULL,
            &numEntries);
         if (err != CL_SUCCESS) {
             return detail::errHandler(err, __GET_SUPPORTED_IMAGE_FORMATS_ERR);
@@ -2741,11 +2641,11 @@ public:
         ImageFormat* value = (ImageFormat*)
             alloca(numEntries * sizeof(ImageFormat));
         err = ::clGetSupportedImageFormats(
-            object_, 
-            flags, 
-            type, 
+            object_,
+            flags,
+            type,
             numEntries,
-            (cl_image_format*) value, 
+            (cl_image_format*) value,
             NULL);
         if (err != CL_SUCCESS) {
             return detail::errHandler(err, __GET_SUPPORTED_IMAGE_FORMATS_ERR);
@@ -2762,7 +2662,7 @@ inline Device Device::getDefault(cl_int * err)
     Device device;
 
     Context context = Context::getDefault(&error);
-    detail::errHandler(error, __CREATE_CONTEXT_ERR);
+    detail::errHandler(error, __CREATE_COMMAND_QUEUE_ERR);
 
     if (error != CL_SUCCESS) {
         if (err != NULL) {
@@ -2781,22 +2681,14 @@ inline Device Device::getDefault(cl_int * err)
 
 
 #ifdef _WIN32
-#ifdef CL_HPP_CPP11_ATOMICS_SUPPORTED
-__declspec(selectany) std::atomic<int> Context::default_initialized_;
-#else // !CL_HPP_CPP11_ATOMICS_SUPPORTED
 __declspec(selectany) volatile int Context::default_initialized_ = __DEFAULT_NOT_INITIALIZED;
-#endif // !CL_HPP_CPP11_ATOMICS_SUPPORTED
 __declspec(selectany) Context Context::default_;
 __declspec(selectany) volatile cl_int Context::default_error_ = CL_SUCCESS;
-#else // !_WIN32
-#ifdef CL_HPP_CPP11_ATOMICS_SUPPORTED
-__attribute__((weak)) std::atomic<int> Context::default_initialized_;
-#else // !CL_HPP_CPP11_ATOMICS_SUPPORTED
+#else
 __attribute__((weak)) volatile int Context::default_initialized_ = __DEFAULT_NOT_INITIALIZED;
-#endif // !CL_HPP_CPP11_ATOMICS_SUPPORTED
 __attribute__((weak)) Context Context::default_;
 __attribute__((weak)) volatile cl_int Context::default_error_ = CL_SUCCESS;
-#endif // !_WIN32
+#endif
 
 /*! \brief Class interface for cl_event.
  *
@@ -2809,20 +2701,45 @@ __attribute__((weak)) volatile cl_int Context::default_error_ = CL_SUCCESS;
 class Event : public detail::Wrapper<cl_event>
 {
 public:
+    /*! \brief Destructor.
+     *
+     *  This calls clReleaseEvent() on the value held by this instance.
+     */
+    ~Event() { }
+
     //! \brief Default constructor - initializes to NULL.
     Event() : detail::Wrapper<cl_type>() { }
 
+    /*! \brief Copy constructor.
+     *
+     *  This calls clRetainEvent() on the parameter's cl_event.
+     */
+    Event(const Event& event) : detail::Wrapper<cl_type>(event) { }
+
     /*! \brief Constructor from cl_event - takes ownership.
-     * 
+     *
      *  This effectively transfers ownership of a refcount on the cl_event
      *  into the new Event object.
      */
-    __CL_EXPLICIT_CONSTRUCTORS Event(const cl_event& event) : detail::Wrapper<cl_type>(event) { }
+    Event(const cl_event& event) : detail::Wrapper<cl_type>(event) { }
 
     /*! \brief Assignment operator from cl_event - takes ownership.
      *
      *  This effectively transfers ownership of a refcount on the rhs and calls
      *  clReleaseEvent() on the value previously held by this instance.
+     */
+    Event& operator = (const Event& rhs)
+    {
+        if (this != &rhs) {
+            detail::Wrapper<cl_type>::operator=(rhs);
+        }
+        return *this;
+    }
+
+    /*! \brief Assignment operator from cl_event.
+     *
+     *  This calls clRetainEvent() on the parameter and clReleaseEvent() on
+     *  the previous value held by this instance.
      */
     Event& operator = (const cl_event& rhs)
     {
@@ -2877,7 +2794,7 @@ public:
     }
 
     /*! \brief Blocks the calling thread until this event completes.
-     * 
+     *
      *  Wraps clWaitForEvents().
      */
     cl_int wait() const
@@ -2894,7 +2811,7 @@ public:
      */
     cl_int setCallback(
         cl_int type,
-        void (CL_CALLBACK * pfn_notify)(cl_event, cl_int, void *),		
+        void (CL_CALLBACK * pfn_notify)(cl_event, cl_int, void *),
         void * user_data = NULL)
     {
         return detail::errHandler(
@@ -2902,13 +2819,13 @@ public:
                 object_,
                 type,
                 pfn_notify,
-                user_data), 
+                user_data),
             __SET_EVENT_CALLBACK_ERR);
     }
 #endif
 
     /*! \brief Blocks the calling thread until every event specified is complete.
-     * 
+     *
      *  Wraps clWaitForEvents().
      */
     static cl_int
@@ -2916,14 +2833,14 @@ public:
     {
         return detail::errHandler(
             ::clWaitForEvents(
-                (cl_uint) events.size(), (events.size() > 0) ? (cl_event*)&events.front() : NULL),
+                (cl_uint) events.size(), (cl_event*)&events.front()),
             __WAIT_FOR_EVENTS_ERR);
     }
 };
 
 #if defined(CL_VERSION_1_1)
 /*! \brief Class interface for user events (a subset of cl_event's).
- * 
+ *
  *  See Event for details about copy semantics, etc.
  */
 class UserEvent : public Event
@@ -2951,6 +2868,18 @@ public:
     //! \brief Default constructor - initializes to NULL.
     UserEvent() : Event() { }
 
+    //! \brief Copy constructor - performs shallow copy.
+    UserEvent(const UserEvent& event) : Event(event) { }
+
+    //! \brief Assignment Operator - performs shallow copy.
+    UserEvent& operator = (const UserEvent& rhs)
+    {
+        if (this != &rhs) {
+            Event::operator=(rhs);
+        }
+        return *this;
+    }
+
     /*! \brief Sets the execution status of a user event object.
      *
      *  Wraps clSetUserEventStatus().
@@ -2958,14 +2887,14 @@ public:
     cl_int setStatus(cl_int status)
     {
         return detail::errHandler(
-            ::clSetUserEventStatus(object_,status), 
+            ::clSetUserEventStatus(object_,status),
             __SET_USER_EVENT_STATUS_ERR);
     }
 };
 #endif
 
 /*! \brief Blocks the calling thread until every event specified is complete.
- * 
+ *
  *  Wraps clWaitForEvents().
  */
 inline static cl_int
@@ -2973,7 +2902,7 @@ WaitForEvents(const VECTOR_CLASS<Event>& events)
 {
     return detail::errHandler(
         ::clWaitForEvents(
-            (cl_uint) events.size(), (events.size() > 0) ? (cl_event*)&events.front() : NULL),
+            (cl_uint) events.size(), (cl_event*)&events.front()),
         __WAIT_FOR_EVENTS_ERR);
 }
 
@@ -2988,15 +2917,41 @@ WaitForEvents(const VECTOR_CLASS<Event>& events)
 class Memory : public detail::Wrapper<cl_mem>
 {
 public:
+
+    /*! \brief Destructor.
+     *
+     *  This calls clReleaseMemObject() on the value held by this instance.
+     */
+    ~Memory() {}
+
     //! \brief Default constructor - initializes to NULL.
     Memory() : detail::Wrapper<cl_type>() { }
 
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  This calls clRetainMemObject() on the parameter's cl_mem.
+     */
+    Memory(const Memory& memory) : detail::Wrapper<cl_type>(memory) { }
+
     /*! \brief Constructor from cl_mem - takes ownership.
-     * 
+     *
      *  This effectively transfers ownership of a refcount on the cl_mem
      *  into the new Memory object.
      */
     __CL_EXPLICIT_CONSTRUCTORS Memory(const cl_mem& memory) : detail::Wrapper<cl_type>(memory) { }
+
+    /*! \brief Assignment operator from Memory.
+     *
+     *  This calls clRetainMemObject() on the parameter and clReleaseMemObject()
+     *  on the previous value held by this instance.
+     */
+    Memory& operator = (const Memory& rhs)
+    {
+        if (this != &rhs) {
+            detail::Wrapper<cl_type>::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment operator from cl_mem - takes ownership.
      *
@@ -3008,36 +2963,6 @@ public:
         detail::Wrapper<cl_type>::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Memory(const Memory& mem) : detail::Wrapper<cl_type>(mem) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Memory& operator = (const Memory &mem)
-    {
-        detail::Wrapper<cl_type>::operator=(mem);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Memory(Memory&& mem) CL_HPP_NOEXCEPT : detail::Wrapper<cl_type>(std::move(mem)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Memory& operator = (Memory &&mem)
-    {
-        detail::Wrapper<cl_type>::operator=(std::move(mem));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 
     //! \brief Wrapper for clGetMemObjectInfo().
     template <typename T>
@@ -3077,14 +3002,14 @@ public:
      *  value - not the Memory class instance.
      */
     cl_int setDestructorCallback(
-        void (CL_CALLBACK * pfn_notify)(cl_mem, void *),		
+        void (CL_CALLBACK * pfn_notify)(cl_mem, void *),
         void * user_data = NULL)
     {
         return detail::errHandler(
             ::clSetMemObjectDestructorCallback(
                 object_,
                 pfn_notify,
-                user_data), 
+                user_data),
             __SET_MEM_OBJECT_DESTRUCTOR_CALLBACK_ERR);
     }
 #endif
@@ -3104,7 +3029,7 @@ cl_int copy( const CommandQueue &queue, const cl::Buffer &buffer, IteratorType s
 
 
 /*! \brief Class interface for Buffer Memory Objects.
- * 
+ *
  *  See Memory for details about copy semantics, etc.
  *
  *  \see Memory
@@ -3189,7 +3114,7 @@ public:
         if( useHostPtr ) {
             flags |= CL_MEM_USE_HOST_PTR;
         }
-        
+
         ::size_t size = sizeof(DataType)*(endIterator - startIterator);
 
         Context context = Context::getDefault(err);
@@ -3223,22 +3148,32 @@ public:
     Buffer(const Context &context, IteratorType startIterator, IteratorType endIterator,
         bool readOnly, bool useHostPtr = false, cl_int* err = NULL);
 
-    /*!
-    * \brief Construct a Buffer from a host container via iterators using a specified queue.
-    * If useHostPtr is specified iterators must represent contiguous data.
-    */
-    template< typename IteratorType >
-    Buffer(const CommandQueue &queue, IteratorType startIterator, IteratorType endIterator,
-        bool readOnly, bool useHostPtr = false, cl_int* err = NULL);
-
     //! \brief Default constructor - initializes to NULL.
     Buffer() : Memory() { }
+
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Buffer(const Buffer& buffer) : Memory(buffer) { }
 
     /*! \brief Constructor from cl_mem - takes ownership.
      *
      *  See Memory for further details.
      */
     __CL_EXPLICIT_CONSTRUCTORS Buffer(const cl_mem& buffer) : Memory(buffer) { }
+
+    /*! \brief Assignment from Buffer - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Buffer& operator = (const Buffer& rhs)
+    {
+        if (this != &rhs) {
+            Memory::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment from cl_mem - performs shallow copy.
      *
@@ -3249,36 +3184,6 @@ public:
         Memory::operator=(rhs);
         return *this;
     }
-    
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Buffer(const Buffer& buf) : Memory(buf) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Buffer& operator = (const Buffer &buf)
-    {
-        Memory::operator=(buf);
-        return *this;
-    }
-    
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Buffer(Buffer&& buf) CL_HPP_NOEXCEPT : Memory(std::move(buf)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Buffer& operator = (Buffer &&buf)
-    {
-        Memory::operator=(std::move(buf));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 
 #if defined(CL_VERSION_1_1)
     /*! \brief Creates a new buffer object from this.
@@ -3294,10 +3199,10 @@ public:
         Buffer result;
         cl_int error;
         result.object_ = ::clCreateSubBuffer(
-            object_, 
-            flags, 
-            buffer_create_type, 
-            buffer_create_info, 
+            object_,
+            flags,
+            buffer_create_type,
+            buffer_create_info,
             &error);
 
         detail::errHandler(error, __CREATE_SUBBUFFER_ERR);
@@ -3306,7 +3211,7 @@ public:
         }
 
         return result;
-    }		
+    }
 #endif
 };
 
@@ -3314,7 +3219,7 @@ public:
 /*! \brief Class interface for creating OpenCL buffers from ID3D10Buffer's.
  *
  *  This is provided to facilitate interoperability with Direct3D.
- * 
+ *
  *  See Memory for details about copy semantics, etc.
  *
  *  \see Memory
@@ -3369,11 +3274,29 @@ public:
     //! \brief Default constructor - initializes to NULL.
     BufferD3D10() : Buffer() { }
 
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    BufferD3D10(const BufferD3D10& buffer) : Buffer(buffer) { }
+
     /*! \brief Constructor from cl_mem - takes ownership.
      *
      *  See Memory for further details.
      */
     __CL_EXPLICIT_CONSTRUCTORS BufferD3D10(const cl_mem& buffer) : Buffer(buffer) { }
+
+    /*! \brief Assignment from BufferD3D10 - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    BufferD3D10& operator = (const BufferD3D10& rhs)
+    {
+        if (this != &rhs) {
+            Buffer::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment from cl_mem - performs shallow copy.
      *
@@ -3384,45 +3307,15 @@ public:
         Buffer::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferD3D10(const BufferD3D10& buf) : Buffer(buf) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferD3D10& operator = (const BufferD3D10 &buf)
-    {
-        Buffer::operator=(buf);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferD3D10(BufferD3D10&& buf) CL_HPP_NOEXCEPT : Buffer(std::move(buf)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferD3D10& operator = (BufferD3D10 &&buf)
-    {
-        Buffer::operator=(std::move(buf));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 #endif
 
 /*! \brief Class interface for GL Buffer Memory Objects.
  *
  *  This is provided to facilitate interoperability with OpenGL.
- * 
+ *
  *  See Memory for details about copy semantics, etc.
- * 
+ *
  *  \see Memory
  */
 class BufferGL : public Buffer
@@ -3436,7 +3329,7 @@ public:
     BufferGL(
         const Context& context,
         cl_mem_flags flags,
-        cl_GLuint bufobj,
+        GLuint bufobj,
         cl_int * err = NULL)
     {
         cl_int error;
@@ -3455,11 +3348,29 @@ public:
     //! \brief Default constructor - initializes to NULL.
     BufferGL() : Buffer() { }
 
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    BufferGL(const BufferGL& buffer) : Buffer(buffer) { }
+
     /*! \brief Constructor from cl_mem - takes ownership.
      *
      *  See Memory for further details.
      */
     __CL_EXPLICIT_CONSTRUCTORS BufferGL(const cl_mem& buffer) : Buffer(buffer) { }
+
+    /*! \brief Assignment from BufferGL - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    BufferGL& operator = (const BufferGL& rhs)
+    {
+        if (this != &rhs) {
+            Buffer::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment from cl_mem - performs shallow copy.
      *
@@ -3471,40 +3382,93 @@ public:
         return *this;
     }
 
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferGL(const BufferGL& buf) : Buffer(buf) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferGL& operator = (const BufferGL &buf)
+    //! \brief Wrapper for clGetGLObjectInfo().
+    cl_int getObjectInfo(
+        cl_gl_object_type *type,
+        GLuint * gl_object_name)
     {
-        Buffer::operator=(buf);
+        return detail::errHandler(
+            ::clGetGLObjectInfo(object_,type,gl_object_name),
+            __GET_GL_OBJECT_INFO_ERR);
+    }
+};
+
+/*! \brief Class interface for GL Render Buffer Memory Objects.
+ *
+ *  This is provided to facilitate interoperability with OpenGL.
+ *
+ *  See Memory for details about copy semantics, etc.
+ *
+ *  \see Memory
+ */
+class BufferRenderGL : public Buffer
+{
+public:
+    /*! \brief Constructs a BufferRenderGL in a specified context, from a given
+     *         GL Renderbuffer.
+     *
+     *  Wraps clCreateFromGLRenderbuffer().
+     */
+    BufferRenderGL(
+        const Context& context,
+        cl_mem_flags flags,
+        GLuint bufobj,
+        cl_int * err = NULL)
+    {
+        cl_int error;
+        object_ = ::clCreateFromGLRenderbuffer(
+            context(),
+            flags,
+            bufobj,
+            &error);
+
+        detail::errHandler(error, __CREATE_GL_RENDER_BUFFER_ERR);
+        if (err != NULL) {
+            *err = error;
+        }
+    }
+
+    //! \brief Default constructor - initializes to NULL.
+    BufferRenderGL() : Buffer() { }
+
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    BufferRenderGL(const BufferGL& buffer) : Buffer(buffer) { }
+
+    /*! \brief Constructor from cl_mem - takes ownership.
+     *
+     *  See Memory for further details.
+     */
+    __CL_EXPLICIT_CONSTRUCTORS BufferRenderGL(const cl_mem& buffer) : Buffer(buffer) { }
+
+    /*! \brief Assignment from BufferGL - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    BufferRenderGL& operator = (const BufferRenderGL& rhs)
+    {
+        if (this != &rhs) {
+            Buffer::operator=(rhs);
+        }
         return *this;
     }
 
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferGL(BufferGL&& buf) CL_HPP_NOEXCEPT : Buffer(std::move(buf)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferGL& operator = (BufferGL &&buf)
+    /*! \brief Assignment from cl_mem - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    BufferRenderGL& operator = (const cl_mem& rhs)
     {
-        Buffer::operator=(std::move(buf));
+        Buffer::operator=(rhs);
         return *this;
     }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 
     //! \brief Wrapper for clGetGLObjectInfo().
     cl_int getObjectInfo(
         cl_gl_object_type *type,
-        cl_GLuint * gl_object_name)
+        GLuint * gl_object_name)
     {
         return detail::errHandler(
             ::clGetGLObjectInfo(object_,type,gl_object_name),
@@ -3515,7 +3479,7 @@ public:
 /*! \brief C++ base class for Image Memory objects.
  *
  *  See Memory for details about copy semantics, etc.
- * 
+ *
  *  \see Memory
  */
 class Image : public Memory
@@ -3524,11 +3488,29 @@ protected:
     //! \brief Default constructor - initializes to NULL.
     Image() : Memory() { }
 
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image(const Image& image) : Memory(image) { }
+
     /*! \brief Constructor from cl_mem - takes ownership.
      *
      *  See Memory for further details.
      */
     __CL_EXPLICIT_CONSTRUCTORS Image(const cl_mem& image) : Memory(image) { }
+
+    /*! \brief Assignment from Image - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image& operator = (const Image& rhs)
+    {
+        if (this != &rhs) {
+            Memory::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment from cl_mem - performs shallow copy.
      *
@@ -3540,36 +3522,6 @@ protected:
         return *this;
     }
 
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image(const Image& img) : Memory(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image& operator = (const Image &img)
-    {
-        Memory::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image(Image&& img) CL_HPP_NOEXCEPT : Memory(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image& operator = (Image &&img)
-    {
-        Memory::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-
 public:
     //! \brief Wrapper for clGetImageInfo().
     template <typename T>
@@ -3579,7 +3531,7 @@ public:
             detail::getInfo(&::clGetImageInfo, object_, name, param),
             __GET_IMAGE_INFO_ERR);
     }
-    
+
     //! \brief Wrapper for clGetImageInfo() that returns by value.
     template <cl_int name> typename
     detail::param_traits<detail::cl_image_info, name>::param_type
@@ -3599,7 +3551,7 @@ public:
 /*! \brief Class interface for 1D Image Memory objects.
  *
  *  See Memory for details about copy semantics, etc.
- * 
+ *
  *  \see Memory
  */
 class Image1D : public Image
@@ -3625,11 +3577,11 @@ public:
             0, 0, 0, 0, 0, 0, 0, 0
         };
         object_ = ::clCreateImage(
-            context(), 
-            flags, 
-            &format, 
-            &desc, 
-            host_ptr, 
+            context(),
+            flags,
+            &format,
+            &desc,
+            host_ptr,
             &error);
 
         detail::errHandler(error, __CREATE_IMAGE_ERR);
@@ -3641,11 +3593,29 @@ public:
     //! \brief Default constructor - initializes to NULL.
     Image1D() { }
 
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image1D(const Image1D& image1D) : Image(image1D) { }
+
     /*! \brief Constructor from cl_mem - takes ownership.
      *
      *  See Memory for further details.
      */
     __CL_EXPLICIT_CONSTRUCTORS Image1D(const cl_mem& image1D) : Image(image1D) { }
+
+    /*! \brief Assignment from Image1D - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image1D& operator = (const Image1D& rhs)
+    {
+        if (this != &rhs) {
+            Image::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment from cl_mem - performs shallow copy.
      *
@@ -3656,36 +3626,6 @@ public:
         Image::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1D(const Image1D& img) : Image(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1D& operator = (const Image1D &img)
-    {
-        Image::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1D(Image1D&& img) CL_HPP_NOEXCEPT : Image(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1D& operator = (Image1D &&img)
-    {
-        Image::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 
 /*! \class Image1DBuffer
@@ -3711,11 +3651,11 @@ public:
             buffer()
         };
         object_ = ::clCreateImage(
-            context(), 
-            flags, 
-            &format, 
-            &desc, 
-            NULL, 
+            context(),
+            flags,
+            &format,
+            &desc,
+            NULL,
             &error);
 
         detail::errHandler(error, __CREATE_IMAGE_ERR);
@@ -3726,43 +3666,23 @@ public:
 
     Image1DBuffer() { }
 
+    Image1DBuffer(const Image1DBuffer& image1D) : Image(image1D) { }
+
     __CL_EXPLICIT_CONSTRUCTORS Image1DBuffer(const cl_mem& image1D) : Image(image1D) { }
+
+    Image1DBuffer& operator = (const Image1DBuffer& rhs)
+    {
+        if (this != &rhs) {
+            Image::operator=(rhs);
+        }
+        return *this;
+    }
 
     Image1DBuffer& operator = (const cl_mem& rhs)
     {
         Image::operator=(rhs);
         return *this;
     }
-    
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1DBuffer(const Image1DBuffer& img) : Image(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1DBuffer& operator = (const Image1DBuffer &img)
-    {
-        Image::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1DBuffer(Image1DBuffer&& img) CL_HPP_NOEXCEPT : Image(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1DBuffer& operator = (Image1DBuffer &&img)
-    {
-        Image::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 
 /*! \class Image1DArray
@@ -3792,11 +3712,11 @@ public:
             0, 0, 0, 0
         };
         object_ = ::clCreateImage(
-            context(), 
-            flags, 
-            &format, 
-            &desc, 
-            host_ptr, 
+            context(),
+            flags,
+            &format,
+            &desc,
+            host_ptr,
             &error);
 
         detail::errHandler(error, __CREATE_IMAGE_ERR);
@@ -3807,43 +3727,23 @@ public:
 
     Image1DArray() { }
 
+    Image1DArray(const Image1DArray& imageArray) : Image(imageArray) { }
+
     __CL_EXPLICIT_CONSTRUCTORS Image1DArray(const cl_mem& imageArray) : Image(imageArray) { }
+
+    Image1DArray& operator = (const Image1DArray& rhs)
+    {
+        if (this != &rhs) {
+            Image::operator=(rhs);
+        }
+        return *this;
+    }
 
     Image1DArray& operator = (const cl_mem& rhs)
     {
         Image::operator=(rhs);
         return *this;
     }
-    
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1DArray(const Image1DArray& img) : Image(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1DArray& operator = (const Image1DArray &img)
-    {
-        Image::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1DArray(Image1DArray&& img) CL_HPP_NOEXCEPT : Image(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image1DArray& operator = (Image1DArray &&img)
-    {
-        Image::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 #endif // #if defined(CL_VERSION_1_2)
 
@@ -3851,7 +3751,7 @@ public:
 /*! \brief Class interface for 2D Image Memory objects.
  *
  *  See Memory for details about copy semantics, etc.
- * 
+ *
  *  \see Memory
  */
 class Image2D : public Image
@@ -3929,11 +3829,29 @@ public:
     //! \brief Default constructor - initializes to NULL.
     Image2D() { }
 
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image2D(const Image2D& image2D) : Image(image2D) { }
+
     /*! \brief Constructor from cl_mem - takes ownership.
      *
      *  See Memory for further details.
      */
     __CL_EXPLICIT_CONSTRUCTORS Image2D(const cl_mem& image2D) : Image(image2D) { }
+
+    /*! \brief Assignment from Image2D - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image2D& operator = (const Image2D& rhs)
+    {
+        if (this != &rhs) {
+            Image::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment from cl_mem - performs shallow copy.
      *
@@ -3944,36 +3862,6 @@ public:
         Image::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2D(const Image2D& img) : Image(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2D& operator = (const Image2D &img)
-    {
-        Image::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2D(Image2D&& img) CL_HPP_NOEXCEPT : Image(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2D& operator = (Image2D &&img)
-    {
-        Image::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 
 
@@ -3981,9 +3869,9 @@ public:
 /*! \brief Class interface for GL 2D Image Memory objects.
  *
  *  This is provided to facilitate interoperability with OpenGL.
- * 
+ *
  *  See Memory for details about copy semantics, etc.
- * 
+ *
  *  \see Memory
  *  \note Deprecated for OpenCL 1.2. Please use ImageGL instead.
  */
@@ -3998,9 +3886,9 @@ public:
     Image2DGL(
         const Context& context,
         cl_mem_flags flags,
-        cl_GLenum target,
-        cl_GLint  miplevel,
-        cl_GLuint texobj,
+        GLenum target,
+        GLint  miplevel,
+        GLuint texobj,
         cl_int * err = NULL)
     {
         cl_int error;
@@ -4018,15 +3906,33 @@ public:
         }
 
     }
-    
+
     //! \brief Default constructor - initializes to NULL.
     Image2DGL() : Image2D() { }
+
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image2DGL(const Image2DGL& image) : Image2D(image) { }
 
     /*! \brief Constructor from cl_mem - takes ownership.
      *
      *  See Memory for further details.
      */
     __CL_EXPLICIT_CONSTRUCTORS Image2DGL(const cl_mem& image) : Image2D(image) { }
+
+    /*! \brief Assignment from Image2DGL - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image2DGL& operator = (const Image2DGL& rhs)
+    {
+        if (this != &rhs) {
+            Image2D::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment from cl_mem - performs shallow copy.
      *
@@ -4037,36 +3943,6 @@ public:
         Image2D::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2DGL(const Image2DGL& img) : Image2D(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2DGL& operator = (const Image2DGL &img)
-    {
-        Image2D::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2DGL(Image2DGL&& img) CL_HPP_NOEXCEPT : Image2D(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2DGL& operator = (Image2DGL &&img)
-    {
-        Image2D::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 #endif // #if !defined(CL_VERSION_1_2)
 
@@ -4102,11 +3978,11 @@ public:
             0, 0, 0
         };
         object_ = ::clCreateImage(
-            context(), 
-            flags, 
-            &format, 
-            &desc, 
-            host_ptr, 
+            context(),
+            flags,
+            &format,
+            &desc,
+            host_ptr,
             &error);
 
         detail::errHandler(error, __CREATE_IMAGE_ERR);
@@ -4117,50 +3993,30 @@ public:
 
     Image2DArray() { }
 
+    Image2DArray(const Image2DArray& imageArray) : Image(imageArray) { }
+
     __CL_EXPLICIT_CONSTRUCTORS Image2DArray(const cl_mem& imageArray) : Image(imageArray) { }
+
+    Image2DArray& operator = (const Image2DArray& rhs)
+    {
+        if (this != &rhs) {
+            Image::operator=(rhs);
+        }
+        return *this;
+    }
 
     Image2DArray& operator = (const cl_mem& rhs)
     {
         Image::operator=(rhs);
         return *this;
     }
-    
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2DArray(const Image2DArray& img) : Image(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2DArray& operator = (const Image2DArray &img)
-    {
-        Image::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2DArray(Image2DArray&& img) CL_HPP_NOEXCEPT : Image(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image2DArray& operator = (Image2DArray &&img)
-    {
-        Image::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 #endif // #if defined(CL_VERSION_1_2)
 
 /*! \brief Class interface for 3D Image Memory objects.
  *
  *  See Memory for details about copy semantics, etc.
- * 
+ *
  *  \see Memory
  */
 class Image3D : public Image
@@ -4212,11 +4068,11 @@ public:
                 0, 0, 0
             };
             object_ = ::clCreateImage(
-                context(), 
-                flags, 
-                &format, 
-                &desc, 
-                host_ptr, 
+                context(),
+                flags,
+                &format,
+                &desc,
+                host_ptr,
                 &error);
 
             detail::errHandler(error, __CREATE_IMAGE_ERR);
@@ -4241,13 +4097,31 @@ public:
     }
 
     //! \brief Default constructor - initializes to NULL.
-    Image3D() : Image() { }
+    Image3D() { }
+
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image3D(const Image3D& image3D) : Image(image3D) { }
 
     /*! \brief Constructor from cl_mem - takes ownership.
      *
      *  See Memory for further details.
      */
     __CL_EXPLICIT_CONSTRUCTORS Image3D(const cl_mem& image3D) : Image(image3D) { }
+
+    /*! \brief Assignment from Image3D - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image3D& operator = (const Image3D& rhs)
+    {
+        if (this != &rhs) {
+            Image::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment from cl_mem - performs shallow copy.
      *
@@ -4258,45 +4132,15 @@ public:
         Image::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image3D(const Image3D& img) : Image(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image3D& operator = (const Image3D &img)
-    {
-        Image::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image3D(Image3D&& img) CL_HPP_NOEXCEPT : Image(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image3D& operator = (Image3D &&img)
-    {
-        Image::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 
 #if !defined(CL_VERSION_1_2)
 /*! \brief Class interface for GL 3D Image Memory objects.
  *
  *  This is provided to facilitate interoperability with OpenGL.
- * 
+ *
  *  See Memory for details about copy semantics, etc.
- * 
+ *
  *  \see Memory
  */
 class Image3DGL : public Image3D
@@ -4310,9 +4154,9 @@ public:
     Image3DGL(
         const Context& context,
         cl_mem_flags flags,
-        cl_GLenum target,
-        cl_GLint  miplevel,
-        cl_GLuint texobj,
+        GLenum target,
+        GLint  miplevel,
+        GLuint texobj,
         cl_int * err = NULL)
     {
         cl_int error;
@@ -4333,11 +4177,29 @@ public:
     //! \brief Default constructor - initializes to NULL.
     Image3DGL() : Image3D() { }
 
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image3DGL(const Image3DGL& image) : Image3D(image) { }
+
     /*! \brief Constructor from cl_mem - takes ownership.
      *
      *  See Memory for further details.
      */
     __CL_EXPLICIT_CONSTRUCTORS Image3DGL(const cl_mem& image) : Image3D(image) { }
+
+    /*! \brief Assignment from Image3DGL - performs shallow copy.
+     *
+     *  See Memory for further details.
+     */
+    Image3DGL& operator = (const Image3DGL& rhs)
+    {
+        if (this != &rhs) {
+            Image3D::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment from cl_mem - performs shallow copy.
      *
@@ -4348,36 +4210,6 @@ public:
         Image3D::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image3DGL(const Image3DGL& img) : Image3D(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image3DGL& operator = (const Image3DGL &img)
-    {
-        Image3D::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image3DGL(Image3DGL&& img) CL_HPP_NOEXCEPT : Image3D(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Image3DGL& operator = (Image3DGL &&img)
-    {
-        Image3D::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 #endif // #if !defined(CL_VERSION_1_2)
 
@@ -4394,15 +4226,15 @@ public:
     ImageGL(
         const Context& context,
         cl_mem_flags flags,
-        cl_GLenum target,
-        cl_GLint  miplevel,
-        cl_GLuint texobj,
+        GLenum target,
+        GLint  miplevel,
+        GLuint texobj,
         cl_int * err = NULL)
     {
         cl_int error;
         object_ = ::clCreateFromGLTexture(
-            context(), 
-            flags, 
+            context(),
+            flags,
             target,
             miplevel,
             texobj,
@@ -4416,177 +4248,25 @@ public:
 
     ImageGL() : Image() { }
 
+    ImageGL(const ImageGL& image) : Image(image) { }
+
     __CL_EXPLICIT_CONSTRUCTORS ImageGL(const cl_mem& image) : Image(image) { }
+
+    ImageGL& operator = (const ImageGL& rhs)
+    {
+        if (this != &rhs) {
+            Image::operator=(rhs);
+        }
+        return *this;
+    }
 
     ImageGL& operator = (const cl_mem& rhs)
     {
         Image::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    ImageGL(const ImageGL& img) : Image(img) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    ImageGL& operator = (const ImageGL &img)
-    {
-        Image::operator=(img);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    ImageGL(ImageGL&& img) CL_HPP_NOEXCEPT : Image(std::move(img)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    ImageGL& operator = (ImageGL &&img)
-    {
-        Image::operator=(std::move(img));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 };
 #endif // #if defined(CL_VERSION_1_2)
-
-/*! \brief Class interface for GL Render Buffer Memory Objects.
-*
-*  This is provided to facilitate interoperability with OpenGL.
-*
-*  See Memory for details about copy semantics, etc.
-*
-*  \see Memory
-*/
-class BufferRenderGL : 
-#if defined(CL_VERSION_1_2)
-    public ImageGL
-#else // #if defined(CL_VERSION_1_2)
-    public Image2DGL
-#endif //#if defined(CL_VERSION_1_2)
-{
-public:
-    /*! \brief Constructs a BufferRenderGL in a specified context, from a given
-    *         GL Renderbuffer.
-    *
-    *  Wraps clCreateFromGLRenderbuffer().
-    */
-    BufferRenderGL(
-        const Context& context,
-        cl_mem_flags flags,
-        cl_GLuint bufobj,
-        cl_int * err = NULL)
-    {
-        cl_int error;
-        object_ = ::clCreateFromGLRenderbuffer(
-            context(),
-            flags,
-            bufobj,
-            &error);
-
-        detail::errHandler(error, __CREATE_GL_RENDER_BUFFER_ERR);
-        if (err != NULL) {
-            *err = error;
-        }
-    }
-
-    //! \brief Default constructor - initializes to NULL.
-#if defined(CL_VERSION_1_2)
-    BufferRenderGL() : ImageGL() {};
-#else // #if defined(CL_VERSION_1_2)
-    BufferRenderGL() : Image2DGL() {};
-#endif //#if defined(CL_VERSION_1_2)
-
-    /*! \brief Constructor from cl_mem - takes ownership.
-    *
-    *  See Memory for further details.
-    */
-#if defined(CL_VERSION_1_2)
-    __CL_EXPLICIT_CONSTRUCTORS BufferRenderGL(const cl_mem& buffer) : ImageGL(buffer) { }
-#else // #if defined(CL_VERSION_1_2)
-    __CL_EXPLICIT_CONSTRUCTORS BufferRenderGL(const cl_mem& buffer) : Image2DGL(buffer) { }
-#endif //#if defined(CL_VERSION_1_2)
-
-
-    /*! \brief Assignment from cl_mem - performs shallow copy.
-    *
-    *  See Memory for further details.
-    */
-    BufferRenderGL& operator = (const cl_mem& rhs)
-    {
-#if defined(CL_VERSION_1_2)
-        ImageGL::operator=(rhs);
-#else // #if defined(CL_VERSION_1_2)
-        Image2DGL::operator=(rhs);
-#endif //#if defined(CL_VERSION_1_2)
-        
-        return *this;
-    }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-    * Required for MSVC.
-    */
-#if defined(CL_VERSION_1_2)
-    BufferRenderGL(const BufferRenderGL& buf) : ImageGL(buf) {}
-#else // #if defined(CL_VERSION_1_2)
-    BufferRenderGL(const BufferRenderGL& buf) : Image2DGL(buf) {}
-#endif //#if defined(CL_VERSION_1_2)
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferRenderGL& operator = (const BufferRenderGL &rhs)
-    {
-#if defined(CL_VERSION_1_2)
-        ImageGL::operator=(rhs);
-#else // #if defined(CL_VERSION_1_2)
-        Image2DGL::operator=(rhs);
-#endif //#if defined(CL_VERSION_1_2)
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-    * Required for MSVC.
-    */
-#if defined(CL_VERSION_1_2)
-    BufferRenderGL(BufferRenderGL&& buf) CL_HPP_NOEXCEPT : ImageGL(std::move(buf)) {}
-#else // #if defined(CL_VERSION_1_2)
-    BufferRenderGL(BufferRenderGL&& buf) CL_HPP_NOEXCEPT : Image2DGL(std::move(buf)) {}
-#endif //#if defined(CL_VERSION_1_2)
-    
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-    * Required for MSVC.
-    */
-    BufferRenderGL& operator = (BufferRenderGL &&buf)
-    {
-#if defined(CL_VERSION_1_2)
-        ImageGL::operator=(std::move(buf));
-#else // #if defined(CL_VERSION_1_2)
-        Image2DGL::operator=(std::move(buf));
-#endif //#if defined(CL_VERSION_1_2)
-        
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-
-    //! \brief Wrapper for clGetGLObjectInfo().
-    cl_int getObjectInfo(
-        cl_gl_object_type *type,
-        cl_GLuint * gl_object_name)
-    {
-        return detail::errHandler(
-            ::clGetGLObjectInfo(object_, type, gl_object_name),
-            __GET_GL_OBJECT_INFO_ERR);
-    }
-};
 
 /*! \brief Class interface for cl_sampler.
  *
@@ -4594,11 +4274,17 @@ public:
  *        to the same underlying cl_sampler as the original.  For details, see
  *        clRetainSampler() and clReleaseSampler().
  *
- *  \see cl_sampler 
+ *  \see cl_sampler
  */
 class Sampler : public detail::Wrapper<cl_sampler>
 {
 public:
+    /*! \brief Destructor.
+     *
+     *  This calls clReleaseSampler() on the value held by this instance.
+     */
+    ~Sampler() { }
+
     //! \brief Default constructor - initializes to NULL.
     Sampler() { }
 
@@ -4615,7 +4301,7 @@ public:
     {
         cl_int error;
         object_ = ::clCreateSampler(
-            context(), 
+            context(),
             normalized_coords,
             addressing_mode,
             filter_mode,
@@ -4627,12 +4313,31 @@ public:
         }
     }
 
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  This calls clRetainSampler() on the parameter's cl_sampler.
+     */
+    Sampler(const Sampler& sampler) : detail::Wrapper<cl_type>(sampler) { }
+
     /*! \brief Constructor from cl_sampler - takes ownership.
-     * 
+     *
      *  This effectively transfers ownership of a refcount on the cl_sampler
      *  into the new Sampler object.
      */
-    __CL_EXPLICIT_CONSTRUCTORS Sampler(const cl_sampler& sampler) : detail::Wrapper<cl_type>(sampler) { }
+    Sampler(const cl_sampler& sampler) : detail::Wrapper<cl_type>(sampler) { }
+
+    /*! \brief Assignment operator from Sampler.
+     *
+     *  This calls clRetainSampler() on the parameter and clReleaseSampler()
+     *  on the previous value held by this instance.
+     */
+    Sampler& operator = (const Sampler& rhs)
+    {
+        if (this != &rhs) {
+            detail::Wrapper<cl_type>::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment operator from cl_sampler - takes ownership.
      *
@@ -4644,36 +4349,6 @@ public:
         detail::Wrapper<cl_type>::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Sampler(const Sampler& sam) : detail::Wrapper<cl_type>(sam) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Sampler& operator = (const Sampler &sam)
-    {
-        detail::Wrapper<cl_type>::operator=(sam);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Sampler(Sampler&& sam) CL_HPP_NOEXCEPT : detail::Wrapper<cl_type>(std::move(sam)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Sampler& operator = (Sampler &&sam)
-    {
-        detail::Wrapper<cl_type>::operator=(std::move(sam));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 
     //! \brief Wrapper for clGetSamplerInfo().
     template <typename T>
@@ -4741,11 +4416,11 @@ public:
     }
 
     /*! \brief Conversion operator to const ::size_t *.
-     *  
+     *
      *  \returns a pointer to the size of the first dimension.
      */
-    operator const ::size_t*() const { 
-        return (const ::size_t*) sizes_; 
+    operator const ::size_t*() const {
+        return (const ::size_t*) sizes_;
     }
 
     //! \brief Queries the number of dimensions in the range.
@@ -4767,17 +4442,17 @@ template <typename T>
 struct KernelArgumentHandler
 {
     static ::size_t size(const T&) { return sizeof(T); }
-    static const T* ptr(const T& value) { return &value; }
+    static T* ptr(T& value) { return &value; }
 };
 
 template <>
 struct KernelArgumentHandler<LocalSpaceArg>
 {
     static ::size_t size(const LocalSpaceArg& value) { return value.size_; }
-    static const void* ptr(const LocalSpaceArg&) { return NULL; }
+    static void* ptr(LocalSpaceArg&) { return NULL; }
 };
 
-} 
+}
 //! \endcond
 
 /*! __local
@@ -4818,15 +4493,40 @@ class Kernel : public detail::Wrapper<cl_kernel>
 public:
     inline Kernel(const Program& program, const char* name, cl_int* err = NULL);
 
+    /*! \brief Destructor.
+     *
+     *  This calls clReleaseKernel() on the value held by this instance.
+     */
+    ~Kernel() { }
+
     //! \brief Default constructor - initializes to NULL.
     Kernel() { }
 
+    /*! \brief Copy constructor - performs shallow copy.
+     *
+     *  This calls clRetainKernel() on the parameter's cl_kernel.
+     */
+    Kernel(const Kernel& kernel) : detail::Wrapper<cl_type>(kernel) { }
+
     /*! \brief Constructor from cl_kernel - takes ownership.
-     * 
+     *
      *  This effectively transfers ownership of a refcount on the cl_kernel
      *  into the new Kernel object.
      */
     __CL_EXPLICIT_CONSTRUCTORS Kernel(const cl_kernel& kernel) : detail::Wrapper<cl_type>(kernel) { }
+
+    /*! \brief Assignment operator from Kernel.
+     *
+     *  This calls clRetainKernel() on the parameter and clReleaseKernel()
+     *  on the previous value held by this instance.
+     */
+    Kernel& operator = (const Kernel& rhs)
+    {
+        if (this != &rhs) {
+            detail::Wrapper<cl_type>::operator=(rhs);
+        }
+        return *this;
+    }
 
     /*! \brief Assignment operator from cl_kernel - takes ownership.
      *
@@ -4838,36 +4538,6 @@ public:
         detail::Wrapper<cl_type>::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Kernel(const Kernel& kernel) : detail::Wrapper<cl_type>(kernel) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Kernel& operator = (const Kernel &kernel)
-    {
-        detail::Wrapper<cl_type>::operator=(kernel);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Kernel(Kernel&& kernel) CL_HPP_NOEXCEPT : detail::Wrapper<cl_type>(std::move(kernel)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Kernel& operator = (Kernel &&kernel)
-    {
-        detail::Wrapper<cl_type>::operator=(std::move(kernel));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 
     template <typename T>
     cl_int getInfo(cl_kernel_info name, T* param) const
@@ -4937,7 +4607,7 @@ public:
     }
 
     template <typename T>
-    cl_int setArg(cl_uint index, const T &value)
+    cl_int setArg(cl_uint index, T value)
     {
         return detail::errHandler(
             ::clSetKernelArg(
@@ -4948,7 +4618,7 @@ public:
             __SET_KERNEL_ARGS_ERR);
     }
 
-    cl_int setArg(cl_uint index, ::size_t size, const void* argPtr)
+    cl_int setArg(cl_uint index, ::size_t size, void* argPtr)
     {
         return detail::errHandler(
             ::clSetKernelArg(object_, index, size, argPtr),
@@ -5072,7 +4742,7 @@ public:
      *   Set to CL_INVALID_BINARY if the binary provided is not valid for the matching device.
      * \param err if non-NULL will be set to CL_SUCCESS on successful operation or one of the following errors:
      *   CL_INVALID_CONTEXT if context is not a valid context.
-     *   CL_INVALID_VALUE if the length of devices is zero; or if the length of binaries does not match the length of devices; 
+     *   CL_INVALID_VALUE if the length of devices is zero; or if the length of binaries does not match the length of devices;
      *     or if any entry in binaries is NULL or has length 0.
      *   CL_INVALID_DEVICE if OpenCL devices listed in devices are not in the list of devices associated with context.
      *   CL_INVALID_BINARY if an invalid program binary was encountered for any device. binaryStatus will return specific status for each device.
@@ -5086,9 +4756,9 @@ public:
         cl_int* err = NULL)
     {
         cl_int error;
-        
+
         const ::size_t numDevices = devices.size();
-        
+
         // Catch size mismatch early and return
         if(binaries.size() != numDevices) {
             error = CL_INVALID_VALUE;
@@ -5115,11 +4785,11 @@ public:
         if(binaryStatus) {
             binaryStatus->resize(numDevices);
         }
-        
+
         object_ = ::clCreateProgramWithBinary(
             context(), (cl_uint) devices.size(),
             deviceIDs,
-            lengths, images, (binaryStatus != NULL && numDevices > 0)
+            lengths, images, binaryStatus != NULL
                ? &binaryStatus->front()
                : NULL, &error);
 
@@ -5129,7 +4799,7 @@ public:
         }
     }
 
-    
+
 #if defined(CL_VERSION_1_2)
     /**
      * Create program using builtin kernels.
@@ -5149,12 +4819,12 @@ public:
         for( ::size_t deviceIndex = 0; deviceIndex < numDevices; ++deviceIndex ) {
             deviceIDs[deviceIndex] = (devices[deviceIndex])();
         }
-        
+
         object_ = ::clCreateProgramWithBuiltInKernels(
-            context(), 
+            context(),
             (cl_uint) devices.size(),
             deviceIDs,
-            kernelNames.c_str(), 
+            kernelNames.c_str(),
             &error);
 
         detail::errHandler(error, __CREATE_PROGRAM_WITH_BUILT_IN_KERNELS_ERR);
@@ -5166,43 +4836,23 @@ public:
 
     Program() { }
 
+    Program(const Program& program) : detail::Wrapper<cl_type>(program) { }
+
     __CL_EXPLICIT_CONSTRUCTORS Program(const cl_program& program) : detail::Wrapper<cl_type>(program) { }
+
+    Program& operator = (const Program& rhs)
+    {
+        if (this != &rhs) {
+            detail::Wrapper<cl_type>::operator=(rhs);
+        }
+        return *this;
+    }
 
     Program& operator = (const cl_program& rhs)
     {
         detail::Wrapper<cl_type>::operator=(rhs);
         return *this;
     }
-
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Program(const Program& program) : detail::Wrapper<cl_type>(program) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    Program& operator = (const Program &program)
-    {
-        detail::Wrapper<cl_type>::operator=(program);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Program(Program&& program) CL_HPP_NOEXCEPT : detail::Wrapper<cl_type>(std::move(program)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    Program& operator = (Program &&program)
-    {
-        detail::Wrapper<cl_type>::operator=(std::move(program));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
 
     cl_int build(
         const VECTOR_CLASS<Device>& devices,
@@ -5336,16 +4986,13 @@ inline Program linkProgram(
     const char* options = NULL,
     void (CL_CALLBACK * notifyFptr)(cl_program, void *) = NULL,
     void* data = NULL,
-    cl_int* err = NULL) 
+    cl_int* err = NULL)
 {
-    cl_int error_local = CL_SUCCESS;
+    cl_int err_local = CL_SUCCESS;
 
     cl_program programs[2] = { input1(), input2() };
 
-    Context ctx = input1.getInfo<CL_PROGRAM_CONTEXT>(&error_local);
-    if(error_local!=CL_SUCCESS) {
-        detail::errHandler(error_local, __LINK_PROGRAM_ERR);
-    }
+    Context ctx = input1.getInfo<CL_PROGRAM_CONTEXT>();
 
     cl_program prog = ::clLinkProgram(
         ctx(),
@@ -5356,11 +5003,11 @@ inline Program linkProgram(
         programs,
         notifyFptr,
         data,
-        &error_local);
+        &err_local);
 
-    detail::errHandler(error_local,__COMPILE_PROGRAM_ERR);
+    detail::errHandler(err_local,__COMPILE_PROGRAM_ERR);
     if (err != NULL) {
-        *err = error_local;
+        *err = err_local;
     }
 
     return Program(prog);
@@ -5371,9 +5018,9 @@ inline Program linkProgram(
     const char* options = NULL,
     void (CL_CALLBACK * notifyFptr)(cl_program, void *) = NULL,
     void* data = NULL,
-    cl_int* err = NULL) 
+    cl_int* err = NULL)
 {
-    cl_int error_local = CL_SUCCESS;
+    cl_int err_local = CL_SUCCESS;
 
     cl_program * programs = (cl_program*) alloca(inputPrograms.size() * sizeof(cl_program));
 
@@ -5381,17 +5028,10 @@ inline Program linkProgram(
         for (unsigned int i = 0; i < inputPrograms.size(); i++) {
           programs[i] = inputPrograms[i]();
         }
-    } 
-
-    Context ctx;
-    if(inputPrograms.size() > 0) {
-        ctx = inputPrograms[0].getInfo<CL_PROGRAM_CONTEXT>(&error_local);
-        if(error_local!=CL_SUCCESS) {
-            detail::errHandler(error_local, __LINK_PROGRAM_ERR);
-        }
     }
+
     cl_program prog = ::clLinkProgram(
-        ctx(),
+        Context::getDefault()(),
         0,
         NULL,
         options,
@@ -5399,11 +5039,11 @@ inline Program linkProgram(
         programs,
         notifyFptr,
         data,
-        &error_local);
+        &err_local);
 
-    detail::errHandler(error_local,__COMPILE_PROGRAM_ERR);
+    detail::errHandler(err_local,__COMPILE_PROGRAM_ERR);
     if (err != NULL) {
-        *err = error_local;
+        *err = err_local;
     }
 
     return Program(prog);
@@ -5415,14 +5055,14 @@ inline VECTOR_CLASS<char *> cl::Program::getInfo<CL_PROGRAM_BINARIES>(cl_int* er
 {
     VECTOR_CLASS< ::size_t> sizes = getInfo<CL_PROGRAM_BINARY_SIZES>();
     VECTOR_CLASS<char *> binaries;
-    for (VECTOR_CLASS< ::size_t>::iterator s = sizes.begin(); s != sizes.end(); ++s) 
+    for (VECTOR_CLASS< ::size_t>::iterator s = sizes.begin(); s != sizes.end(); ++s)
     {
         char *ptr = NULL;
-        if (*s != 0) 
+        if (*s != 0)
             ptr = new char[*s];
         binaries.push_back(ptr);
     }
-    
+
     cl_int result = getInfo(CL_PROGRAM_BINARIES, &binaries);
     if (err != NULL) {
         *err = result;
@@ -5449,11 +5089,7 @@ inline Kernel::Kernel(const Program& program, const char* name, cl_int* err)
 class CommandQueue : public detail::Wrapper<cl_command_queue>
 {
 private:
-#ifdef CL_HPP_CPP11_ATOMICS_SUPPORTED
-    static std::atomic<int> default_initialized_;
-#else // !CL_HPP_CPP11_ATOMICS_SUPPORTED
     static volatile int default_initialized_;
-#endif // !CL_HPP_CPP11_ATOMICS_SUPPORTED
     static CommandQueue default_;
     static volatile cl_int default_error_;
 public:
@@ -5464,7 +5100,7 @@ public:
         cl_int error;
 
         Context context = Context::getDefault(&error);
-        detail::errHandler(error, __CREATE_CONTEXT_ERR);
+        detail::errHandler(error, __CREATE_COMMAND_QUEUE_ERR);
 
         if (error != CL_SUCCESS) {
             if (err != NULL) {
@@ -5495,7 +5131,7 @@ public:
         VECTOR_CLASS<cl::Device> devices;
         error = context.getInfo(CL_CONTEXT_DEVICES, &devices);
 
-        detail::errHandler(error, __CREATE_CONTEXT_ERR);
+        detail::errHandler(error, __CREATE_COMMAND_QUEUE_ERR);
 
         if (error != CL_SUCCESS)
         {
@@ -5531,42 +5167,12 @@ public:
         }
     }
 
-    /*! \brief Copy constructor to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    CommandQueue(const CommandQueue& queue) : detail::Wrapper<cl_type>(queue) {}
-
-    /*! \brief Copy assignment to forward copy to the superclass correctly.
-     * Required for MSVC.
-     */
-    CommandQueue& operator = (const CommandQueue &queue)
-    {
-        detail::Wrapper<cl_type>::operator=(queue);
-        return *this;
-    }
-
-#if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-    /*! \brief Move constructor to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    CommandQueue(CommandQueue&& queue) CL_HPP_NOEXCEPT : detail::Wrapper<cl_type>(std::move(queue)) {}
-
-    /*! \brief Move assignment to forward move to the superclass correctly.
-     * Required for MSVC.
-     */
-    CommandQueue& operator = (CommandQueue &&queue)
-    {
-        detail::Wrapper<cl_type>::operator=(std::move(queue));
-        return *this;
-    }
-#endif // #if defined(CL_HPP_RVALUE_REFERENCES_SUPPORTED)
-
-    static CommandQueue getDefault(cl_int * err = NULL) 
+    static CommandQueue getDefault(cl_int * err = NULL)
     {
         int state = detail::compare_exchange(
-            &default_initialized_, 
+            &default_initialized_,
             __DEFAULT_BEING_INITIALIZED, __DEFAULT_NOT_INITIALIZED);
-        
+
         if (state & __DEFAULT_INITIALIZED) {
             if (err != NULL) {
                 *err = default_error_;
@@ -5624,7 +5230,17 @@ public:
 
     CommandQueue() { }
 
-    __CL_EXPLICIT_CONSTRUCTORS CommandQueue(const cl_command_queue& commandQueue) : detail::Wrapper<cl_type>(commandQueue) { }
+    CommandQueue(const CommandQueue& commandQueue) : detail::Wrapper<cl_type>(commandQueue) { }
+
+    CommandQueue(const cl_command_queue& commandQueue) : detail::Wrapper<cl_type>(commandQueue) { }
+
+    CommandQueue& operator = (const CommandQueue& rhs)
+    {
+        if (this != &rhs) {
+            detail::Wrapper<cl_type>::operator=(rhs);
+        }
+        return *this;
+    }
 
     CommandQueue& operator = (const cl_command_queue& rhs)
     {
@@ -5745,9 +5361,9 @@ public:
         cl_event tmp;
         cl_int err = detail::errHandler(
             ::clEnqueueReadBufferRect(
-                object_, 
-                buffer(), 
-                blocking, 
+                object_,
+                buffer(),
+                blocking,
                 (const ::size_t *)buffer_offset,
                 (const ::size_t *)host_offset,
                 (const ::size_t *)region,
@@ -5784,9 +5400,9 @@ public:
         cl_event tmp;
         cl_int err = detail::errHandler(
             ::clEnqueueWriteBufferRect(
-                object_, 
-                buffer(), 
-                blocking, 
+                object_,
+                buffer(),
+                blocking,
                 (const ::size_t *)buffer_offset,
                 (const ::size_t *)host_offset,
                 (const ::size_t *)region,
@@ -5822,11 +5438,11 @@ public:
         cl_event tmp;
         cl_int err = detail::errHandler(
             ::clEnqueueCopyBufferRect(
-                object_, 
-                src(), 
-                dst(), 
-                (const ::size_t *)src_origin, 
-                (const ::size_t *)dst_origin, 
+                object_,
+                src(),
+                dst(),
+                (const ::size_t *)src_origin,
+                (const ::size_t *)dst_origin,
                 (const ::size_t *)region,
                 src_row_pitch,
                 src_slice_pitch,
@@ -5847,7 +5463,7 @@ public:
     /**
      * Enqueue a command to fill a buffer object with a pattern
      * of a given size. The pattern is specified a as vector.
-     * \tparam PatternType The datatype of the pattern field. 
+     * \tparam PatternType The datatype of the pattern field.
      *     The pattern type must be an accepted OpenCL data type.
      */
     template<typename PatternType>
@@ -5862,11 +5478,11 @@ public:
         cl_event tmp;
         cl_int err = detail::errHandler(
             ::clEnqueueFillBuffer(
-                object_, 
+                object_,
                 buffer(),
                 static_cast<void*>(&pattern),
-                sizeof(PatternType), 
-                offset, 
+                sizeof(PatternType),
+                offset,
                 size,
                 (events != NULL) ? (cl_uint) events->size() : 0,
                 (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
@@ -5978,10 +5594,10 @@ public:
         cl_event tmp;
         cl_int err = detail::errHandler(
             ::clEnqueueFillImage(
-                object_, 
+                object_,
                 image(),
-                static_cast<void*>(&fillColor), 
-                (const ::size_t *) origin, 
+                static_cast<void*>(&fillColor),
+                (const ::size_t *) origin,
                 (const ::size_t *) region,
                 (events != NULL) ? (cl_uint) events->size() : 0,
                 (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
@@ -6012,10 +5628,10 @@ public:
         cl_event tmp;
         cl_int err = detail::errHandler(
             ::clEnqueueFillImage(
-                object_, 
+                object_,
                 image(),
-                static_cast<void*>(&fillColor), 
-                (const ::size_t *) origin, 
+                static_cast<void*>(&fillColor),
+                (const ::size_t *) origin,
                 (const ::size_t *) region,
                 (events != NULL) ? (cl_uint) events->size() : 0,
                 (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
@@ -6046,10 +5662,10 @@ public:
         cl_event tmp;
         cl_int err = detail::errHandler(
             ::clEnqueueFillImage(
-                object_, 
+                object_,
                 image(),
-                static_cast<void*>(&fillColor), 
-                (const ::size_t *) origin, 
+                static_cast<void*>(&fillColor),
+                (const ::size_t *) origin,
                 (const ::size_t *) region,
                 (events != NULL) ? (cl_uint) events->size() : 0,
                 (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
@@ -6123,22 +5739,18 @@ public:
         Event* event = NULL,
         cl_int* err = NULL) const
     {
-        cl_event tmp;
         cl_int error;
         void * result = ::clEnqueueMapBuffer(
             object_, buffer(), blocking, flags, offset, size,
             (events != NULL) ? (cl_uint) events->size() : 0,
             (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
-            (event != NULL) ? &tmp : NULL,
+            (cl_event*) event,
             &error);
 
         detail::errHandler(error, __ENQUEUE_MAP_BUFFER_ERR);
         if (err != NULL) {
             *err = error;
         }
-        if (event != NULL && error == CL_SUCCESS)
-            *event = tmp;
-
         return result;
     }
 
@@ -6154,7 +5766,6 @@ public:
         Event* event = NULL,
         cl_int* err = NULL) const
     {
-        cl_event tmp;
         cl_int error;
         void * result = ::clEnqueueMapImage(
             object_, buffer(), blocking, flags,
@@ -6162,15 +5773,13 @@ public:
             row_pitch, slice_pitch,
             (events != NULL) ? (cl_uint) events->size() : 0,
             (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
-            (event != NULL) ? &tmp : NULL,
+            (cl_event*) event,
             &error);
 
         detail::errHandler(error, __ENQUEUE_MAP_IMAGE_ERR);
         if (err != NULL) {
               *err = error;
         }
-        if (event != NULL && error == CL_SUCCESS)
-            *event = tmp;
         return result;
     }
 
@@ -6197,14 +5806,14 @@ public:
 
 #if defined(CL_VERSION_1_2)
     /**
-     * Enqueues a marker command which waits for either a list of events to complete, 
+     * Enqueues a marker command which waits for either a list of events to complete,
      * or all previously enqueued commands to complete.
      *
-     * Enqueues a marker command which waits for either a list of events to complete, 
-     * or if the list is empty it waits for all commands previously enqueued in command_queue 
-     * to complete before it completes. This command returns an event which can be waited on, 
-     * i.e. this event can be waited on to insure that all events either in the event_wait_list 
-     * or all previously enqueued commands, queued before this command to command_queue, 
+     * Enqueues a marker command which waits for either a list of events to complete,
+     * or if the list is empty it waits for all commands previously enqueued in command_queue
+     * to complete before it completes. This command returns an event which can be waited on,
+     * i.e. this event can be waited on to insure that all events either in the event_wait_list
+     * or all previously enqueued commands, queued before this command to command_queue,
      * have completed.
      */
     cl_int enqueueMarkerWithWaitList(
@@ -6229,12 +5838,12 @@ public:
     /**
      * A synchronization point that enqueues a barrier operation.
      *
-     * Enqueues a barrier command which waits for either a list of events to complete, 
-     * or if the list is empty it waits for all commands previously enqueued in command_queue 
-     * to complete before it completes. This command blocks command execution, that is, any 
-     * following commands enqueued after it do not execute until it completes. This command 
-     * returns an event which can be waited on, i.e. this event can be waited on to insure that 
-     * all events either in the event_wait_list or all previously enqueued commands, queued 
+     * Enqueues a barrier command which waits for either a list of events to complete,
+     * or if the list is empty it waits for all commands previously enqueued in command_queue
+     * to complete before it completes. This command blocks command execution, that is, any
+     * following commands enqueued after it do not execute until it completes. This command
+     * returns an event which can be waited on, i.e. this event can be waited on to insure that
+     * all events either in the event_wait_list or all previously enqueued commands, queued
      * before this command to command_queue, have completed.
      */
     cl_int enqueueBarrierWithWaitList(
@@ -6255,7 +5864,7 @@ public:
 
         return err;
     }
-    
+
     /**
      * Enqueues a command to indicate with which device a set of memory objects
      * should be associated.
@@ -6268,7 +5877,7 @@ public:
         )
     {
         cl_event tmp;
-        
+
         cl_mem* localMemObjects = static_cast<cl_mem*>(alloca(memObjects.size() * sizeof(cl_mem)));
         for( int i = 0; i < (int)memObjects.size(); ++i ) {
             localMemObjects[i] = memObjects[i]();
@@ -6277,8 +5886,8 @@ public:
 
         cl_int err = detail::errHandler(
             ::clEnqueueMigrateMemObjects(
-                object_, 
-                (cl_uint)memObjects.size(), 
+                object_,
+                (cl_uint)memObjects.size(),
                 static_cast<const cl_mem*>(localMemObjects),
                 flags,
                 (events != NULL) ? (cl_uint) events->size() : 0,
@@ -6347,7 +5956,7 @@ public:
         const VECTOR_CLASS<Event>* events = NULL,
         Event* event = NULL) const
     {
-        cl_mem * mems = (mem_objects != NULL && mem_objects->size() > 0) 
+        cl_mem * mems = (mem_objects != NULL && mem_objects->size() > 0)
             ? (cl_mem*) alloca(mem_objects->size() * sizeof(cl_mem))
             : NULL;
 
@@ -6363,7 +5972,7 @@ public:
                 object_, userFptr, args.first, args.second,
                 (mem_objects != NULL) ? (cl_uint) mem_objects->size() : 0,
                 mems,
-                (mem_locs != NULL && mem_locs->size() > 0) ? (const void **) &mem_locs->front() : NULL,
+                (mem_locs != NULL) ? (const void **) &mem_locs->front() : NULL,
                 (events != NULL) ? (cl_uint) events->size() : 0,
                 (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
                 (event != NULL) ? &tmp : NULL),
@@ -6378,21 +5987,13 @@ public:
 /**
  * Deprecated APIs for 1.2
  */
-#if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS) || (defined(CL_VERSION_1_1) && !defined(CL_VERSION_1_2)) 
-    CL_EXT_PREFIX__VERSION_1_1_DEPRECATED 
+#if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS) || (defined(CL_VERSION_1_1) && !defined(CL_VERSION_1_2))
+    CL_EXT_PREFIX__VERSION_1_1_DEPRECATED
     cl_int enqueueMarker(Event* event = NULL) const CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED
     {
-        cl_event tmp;
-        cl_int err = detail::errHandler(
-            ::clEnqueueMarker(
-                object_, 
-                (event != NULL) ? &tmp : NULL),
+        return detail::errHandler(
+            ::clEnqueueMarker(object_, (cl_event*) event),
             __ENQUEUE_MARKER_ERR);
-
-        if (event != NULL && err == CL_SUCCESS)
-            *event = tmp;
-
-        return err;
     }
 
     CL_EXT_PREFIX__VERSION_1_1_DEPRECATED
@@ -6402,7 +6003,7 @@ public:
             ::clEnqueueWaitForEvents(
                 object_,
                 (cl_uint) events.size(),
-                events.size() > 0 ? (const cl_event*) &events.front() : NULL),
+                (const cl_event*) &events.front()),
             __ENQUEUE_WAIT_FOR_EVENTS_ERR);
     }
 #endif // #if defined(CL_VERSION_1_1)
@@ -6417,7 +6018,7 @@ public:
              ::clEnqueueAcquireGLObjects(
                  object_,
                  (mem_objects != NULL) ? (cl_uint) mem_objects->size() : 0,
-                 (mem_objects != NULL && mem_objects->size() > 0) ? (const cl_mem *) &mem_objects->front(): NULL,
+                 (mem_objects != NULL) ? (const cl_mem *) &mem_objects->front(): NULL,
                  (events != NULL) ? (cl_uint) events->size() : 0,
                  (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
                  (event != NULL) ? &tmp : NULL),
@@ -6439,7 +6040,7 @@ public:
              ::clEnqueueReleaseGLObjects(
                  object_,
                  (mem_objects != NULL) ? (cl_uint) mem_objects->size() : 0,
-                 (mem_objects != NULL && mem_objects->size() > 0) ? (const cl_mem *) &mem_objects->front(): NULL,
+                 (mem_objects != NULL) ? (const cl_mem *) &mem_objects->front(): NULL,
                  (events != NULL) ? (cl_uint) events->size() : 0,
                  (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
                  (event != NULL) ? &tmp : NULL),
@@ -6476,13 +6077,13 @@ typedef CL_API_ENTRY cl_int (CL_API_CALL *PFN_clEnqueueReleaseD3D10ObjectsKHR)(
 #if defined(CL_VERSION_1_1)
         __INIT_CL_EXT_FCN_PTR(clEnqueueAcquireD3D10ObjectsKHR);
 #endif
-        
+
         cl_event tmp;
         cl_int err = detail::errHandler(
              pfn_clEnqueueAcquireD3D10ObjectsKHR(
                  object_,
                  (mem_objects != NULL) ? (cl_uint) mem_objects->size() : 0,
-                 (mem_objects != NULL && mem_objects->size() > 0) ? (const cl_mem *) &mem_objects->front(): NULL,
+                 (mem_objects != NULL) ? (const cl_mem *) &mem_objects->front(): NULL,
                  (events != NULL) ? (cl_uint) events->size() : 0,
                  (events != NULL) ? (cl_event*) &events->front() : NULL,
                  (event != NULL) ? &tmp : NULL),
@@ -6515,9 +6116,9 @@ typedef CL_API_ENTRY cl_int (CL_API_CALL *PFN_clEnqueueReleaseD3D10ObjectsKHR)(
             pfn_clEnqueueReleaseD3D10ObjectsKHR(
                 object_,
                 (mem_objects != NULL) ? (cl_uint) mem_objects->size() : 0,
-                (mem_objects != NULL && mem_objects->size() > 0) ? (const cl_mem *) &mem_objects->front(): NULL,
+                (mem_objects != NULL) ? (const cl_mem *) &mem_objects->front(): NULL,
                 (events != NULL) ? (cl_uint) events->size() : 0,
-                (events != NULL && events->size() > 0) ? (cl_event*) &events->front() : NULL,
+                (events != NULL) ? (cl_event*) &events->front() : NULL,
                 (event != NULL) ? &tmp : NULL),
             __ENQUEUE_RELEASE_GL_ERR);
 
@@ -6531,7 +6132,7 @@ typedef CL_API_ENTRY cl_int (CL_API_CALL *PFN_clEnqueueReleaseD3D10ObjectsKHR)(
 /**
  * Deprecated APIs for 1.2
  */
-#if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS) || (defined(CL_VERSION_1_1) && !defined(CL_VERSION_1_2)) 
+#if defined(CL_USE_DEPRECATED_OPENCL_1_1_APIS) || (defined(CL_VERSION_1_1) && !defined(CL_VERSION_1_2))
     CL_EXT_PREFIX__VERSION_1_1_DEPRECATED
     cl_int enqueueBarrier() const CL_EXT_SUFFIX__VERSION_1_1_DEPRECATED
     {
@@ -6553,22 +6154,14 @@ typedef CL_API_ENTRY cl_int (CL_API_CALL *PFN_clEnqueueReleaseD3D10ObjectsKHR)(
 };
 
 #ifdef _WIN32
-#ifdef CL_HPP_CPP11_ATOMICS_SUPPORTED
-__declspec(selectany) std::atomic<int> CommandQueue::default_initialized_;
-#else // !CL_HPP_CPP11_ATOMICS_SUPPORTED
 __declspec(selectany) volatile int CommandQueue::default_initialized_ = __DEFAULT_NOT_INITIALIZED;
-#endif // !CL_HPP_CPP11_ATOMICS_SUPPORTED
 __declspec(selectany) CommandQueue CommandQueue::default_;
 __declspec(selectany) volatile cl_int CommandQueue::default_error_ = CL_SUCCESS;
-#else // !_WIN32
-#ifdef CL_HPP_CPP11_ATOMICS_SUPPORTED
-__attribute__((weak)) std::atomic<int> CommandQueue::default_initialized_;
-#else // !CL_HPP_CPP11_ATOMICS_SUPPORTED
+#else
 __attribute__((weak)) volatile int CommandQueue::default_initialized_ = __DEFAULT_NOT_INITIALIZED;
-#endif // !CL_HPP_CPP11_ATOMICS_SUPPORTED
 __attribute__((weak)) CommandQueue CommandQueue::default_;
 __attribute__((weak)) volatile cl_int CommandQueue::default_error_ = CL_SUCCESS;
-#endif // !_WIN32
+#endif
 
 template< typename IteratorType >
 Buffer::Buffer(
@@ -6592,7 +6185,7 @@ Buffer::Buffer(
     if( useHostPtr ) {
         flags |= CL_MEM_USE_HOST_PTR;
     }
-    
+
     ::size_t size = sizeof(DataType)*(endIterator - startIterator);
 
     if( useHostPtr ) {
@@ -6613,54 +6206,6 @@ Buffer::Buffer(
             *err = error;
         }
 
-        error = cl::copy(queue, startIterator, endIterator, *this);
-        detail::errHandler(error, __CREATE_BUFFER_ERR);
-        if (err != NULL) {
-            *err = error;
-        }
-    }
-}
-
-template< typename IteratorType >
-Buffer::Buffer(
-    const CommandQueue &queue,
-    IteratorType startIterator,
-    IteratorType endIterator,
-    bool readOnly,
-    bool useHostPtr,
-    cl_int* err)
-{
-    typedef typename std::iterator_traits<IteratorType>::value_type DataType;
-    cl_int error;
-
-    cl_mem_flags flags = 0;
-    if (readOnly) {
-        flags |= CL_MEM_READ_ONLY;
-    }
-    else {
-        flags |= CL_MEM_READ_WRITE;
-    }
-    if (useHostPtr) {
-        flags |= CL_MEM_USE_HOST_PTR;
-    }
-
-    ::size_t size = sizeof(DataType)*(endIterator - startIterator);
-
-    Context context = queue.getInfo<CL_QUEUE_CONTEXT>();
-
-    if (useHostPtr) {
-        object_ = ::clCreateBuffer(context(), flags, size, static_cast<DataType*>(&*startIterator), &error);
-    }
-    else {
-        object_ = ::clCreateBuffer(context(), flags, size, 0, &error);
-    }
-
-    detail::errHandler(error, __CREATE_BUFFER_ERR);
-    if (err != NULL) {
-        *err = error;
-    }
-
-    if (!useHostPtr) {
         error = cl::copy(queue, startIterator, endIterator, *this);
         detail::errHandler(error, __CREATE_BUFFER_ERR);
         if (err != NULL) {
@@ -6827,11 +6372,11 @@ inline cl_int copy( const CommandQueue &queue, IteratorType startIterator, Itera
 {
     typedef typename std::iterator_traits<IteratorType>::value_type DataType;
     cl_int error;
-    
+
     ::size_t length = endIterator-startIterator;
     ::size_t byteLength = length*sizeof(DataType);
 
-    DataType *pointer = 
+    DataType *pointer =
         static_cast<DataType*>(queue.enqueueMapBuffer(buffer, CL_TRUE, CL_MAP_WRITE, 0, byteLength, 0, 0, &error));
     // if exceptions enabled, enqueueMapBuffer will throw
     if( error != CL_SUCCESS ) {
@@ -6839,8 +6384,8 @@ inline cl_int copy( const CommandQueue &queue, IteratorType startIterator, Itera
     }
 #if defined(_MSC_VER)
     std::copy(
-        startIterator, 
-        endIterator, 
+        startIterator,
+        endIterator,
         stdext::checked_array_iterator<DataType*>(
             pointer, length));
 #else
@@ -6849,7 +6394,7 @@ inline cl_int copy( const CommandQueue &queue, IteratorType startIterator, Itera
     Event endEvent;
     error = queue.enqueueUnmapMemObject(buffer, pointer, 0, &endEvent);
     // if exceptions enabled, enqueueUnmapMemObject will throw
-    if( error != CL_SUCCESS ) { 
+    if( error != CL_SUCCESS ) {
         return error;
     }
     endEvent.wait();
@@ -6866,11 +6411,11 @@ inline cl_int copy( const CommandQueue &queue, const cl::Buffer &buffer, Iterato
 {
     typedef typename std::iterator_traits<IteratorType>::value_type DataType;
     cl_int error;
-        
+
     ::size_t length = endIterator-startIterator;
     ::size_t byteLength = length*sizeof(DataType);
 
-    DataType *pointer = 
+    DataType *pointer =
         static_cast<DataType*>(queue.enqueueMapBuffer(buffer, CL_TRUE, CL_MAP_READ, 0, byteLength, 0, 0, &error));
     // if exceptions enabled, enqueueMapBuffer will throw
     if( error != CL_SUCCESS ) {
@@ -6880,7 +6425,7 @@ inline cl_int copy( const CommandQueue &queue, const cl::Buffer &buffer, Iterato
     Event endEvent;
     error = queue.enqueueUnmapMemObject(buffer, pointer, 0, &endEvent);
     // if exceptions enabled, enqueueUnmapMemObject will throw
-    if( error != CL_SUCCESS ) { 
+    if( error != CL_SUCCESS ) {
         return error;
     }
     endEvent.wait();
@@ -6910,17 +6455,17 @@ inline cl_int enqueueReadBufferRect(
     }
 
     return queue.enqueueReadBufferRect(
-        buffer, 
-        blocking, 
-        buffer_offset, 
+        buffer,
+        blocking,
+        buffer_offset,
         host_offset,
         region,
         buffer_row_pitch,
         buffer_slice_pitch,
         host_row_pitch,
         host_slice_pitch,
-        ptr, 
-        events, 
+        ptr,
+        events,
         event);
 }
 
@@ -6946,17 +6491,17 @@ inline cl_int enqueueWriteBufferRect(
     }
 
     return queue.enqueueWriteBufferRect(
-        buffer, 
-        blocking, 
-        buffer_offset, 
+        buffer,
+        blocking,
+        buffer_offset,
         host_offset,
         region,
         buffer_row_pitch,
         buffer_slice_pitch,
         host_row_pitch,
         host_slice_pitch,
-        ptr, 
-        events, 
+        ptr,
+        events,
         event);
 }
 
@@ -6990,7 +6535,7 @@ inline cl_int enqueueCopyBufferRect(
         src_slice_pitch,
         dst_row_pitch,
         dst_slice_pitch,
-        events, 
+        events,
         event);
 }
 #endif
@@ -7004,7 +6549,7 @@ inline cl_int enqueueReadImage(
     ::size_t slice_pitch,
     void* ptr,
     const VECTOR_CLASS<Event>* events = NULL,
-    Event* event = NULL) 
+    Event* event = NULL)
 {
     cl_int error;
     CommandQueue queue = CommandQueue::getDefault(&error);
@@ -7021,7 +6566,7 @@ inline cl_int enqueueReadImage(
         row_pitch,
         slice_pitch,
         ptr,
-        events, 
+        events,
         event);
 }
 
@@ -7051,7 +6596,7 @@ inline cl_int enqueueWriteImage(
         row_pitch,
         slice_pitch,
         ptr,
-        events, 
+        events,
         event);
 }
 
@@ -7153,7 +6698,7 @@ inline cl_int finish(void)
 
     if (error != CL_SUCCESS) {
         return error;
-    } 
+    }
 
 
     return queue.finish();
@@ -7172,63 +6717,63 @@ struct EnqueueArgs
     const NDRange local_;
     VECTOR_CLASS<Event> events_;
 
-    EnqueueArgs(NDRange global) : 
+    EnqueueArgs(NDRange global) :
       queue_(CommandQueue::getDefault()),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(NullRange)
     {
 
     }
 
-    EnqueueArgs(NDRange global, NDRange local) : 
+    EnqueueArgs(NDRange global, NDRange local) :
       queue_(CommandQueue::getDefault()),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(local)
     {
 
     }
 
-    EnqueueArgs(NDRange offset, NDRange global, NDRange local) : 
+    EnqueueArgs(NDRange offset, NDRange global, NDRange local) :
       queue_(CommandQueue::getDefault()),
-      offset_(offset), 
+      offset_(offset),
       global_(global),
       local_(local)
     {
 
     }
 
-    EnqueueArgs(Event e, NDRange global) : 
+    EnqueueArgs(Event e, NDRange global) :
       queue_(CommandQueue::getDefault()),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(NullRange)
     {
         events_.push_back(e);
     }
 
-    EnqueueArgs(Event e, NDRange global, NDRange local) : 
+    EnqueueArgs(Event e, NDRange global, NDRange local) :
       queue_(CommandQueue::getDefault()),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(local)
     {
         events_.push_back(e);
     }
 
-    EnqueueArgs(Event e, NDRange offset, NDRange global, NDRange local) : 
+    EnqueueArgs(Event e, NDRange offset, NDRange global, NDRange local) :
       queue_(CommandQueue::getDefault()),
-      offset_(offset), 
+      offset_(offset),
       global_(global),
       local_(local)
     {
         events_.push_back(e);
     }
 
-    EnqueueArgs(const VECTOR_CLASS<Event> &events, NDRange global) : 
+    EnqueueArgs(const VECTOR_CLASS<Event> &events, NDRange global) :
       queue_(CommandQueue::getDefault()),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(NullRange),
       events_(events)
@@ -7236,9 +6781,9 @@ struct EnqueueArgs
 
     }
 
-    EnqueueArgs(const VECTOR_CLASS<Event> &events, NDRange global, NDRange local) : 
+    EnqueueArgs(const VECTOR_CLASS<Event> &events, NDRange global, NDRange local) :
       queue_(CommandQueue::getDefault()),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(local),
       events_(events)
@@ -7246,9 +6791,9 @@ struct EnqueueArgs
 
     }
 
-    EnqueueArgs(const VECTOR_CLASS<Event> &events, NDRange offset, NDRange global, NDRange local) : 
+    EnqueueArgs(const VECTOR_CLASS<Event> &events, NDRange offset, NDRange global, NDRange local) :
       queue_(CommandQueue::getDefault()),
-      offset_(offset), 
+      offset_(offset),
       global_(global),
       local_(local),
       events_(events)
@@ -7256,63 +6801,63 @@ struct EnqueueArgs
 
     }
 
-    EnqueueArgs(CommandQueue &queue, NDRange global) : 
+    EnqueueArgs(CommandQueue &queue, NDRange global) :
       queue_(queue),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(NullRange)
     {
 
     }
 
-    EnqueueArgs(CommandQueue &queue, NDRange global, NDRange local) : 
+    EnqueueArgs(CommandQueue &queue, NDRange global, NDRange local) :
       queue_(queue),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(local)
     {
 
     }
 
-    EnqueueArgs(CommandQueue &queue, NDRange offset, NDRange global, NDRange local) : 
+    EnqueueArgs(CommandQueue &queue, NDRange offset, NDRange global, NDRange local) :
       queue_(queue),
-      offset_(offset), 
+      offset_(offset),
       global_(global),
       local_(local)
     {
 
     }
 
-    EnqueueArgs(CommandQueue &queue, Event e, NDRange global) : 
+    EnqueueArgs(CommandQueue &queue, Event e, NDRange global) :
       queue_(queue),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(NullRange)
     {
         events_.push_back(e);
     }
 
-    EnqueueArgs(CommandQueue &queue, Event e, NDRange global, NDRange local) : 
+    EnqueueArgs(CommandQueue &queue, Event e, NDRange global, NDRange local) :
       queue_(queue),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(local)
     {
         events_.push_back(e);
     }
 
-    EnqueueArgs(CommandQueue &queue, Event e, NDRange offset, NDRange global, NDRange local) : 
+    EnqueueArgs(CommandQueue &queue, Event e, NDRange offset, NDRange global, NDRange local) :
       queue_(queue),
-      offset_(offset), 
+      offset_(offset),
       global_(global),
       local_(local)
     {
         events_.push_back(e);
     }
 
-    EnqueueArgs(CommandQueue &queue, const VECTOR_CLASS<Event> &events, NDRange global) : 
+    EnqueueArgs(CommandQueue &queue, const VECTOR_CLASS<Event> &events, NDRange global) :
       queue_(queue),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(NullRange),
       events_(events)
@@ -7320,9 +6865,9 @@ struct EnqueueArgs
 
     }
 
-    EnqueueArgs(CommandQueue &queue, const VECTOR_CLASS<Event> &events, NDRange global, NDRange local) : 
+    EnqueueArgs(CommandQueue &queue, const VECTOR_CLASS<Event> &events, NDRange global, NDRange local) :
       queue_(queue),
-      offset_(NullRange), 
+      offset_(NullRange),
       global_(global),
       local_(local),
       events_(events)
@@ -7330,9 +6875,9 @@ struct EnqueueArgs
 
     }
 
-    EnqueueArgs(CommandQueue &queue, const VECTOR_CLASS<Event> &events, NDRange offset, NDRange global, NDRange local) : 
+    EnqueueArgs(CommandQueue &queue, const VECTOR_CLASS<Event> &events, NDRange offset, NDRange global, NDRange local) :
       queue_(queue),
-      offset_(offset), 
+      offset_(offset),
       global_(global),
       local_(local),
       events_(events)
@@ -7352,13 +6897,13 @@ struct SetArg
     {
         kernel.setArg(index, arg);
     }
-};  
+};
 
 template<int index>
 struct SetArg<index, NullType>
 {
     static void set (Kernel, NullType)
-    { 
+    {
     }
 };
 
@@ -7459,7 +7004,7 @@ public:
         SetArg<29, T29>::set(kernel_, t29);
         SetArg<30, T30>::set(kernel_, t30);
         SetArg<31, T31>::set(kernel_, t31);
-        
+
         args.queue_.enqueueNDRangeKernel(
             kernel_,
             args.offset_,
@@ -7467,7 +7012,7 @@ public:
             args.local_,
             &args.events_,
             &event);
-        
+
         return event;
     }
 
@@ -7477,5249 +7022,5249 @@ public:
 
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22,
-	typename T23,
-	typename T24,
-	typename T25,
-	typename T26,
-	typename T27,
-	typename T28,
-	typename T29,
-	typename T30,
-	typename T31>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22,
+    typename T23,
+    typename T24,
+    typename T25,
+    typename T26,
+    typename T27,
+    typename T28,
+    typename T29,
+    typename T30,
+    typename T31>
 struct functionImplementation_
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27,
-		T28,
-		T29,
-		T30,
-		T31> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27,
+        T28,
+        T29,
+        T30,
+        T31> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 32))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27,
-		T28,
-		T29,
-		T30,
-		T31);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27,
+        T28,
+        T29,
+        T30,
+        T31);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22,
-		T23 arg23,
-		T24 arg24,
-		T25 arg25,
-		T26 arg26,
-		T27 arg27,
-		T28 arg28,
-		T29 arg29,
-		T30 arg30,
-		T31 arg31)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22,
-			arg23,
-			arg24,
-			arg25,
-			arg26,
-			arg27,
-			arg28,
-			arg29,
-			arg30,
-			arg31);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22,
+        T23 arg23,
+        T24 arg24,
+        T25 arg25,
+        T26 arg26,
+        T27 arg27,
+        T28 arg28,
+        T29 arg29,
+        T30 arg30,
+        T31 arg31)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22,
+            arg23,
+            arg24,
+            arg25,
+            arg26,
+            arg27,
+            arg28,
+            arg29,
+            arg30,
+            arg31);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22,
-	typename T23,
-	typename T24,
-	typename T25,
-	typename T26,
-	typename T27,
-	typename T28,
-	typename T29,
-	typename T30>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22,
+    typename T23,
+    typename T24,
+    typename T25,
+    typename T26,
+    typename T27,
+    typename T28,
+    typename T29,
+    typename T30>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	T22,
-	T23,
-	T24,
-	T25,
-	T26,
-	T27,
-	T28,
-	T29,
-	T30,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    T23,
+    T24,
+    T25,
+    T26,
+    T27,
+    T28,
+    T29,
+    T30,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27,
-		T28,
-		T29,
-		T30,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27,
+        T28,
+        T29,
+        T30,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 31))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27,
-		T28,
-		T29,
-		T30);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27,
+        T28,
+        T29,
+        T30);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22,
-		T23 arg23,
-		T24 arg24,
-		T25 arg25,
-		T26 arg26,
-		T27 arg27,
-		T28 arg28,
-		T29 arg29,
-		T30 arg30)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22,
-			arg23,
-			arg24,
-			arg25,
-			arg26,
-			arg27,
-			arg28,
-			arg29,
-			arg30);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22,
+        T23 arg23,
+        T24 arg24,
+        T25 arg25,
+        T26 arg26,
+        T27 arg27,
+        T28 arg28,
+        T29 arg29,
+        T30 arg30)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22,
+            arg23,
+            arg24,
+            arg25,
+            arg26,
+            arg27,
+            arg28,
+            arg29,
+            arg30);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22,
-	typename T23,
-	typename T24,
-	typename T25,
-	typename T26,
-	typename T27,
-	typename T28,
-	typename T29>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22,
+    typename T23,
+    typename T24,
+    typename T25,
+    typename T26,
+    typename T27,
+    typename T28,
+    typename T29>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	T22,
-	T23,
-	T24,
-	T25,
-	T26,
-	T27,
-	T28,
-	T29,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    T23,
+    T24,
+    T25,
+    T26,
+    T27,
+    T28,
+    T29,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27,
-		T28,
-		T29,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27,
+        T28,
+        T29,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 30))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27,
-		T28,
-		T29);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27,
+        T28,
+        T29);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22,
-		T23 arg23,
-		T24 arg24,
-		T25 arg25,
-		T26 arg26,
-		T27 arg27,
-		T28 arg28,
-		T29 arg29)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22,
-			arg23,
-			arg24,
-			arg25,
-			arg26,
-			arg27,
-			arg28,
-			arg29);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22,
+        T23 arg23,
+        T24 arg24,
+        T25 arg25,
+        T26 arg26,
+        T27 arg27,
+        T28 arg28,
+        T29 arg29)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22,
+            arg23,
+            arg24,
+            arg25,
+            arg26,
+            arg27,
+            arg28,
+            arg29);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22,
-	typename T23,
-	typename T24,
-	typename T25,
-	typename T26,
-	typename T27,
-	typename T28>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22,
+    typename T23,
+    typename T24,
+    typename T25,
+    typename T26,
+    typename T27,
+    typename T28>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	T22,
-	T23,
-	T24,
-	T25,
-	T26,
-	T27,
-	T28,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    T23,
+    T24,
+    T25,
+    T26,
+    T27,
+    T28,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27,
-		T28,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27,
+        T28,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 29))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27,
-		T28);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27,
+        T28);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22,
-		T23 arg23,
-		T24 arg24,
-		T25 arg25,
-		T26 arg26,
-		T27 arg27,
-		T28 arg28)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22,
-			arg23,
-			arg24,
-			arg25,
-			arg26,
-			arg27,
-			arg28);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22,
+        T23 arg23,
+        T24 arg24,
+        T25 arg25,
+        T26 arg26,
+        T27 arg27,
+        T28 arg28)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22,
+            arg23,
+            arg24,
+            arg25,
+            arg26,
+            arg27,
+            arg28);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22,
-	typename T23,
-	typename T24,
-	typename T25,
-	typename T26,
-	typename T27>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22,
+    typename T23,
+    typename T24,
+    typename T25,
+    typename T26,
+    typename T27>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	T22,
-	T23,
-	T24,
-	T25,
-	T26,
-	T27,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    T23,
+    T24,
+    T25,
+    T26,
+    T27,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 28))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		T27);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        T27);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22,
-		T23 arg23,
-		T24 arg24,
-		T25 arg25,
-		T26 arg26,
-		T27 arg27)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22,
-			arg23,
-			arg24,
-			arg25,
-			arg26,
-			arg27);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22,
+        T23 arg23,
+        T24 arg24,
+        T25 arg25,
+        T26 arg26,
+        T27 arg27)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22,
+            arg23,
+            arg24,
+            arg25,
+            arg26,
+            arg27);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22,
-	typename T23,
-	typename T24,
-	typename T25,
-	typename T26>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22,
+    typename T23,
+    typename T24,
+    typename T25,
+    typename T26>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	T22,
-	T23,
-	T24,
-	T25,
-	T26,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    T23,
+    T24,
+    T25,
+    T26,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 27))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		T26);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        T26);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22,
-		T23 arg23,
-		T24 arg24,
-		T25 arg25,
-		T26 arg26)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22,
-			arg23,
-			arg24,
-			arg25,
-			arg26);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22,
+        T23 arg23,
+        T24 arg24,
+        T25 arg25,
+        T26 arg26)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22,
+            arg23,
+            arg24,
+            arg25,
+            arg26);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22,
-	typename T23,
-	typename T24,
-	typename T25>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22,
+    typename T23,
+    typename T24,
+    typename T25>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	T22,
-	T23,
-	T24,
-	T25,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    T23,
+    T24,
+    T25,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 26))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		T25);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        T25);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22,
-		T23 arg23,
-		T24 arg24,
-		T25 arg25)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22,
-			arg23,
-			arg24,
-			arg25);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22,
+        T23 arg23,
+        T24 arg24,
+        T25 arg25)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22,
+            arg23,
+            arg24,
+            arg25);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22,
-	typename T23,
-	typename T24>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22,
+    typename T23,
+    typename T24>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	T22,
-	T23,
-	T24,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    T23,
+    T24,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 25))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		T24);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        T24);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22,
-		T23 arg23,
-		T24 arg24)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22,
-			arg23,
-			arg24);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22,
+        T23 arg23,
+        T24 arg24)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22,
+            arg23,
+            arg24);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22,
-	typename T23>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22,
+    typename T23>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	T22,
-	T23,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    T23,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 24))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		T23);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        T23);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22,
-		T23 arg23)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22,
-			arg23);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22,
+        T23 arg23)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22,
+            arg23);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21,
-	typename T22>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21,
+    typename T22>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	T22,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    T22,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 23))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		T22);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        T22);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21,
-		T22 arg22)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21,
-			arg22);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21,
+        T22 arg22)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21,
+            arg22);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20,
-	typename T21>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20,
+    typename T21>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	T21,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    T21,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 22))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		T21);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        T21);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20,
-		T21 arg21)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20,
-			arg21);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20,
+        T21 arg21)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20,
+            arg21);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19,
-	typename T20>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19,
+    typename T20>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	T20,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    T20,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 21))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		T20);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        T20);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19,
-		T20 arg20)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19,
-			arg20);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19,
+        T20 arg20)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19,
+            arg20);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18,
-	typename T19>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18,
+    typename T19>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	T19,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    T19,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 20))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		T19);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        T19);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18,
-		T19 arg19)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18,
-			arg19);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18,
+        T19 arg19)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18,
+            arg19);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17,
-	typename T18>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17,
+    typename T18>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	T18,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    T18,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 19))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		T18);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        T18);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17,
-		T18 arg18)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17,
-			arg18);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17,
+        T18 arg18)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17,
+            arg18);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16,
-	typename T17>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16,
+    typename T17>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	T17,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    T17,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 18))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		T17);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        T17);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16,
-		T17 arg17)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16,
-			arg17);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16,
+        T17 arg17)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16,
+            arg17);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15,
-	typename T16>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15,
+    typename T16>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	T16,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    T16,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 17))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		T16);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        T16);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15,
-		T16 arg16)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15,
-			arg16);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15,
+        T16 arg16)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15,
+            arg16);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14,
-	typename T15>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14,
+    typename T15>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	T15,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    T15,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 16))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		T15);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        T15);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14,
-		T15 arg15)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14,
-			arg15);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14,
+        T15 arg15)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14,
+            arg15);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13,
-	typename T14>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13,
+    typename T14>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	T14,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    T14,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 15))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		T14);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        T14);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13,
-		T14 arg14)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13,
-			arg14);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13,
+        T14 arg14)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13,
+            arg14);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12,
-	typename T13>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12,
+    typename T13>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	T13,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    T13,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 14))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		T13);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        T13);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12,
-		T13 arg13)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12,
-			arg13);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12,
+        T13 arg13)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12,
+            arg13);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11,
-	typename T12>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11,
+    typename T12>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	T12,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    T12,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 13))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		T12);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        T12);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11,
-		T12 arg12)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11,
-			arg12);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11,
+        T12 arg12)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11,
+            arg12);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10,
-	typename T11>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10,
+    typename T11>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	T11,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    T11,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 12))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		T11);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        T11);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10,
-		T11 arg11)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10,
-			arg11);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10,
+        T11 arg11)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10,
+            arg11);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9,
-	typename T10>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9,
+    typename T10>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	T10,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    T10,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 11))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		T10);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        T10);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9,
-		T10 arg10)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9,
-			arg10);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9,
+        T10 arg10)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9,
+            arg10);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8,
-	typename T9>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8,
+    typename T9>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	T9,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    T9,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 10))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		T9);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        T9);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8,
-		T9 arg9)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8,
-			arg9);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8,
+        T9 arg9)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8,
+            arg9);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7,
-	typename T8>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7,
+    typename T8>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	T8,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    T8,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 9))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		T8);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        T8);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7,
-		T8 arg8)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7,
-			arg8);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7,
+        T8 arg8)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7,
+            arg8);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6,
-	typename T7>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6,
+    typename T7>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	T7,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    T7,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 8))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		T7);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        T7);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6,
-		T7 arg7)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6,
-			arg7);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6,
+        T7 arg7)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6,
+            arg7);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5,
-	typename T6>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5,
+    typename T6>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	T6,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    T6,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 7))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		T6);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        T6);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5,
-		T6 arg6)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5,
-			arg6);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5,
+        T6 arg6)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5,
+            arg6);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4,
-	typename T5>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4,
+    typename T5>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	T5,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    T5,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 6))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		T5);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        T5);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4,
-		T5 arg5)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4,
-			arg5);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4,
+        T5 arg5)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4,
+            arg5);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3,
-	typename T4>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3,
+    typename T4>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	T4,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    T4,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		T4,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        T4,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 5))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3,
-		T4);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3,
+        T4);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3,
-		T4 arg4)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3,
-			arg4);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3,
+        T4 arg4)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3,
+            arg4);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2,
-	typename T3>
+    typename T0,
+    typename T1,
+    typename T2,
+    typename T3>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	T3,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    T3,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		T3,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        T3,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 4))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2,
-		T3);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2,
+        T3);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2,
-		T3 arg3)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2,
-			arg3);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2,
+        T3 arg3)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2,
+            arg3);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1,
-	typename T2>
+    typename T0,
+    typename T1,
+    typename T2>
 struct functionImplementation_
-<	T0,
-	T1,
-	T2,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    T2,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		T2,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        T2,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 3))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1,
-		T2);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1,
+        T2);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1,
-		T2 arg2)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1,
-			arg2);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1,
+        T2 arg2)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1,
+            arg2);
+    }
 
 
 };
 
 template<
-	typename T0,
-	typename T1>
+    typename T0,
+    typename T1>
 struct functionImplementation_
-<	T0,
-	T1,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    T1,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		T1,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        T1,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 2))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0,
-		T1);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0,
+        T1);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0,
-		T1 arg1)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0,
-			arg1);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0,
+        T1 arg1)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0,
+            arg1);
+    }
 
 
 };
 
 template<
-	typename T0>
+    typename T0>
 struct functionImplementation_
-<	T0,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType,
-	NullType>
+<   T0,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType,
+    NullType>
 {
-	typedef detail::KernelFunctorGlobal<
-		T0,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType,
-		NullType> FunctorType;
+    typedef detail::KernelFunctorGlobal<
+        T0,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType,
+        NullType> FunctorType;
 
     FunctorType functor_;
 
     functionImplementation_(const FunctorType &functor) :
         functor_(functor)
     {
-    
+
         #if (defined(_WIN32) && defined(_VARIADIC_MAX) && (_VARIADIC_MAX < 1))
         // Fail variadic expansion for dev11
         static_assert(0, "Visual Studio has a hard limit of argument count for a std::function expansion. Please define _VARIADIC_MAX to be 10. If you need more arguments than that VC12 and below cannot support it.");
         #endif
-            
+
     }
 
-	//! \brief Return type of the functor
-	typedef Event result_type;
+    //! \brief Return type of the functor
+    typedef Event result_type;
 
-	//! \brief Function signature of kernel functor with no event dependency.
-	typedef Event type_(
-		const EnqueueArgs&,
-		T0);
+    //! \brief Function signature of kernel functor with no event dependency.
+    typedef Event type_(
+        const EnqueueArgs&,
+        T0);
 
-	Event operator()(
-		const EnqueueArgs& enqueueArgs,
-		T0 arg0)
-	{
-		return functor_(
-			enqueueArgs,
-			arg0);
-	}
+    Event operator()(
+        const EnqueueArgs& enqueueArgs,
+        T0 arg0)
+    {
+        return functor_(
+            enqueueArgs,
+            arg0);
+    }
 
 
 };
@@ -12763,7 +12308,7 @@ struct make_kernel :
     >
 {
 public:
-    typedef detail::KernelFunctorGlobal<             
+    typedef detail::KernelFunctorGlobal<
                T0,   T1,   T2,   T3,
                T4,   T5,   T6,   T7,
                T8,   T9,   T10,   T11,
@@ -12788,7 +12333,7 @@ public:
                        T24,   T25,   T26,   T27,
                        T28,   T29,   T30,   T31
            >(
-            FunctorType(program, name, err)) 
+            FunctorType(program, name, err))
     {}
 
     make_kernel(
@@ -12803,8 +12348,8 @@ public:
                        T24,   T25,   T26,   T27,
                        T28,   T29,   T30,   T31
            >(
-            FunctorType(kernel)) 
-    {}    
+            FunctorType(kernel))
+    {}
 };
 
 
@@ -12894,13 +12439,14 @@ public:
 #undef __PARAM_NAME_DEVICE_FISSION
 #endif // USE_CL_DEVICE_FISSION
 
-#undef __DEFAULT_NOT_INITIALIZED 
-#undef __DEFAULT_BEING_INITIALIZED 
+#undef __DEFAULT_NOT_INITIALIZED
+#undef __DEFAULT_BEING_INITIALIZED
 #undef __DEFAULT_INITIALIZED
 
-#undef CL_HPP_RVALUE_REFERENCES_SUPPORTED
-#undef CL_HPP_NOEXCEPT
-
 } // namespace cl
+
+#ifdef _WIN32
+#pragma pop_macro("max")
+#endif // _WIN32
 
 #endif // CL_HPP_
