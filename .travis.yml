@@ -1,7 +1,6 @@
 # Travis Configuration
 sudo: false
 language: cpp
-script: make all && make test
 compiler:
   - clang
   - gcc
@@ -20,6 +19,11 @@ addons:
 before_script:
   - export PATH=$HOME/.local/bin:$PATH
   - pip install cpp-coveralls --user `whoami`
+
+# Run the Test Script
+script:
+  - make all
+  - make check
 
 # Upload Code Coverage Data
 after_success:

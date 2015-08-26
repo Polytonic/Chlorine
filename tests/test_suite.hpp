@@ -23,7 +23,7 @@ void test(std::string const & type, std::string const & instr, T val = 1)
 {
     // Create a Worker and Load the Correct Types Kernel
     INFO("Testing Function: " << instr << typeid(T).name());
-    ch::Worker worker; worker >> ch::read("tests/test_" + type + ".cl");
+    ch::Worker worker; worker >> ch::read("kernels/test_" + type + ".cl");
 
     // Define Two Vectors of Test Data
     size_t const n = 10;
