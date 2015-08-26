@@ -31,9 +31,12 @@ target_link_libraries(clinfo ${OpenCL_LIBRARY})
 include_directories(tests tests/catch/include)
 file(GLOB TEST_KERNELS tests/**/*.cl)
 source_group("Kernels" FILES ${TEST_KERNELS})
-add_executable(check tests/test_suite.hpp tests/test_main.cpp ${TEST_KERNELS})
-target_link_libraries(check ${OpenCL_LIBRARY})
-add_custom_command(TARGET check PRE_BUILD
+add_executable(runner EXCLUDE_FROM_ALL tests/test_suite.hpp tests/test_main.cpp ${TEST_KERNELS})
+target_link_libraries(runner ${OpenCL_LIBRARY})
+add_custom_command(TARGET runner PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                    ${CMAKE_SOURCE_DIR}/tests/kernels/
-                   $<TARGET_FILE_DIR:check>/tests/)
+                   $<TARGET_FILE_DIR:runner>/tests/)
+
+add_custom_target(check COMMAND runner --reporter compact)
+add_dependencies(check runner)
