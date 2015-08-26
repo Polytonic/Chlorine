@@ -1,4 +1,5 @@
 # Compiled Makefile Outputs
+build
 builds
 *.dSYM
 *.gcda
