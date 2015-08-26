@@ -9,17 +9,17 @@
  */
 
 // Chlorine Integer Arrays Test
-TEST_CASE("Adds       Integers", "[int, add]") { test<int>("integers", "add"); }
-TEST_CASE("Subtracts  Integers", "[int, sub]") { test<int>("integers", "sub"); }
-TEST_CASE("Multiplies Integers", "[int, mul]") { test<int>("integers", "mul"); }
+TEST_CASE("Adds       Integers", "[int][add]") { test<int>("integers", "add"); }
+TEST_CASE("Subtracts  Integers", "[int][sub]") { test<int>("integers", "sub"); }
+TEST_CASE("Multiplies Integers", "[int][mul]") { test<int>("integers", "mul"); }
 
 // Chlorine Float Arrays Test
-TEST_CASE("Adds       Floats", "[float, add]") { test<float>("floats", "add"); }
-TEST_CASE("Subtracts  Floats", "[float, sub]") { test<float>("floats", "sub"); }
-TEST_CASE("Multiplies Floats", "[float, mul]") { test<float>("floats", "mul"); }
+TEST_CASE("Adds       Floats", "[float][add]") { test<float>("floats", "add"); }
+TEST_CASE("Subtracts  Floats", "[float][sub]") { test<float>("floats", "sub"); }
+TEST_CASE("Multiplies Floats", "[float][mul]") { test<float>("floats", "mul"); }
 
 // Chlorine Scalar Primitives Test
-TEST_CASE("Scalars", "[arithmetic, scalars]")
+TEST_CASE("Scalars", "[arithmetic][scalars]")
 {
     // Create a Worker and Load the Correct Types Kernel
     ch::Worker worker("tests/test_scalars.cl");
@@ -48,7 +48,7 @@ TEST_CASE("Scalars", "[arithmetic, scalars]")
 }
 
 // Chlorine Vector Primitives Test
-TEST_CASE("Vectors", "[arithmetic, vectors]")
+TEST_CASE("Vectors", "[arithmetic][vectors]")
 {
     // Create a Worker and Load the Correct Types Kernel
     ch::Worker worker("tests/test_vectors.cl");
