@@ -66,7 +66,7 @@ void ppm_draw(std::string const & filename,
     }
 }
 
-int main(int argc, char* argv[])
+int main()
 {
     // Define Mandelbrot Settings
     int iterations = 2000;
