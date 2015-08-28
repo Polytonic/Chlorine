@@ -79,7 +79,7 @@ The core philosophy in Chlorine is that you should *work with your data*, instea
 
 Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, `3.14` vs. `3.14f`.
 
-For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it by invoking `make`, and optionally, `make install` to copy it to your system.
+For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it using `cmake`.
 
 ## License
 >The MIT License (MIT)
