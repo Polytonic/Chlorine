@@ -44,7 +44,7 @@ script:
   - cd build
   - cmake ..
   - make all
-  - clinfo > /dev/null
+  - ./clinfo > /dev/null
   - make check
 
 # Upload Code Coverage Data
