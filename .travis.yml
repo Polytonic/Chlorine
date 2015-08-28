@@ -48,11 +48,12 @@ script:
   - cmake ..
   - make all
   - ./clinfo > /dev/null
+  - ./chlorine > /dev/null
   - make check
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls --root .. --exclude chlorine/include/cl.hpp  --exclude examples --exclude tests
+  - coveralls --root .. --exclude chlorine/include/cl.hpp  --exclude chlorine/clinfo/clinfo.cpp --exclude examples --exclude tests
 
 # Display Compiler Information
 after_script:

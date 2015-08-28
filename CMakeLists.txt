@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 3.1)
 project(Chlorine)
 
+# Set Compiler Flags
 if(MSVC)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 else()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++1y")
+endif()
+
+# Enable Coverage on Travis Tests
+if(DEFINED ENV{TRAVIS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()
 
 find_package(OpenCL REQUIRED)
@@ -26,11 +32,6 @@ target_link_libraries(chlorine ${OpenCL_LIBRARY})
 # Build the clinfo Helper
 add_executable(clinfo chlorine/include/cl.hpp chlorine/clinfo/clinfo.cpp)
 target_link_libraries(clinfo ${OpenCL_LIBRARY})
-
-# Enable Coverage on Travis Tests
-if(DEFINED ENV{TRAVIS})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-endif()
 
 # Build the Test Suite
 include_directories(tests tests/catch/include)
