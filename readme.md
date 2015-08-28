@@ -46,14 +46,14 @@ __kernel void swap(__global float * spam, __global float * eggs)
 
 Chlorine uses the [cmake](http://www.cmake.org/) build system. If you're looking to compile the examples or contribute to Chlorine, you'll need to do the following:
 
-```
+```bash
 # Create the Out-of-Source Builds Folder
 mkdir -p build && cd build
 ```
 
 Now generate a project file or makefile for your platform. If you want to use a particular IDE, make sure it is installed; don't forget to set the Start-Up Project in Visual Studio or the Target in Xcode.
 
-```
+```bash
 # UNIX Makefile
 cmake ..
 
