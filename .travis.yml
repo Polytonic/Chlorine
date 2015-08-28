@@ -1,8 +1,7 @@
 # Travis Configuration
 # sudo: false
-language: cpp
-os:
-  - osx
+language: objective-c
+os: osx
 compiler:
   - clang
   - gcc
@@ -30,9 +29,11 @@ compiler:
 # Delete This on Container Integration #
 ########################################
 
-install:
+before_script:
   - if [ "$CXX" = "g++" ]; then export CXX=g++-4.8; fi
-  - brew install cmake
+  - brew update
+  - brew outdated cmake || brew upgrade cmake
+  - brew install python
   - pip install cpp-coveralls
 
 ########################################
