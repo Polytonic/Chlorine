@@ -7,6 +7,10 @@ else()
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++1y")
 endif()
 
+if(DEFINED ENV{TRAVIS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
+
 find_package(OpenCL REQUIRED)
 include_directories(chlorine/include ${OpenCL_INCLUDE_DIR})
 file(GLOB PROJECT_HEADERS chlorine/include/*.hpp)
