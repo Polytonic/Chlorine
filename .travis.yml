@@ -1,11 +1,14 @@
 # Travis Configuration
-# sudo: false
+sudo: false
 language: objective-c
 os: osx
 compiler:
   - clang
   - gcc
 
+env:
+  global:
+    - COVERAGE=true
 #####################################
 # For Migration to Container Builds #
 #####################################
@@ -49,7 +52,7 @@ script:
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls --exclude chlorine/include/cl.hpp  --exclude examples --exclude tests
+  - coveralls
 
 # Display Compiler Information
 after_script:
