@@ -46,7 +46,11 @@ install:
 
 # Run the Test Script
 script:
+  - mkdir -p build
+  - cd build
+  - cmake ..
   - make all
+  - clinfo > /dev/null
   - make check
 
 # Upload Code Coverage Data
