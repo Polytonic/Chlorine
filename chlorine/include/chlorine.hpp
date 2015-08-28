@@ -23,8 +23,7 @@ namespace ch
     public:
 
         // Worker Constructors
-        Worker(std::string const & filename, unsigned int const platform = 0, unsigned int const device = 0);
-        Worker(      /* No Filename */       unsigned int const platform = 0, unsigned int const device = 0);
+        Worker(std::string const & filename = "", unsigned int const platform = 0, unsigned int const device = 0);
 
         // Disable Copy and Assignment Constructors
         Worker(Worker const &) = delete;
@@ -115,14 +114,9 @@ namespace ch
     {
         set_platform(platform);
         set_device(device);
-        std::cout << build_kernel(read(filename));
-    }
 
-    // Default Constructor
-    Worker::Worker(unsigned int const platform, unsigned int const device)
-    {
-        set_platform(platform);
-        set_device(device);
+        if (filename.empty() == false)
+            std::cout << build_kernel(read(filename));
     }
 
     // Selects the Specified OpenCL Platform

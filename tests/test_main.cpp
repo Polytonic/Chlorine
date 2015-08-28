@@ -9,20 +9,20 @@
  */
 
 // Chlorine Integer Arrays Test
-TEST_CASE("Adds       Integers", "[int, add]") { test<int>("integers", "add"); }
-TEST_CASE("Subtracts  Integers", "[int, sub]") { test<int>("integers", "sub"); }
-TEST_CASE("Multiplies Integers", "[int, mul]") { test<int>("integers", "mul"); }
+TEST_CASE("Adds       Integers", "[int][add]") { test<int>("integers", "add"); }
+TEST_CASE("Subtracts  Integers", "[int][sub]") { test<int>("integers", "sub"); }
+TEST_CASE("Multiplies Integers", "[int][mul]") { test<int>("integers", "mul"); }
 
 // Chlorine Float Arrays Test
-TEST_CASE("Adds       Floats", "[float, add]") { test<float>("floats", "add"); }
-TEST_CASE("Subtracts  Floats", "[float, sub]") { test<float>("floats", "sub"); }
-TEST_CASE("Multiplies Floats", "[float, mul]") { test<float>("floats", "mul"); }
+TEST_CASE("Adds       Floats", "[float][add]") { test<float>("floats", "add"); }
+TEST_CASE("Subtracts  Floats", "[float][sub]") { test<float>("floats", "sub"); }
+TEST_CASE("Multiplies Floats", "[float][mul]") { test<float>("floats", "mul"); }
 
 // Chlorine Scalar Primitives Test
-TEST_CASE("Scalars", "[arithmetic, scalars]")
+TEST_CASE("Scalars", "[arithmetic][scalars]")
 {
     // Create a Worker and Load the Correct Types Kernel
-    ch::Worker worker("tests/test_scalars.cl");
+    ch::Worker worker("kernels/test_scalars.cl");
     srand(static_cast<unsigned>(time(0)));
     size_t const n = 10;
 
@@ -48,10 +48,10 @@ TEST_CASE("Scalars", "[arithmetic, scalars]")
 }
 
 // Chlorine Vector Primitives Test
-TEST_CASE("Vectors", "[arithmetic, vectors]")
+TEST_CASE("Vectors", "[arithmetic][vectors]")
 {
     // Create a Worker and Load the Correct Types Kernel
-    ch::Worker worker("tests/test_vectors.cl");
+    ch::Worker worker("kernels/test_vectors.cl");
     size_t const n = 10;
 
     SECTION("Vector Integers")
@@ -80,7 +80,7 @@ TEST_CASE("Helpers", "[helpers]")
 {
     SECTION("ch::elapsed() Returns an Elapsed Time")
     {
-        ch::Worker worker("tests/test_helpers.cl");
+        ch::Worker worker("kernels/test_helpers.cl");
         std::vector<int> a(100, 100);
         auto event = worker.call("fill", a);
         for (unsigned int i = 0; i < a.size(); i++)
@@ -91,7 +91,7 @@ TEST_CASE("Helpers", "[helpers]")
     SECTION("ch::read() Returns File Contents")
     {
         // Read Kernel Source
-        std::string kernel = ch::read("tests/test_helpers.cl");
+        std::string kernel = ch::read("kernels/test_helpers.cl");
 
         // Define String Literal to Match
         std::string match =
@@ -109,13 +109,13 @@ TEST_CASE("Helpers", "[helpers]")
     SECTION("Operator >> Accepts Kernel Strings")
     {
         ch::Worker worker;
-        REQUIRE_NOTHROW(worker >> ch::read("tests/test_helpers.cl"));
+        REQUIRE_NOTHROW(worker >> ch::read("kernels/test_helpers.cl"));
     }
 
     SECTION("Operator << Prints the Build Log")
     {
         ch::Worker worker;
-        REQUIRE_THROWS(worker >> ch::read("tests/test_operators.cl"));
+        REQUIRE_THROWS(worker >> ch::read("kernels/test_operators.cl"));
         INFO("Build Log" << worker);
     }
 }

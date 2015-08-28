@@ -1,27 +1,32 @@
 # Travis Configuration
-language: cpp
-script: make all && make test
+sudo: false
+language: objective-c
+os: osx
 compiler:
   - clang
   - gcc
 
-# Install GCC 4.8.x
-before_install:
-  - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
-  - if [ "$CXX" = "g++" ]; then sudo apt-get update -qq; fi
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8" GCOV="gcov-4.8"; fi
+# Install Dependencies
+before_script:
+  - if [ "$CXX" = "g++" ]; then export CXX=g++-4.8; fi
+  - brew update
+  - brew outdated cmake || brew upgrade cmake
+  - brew install python
+  - pip install cpp-coveralls
 
-# Install Chlorine Dependencies
-install:
-  - sudo apt-get update  -qq
-  - sudo apt-get install -qq fglrx=2:8.960-0ubuntu1
-  - sudo apt-get install -qq opencl-headers
-  - sudo pip install cpp-coveralls
+# Run the Test Script
+script:
+  - mkdir -p build
+  - cd build
+  - cmake ..
+  - make all
+  - ./clinfo > /dev/null
+  - ./chlorine > /dev/null
+  - make check
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls --exclude chlorine/cl.hpp  --exclude examples --exclude tests
+  - coveralls --root .. --exclude chlorine/include/cl.hpp  --exclude chlorine/clinfo/clinfo.cpp --exclude examples --exclude tests
 
 # Display Compiler Information
 after_script:

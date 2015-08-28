@@ -4,7 +4,7 @@
 [![OpenCL Version](http://img.shields.io/badge/OpenCL-1.2%2B-brightgreen.svg?style=flat-square)](https://www.khronos.org/opencl/)
 
 ## Summary
-Chlorine is a simple way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. You can rapidly *prototype* parallel processing on graphics processing units using a generic worker implementation that abstracts away much of the boilerplate involved with writing OpenCL applications.
+Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. Chlorine allows you to write code that runs on graphics processing units without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.
 
 ## Getting Started
 Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp) and a compiler with `C++11` support. An example of how to use Chlorine is shown below. You can also read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
@@ -44,7 +44,28 @@ __kernel void swap(__global float * spam, __global float * eggs)
 }
 ```
 
-You can build all of the samples by invoking `make examples`, or you can examine and build individual samples from their respective [examples](https://github.com/Polytonic/Chlorine/tree/master/examples) subdirectories.
+Chlorine uses the [cmake](http://www.cmake.org/) build system. If you're looking to compile the examples or contribute to Chlorine, you'll need to do the following:
+
+```bash
+# Create the Out-of-Source Builds Folder
+mkdir -p build && cd build
+```
+
+Now generate a project file or makefile for your platform. If you want to use a particular IDE, make sure it is installed; don't forget to set the Start-Up Project in Visual Studio or the Target in Xcode.
+
+```bash
+# UNIX Makefile
+cmake ..
+
+# Mac OSX
+cmake -G "Xcode" ..
+
+# Microsoft Windows
+cmake -G "Visual Studio 14" ..
+cmake -G "Visual Studio 14 Win64" ..
+...
+
+```
 
 ## Documentation
 The core philosophy in Chlorine is that you should *work with your data*, instead of spending time fighting an API. To that end, Chlorine acts as a lightweight interface to OpenCL, automatically mapping arguments passed on the host to kernel functions running on a device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix scalar and vector types as needed. The following types are supported:
@@ -58,7 +79,7 @@ The core philosophy in Chlorine is that you should *work with your data*, instea
 
 Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, `3.14` vs. `3.14f`.
 
-For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it by invoking `make`, and optionally, `make install` to copy it to your system.
+For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it using `cmake`.
 
 ## License
 >The MIT License (MIT)

@@ -1,6 +1,6 @@
 // Include the Chlorine Header
 #include "chlorine.hpp"
-int main(int argc, char * argv[])
+int main()
 {
     // Create Some Data
     std::vector<float> spam(10, 3.1415f);
