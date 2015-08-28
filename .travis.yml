@@ -52,7 +52,7 @@ script:
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls
+  - coveralls --root .. --exclude chlorine/include/cl.hpp  --exclude examples --exclude tests
 
 # Display Compiler Information
 after_script:
