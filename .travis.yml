@@ -53,7 +53,7 @@ script:
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls --root .. --exclude chlorine/include/cl.hpp  --exclude chlorine/clinfo/clinfo.cpp --exclude examples --exclude tests
+  - coveralls --root .. --exclude chlorine/include/cl.hpp  --exclude chlorine/clinfo/clinfo.cpp --exclude build/CMakeFiles/ --exclude examples --exclude tests
 
 # Display Compiler Information
 after_script:
