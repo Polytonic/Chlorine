@@ -1,24 +1,48 @@
 # Travis Configuration
-sudo: false
+# sudo: false
 language: cpp
 compiler:
   - clang
   - gcc
 
+#####################################
+# For Migration to Container Builds #
+#####################################
+
 # Install Container Dependencies
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - fglrx-dev # (TravisCI: #4228, apt-package-whitelist: #383)
-      - g++-4.8
-      - opencl-headers
+# addons:
+#   apt:
+#     sources:
+#       - ubuntu-toolchain-r-test
+#     packages:
+#       - fglrx-dev # (TravisCI: #4228, apt-package-whitelist: #383)
+#       - g++-4.8
+#       - opencl-headers
 
 # Install Coveralls (TravisCI: #3563)
-before_script:
-  - export PATH=$HOME/.local/bin:$PATH
-  - pip install cpp-coveralls --user `whoami`
+# before_script:
+#   - export PATH=$HOME/.local/bin:$PATH
+#   - pip install cpp-coveralls --user `whoami`
+
+########################################
+# Delete This on Container Integration #
+########################################
+
+# Install GCC 4.8.x
+before_install:
+  - if [ "$CXX" = "g++" ]; then sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y; fi
+  - if [ "$CXX" = "g++" ]; then sudo apt-get update -qq; fi
+  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8" GCOV="gcov-4.8"; fi
+
+# Install Chlorine Dependencies
+install:
+  - sudo apt-get update  -qq
+  - sudo apt-get install -qq fglrx=2:8.960-0ubuntu1
+  - sudo apt-get install -qq opencl-headers
+  - sudo pip install cpp-coveralls
+
+########################################
 
 # Run the Test Script
 script:
@@ -27,7 +51,7 @@ script:
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls --exclude chlorine/cl.hpp  --exclude examples --exclude tests
+  - coveralls --exclude chlorine/include/cl.hpp  --exclude examples --exclude tests
 
 # Display Compiler Information
 after_script:
