@@ -1,45 +1,36 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Chlorine by Polytonic</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>Chlorine</h1>
-        <p>Parallel Processing Made Simple</p>
+    <section class="page-header">
+      <h1 class="project-name">Chlorine</h1>
+      <h2 class="project-tagline">Parallel Processing Made Simple</h2>
+      <a href="https://github.com/Polytonic/Chlorine" class="btn">View on GitHub</a>
+      <a href="https://github.com/Polytonic/Chlorine/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Polytonic/Chlorine/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-        <p class="view"><a href="https://github.com/Polytonic/Chlorine">View the Project on GitHub <small>Polytonic/Chlorine</small></a></p>
-
-
-        <ul>
-          <li><a href="https://github.com/Polytonic/Chlorine/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/Polytonic/Chlorine/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/Polytonic/Chlorine">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>
+    <section class="main-content">
+      <h1>
 <a id="chlorine" class="anchor" href="#chlorine" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="http://polytonic.github.io/Chlorine/">Chlorine</a>
 </h1>
 
-<p><a href="https://travis-ci.org/Polytonic/Chlorine"><img src="http://img.shields.io/travis/Polytonic/Chlorine.svg?style=flat-square" alt="Build Status"></a>
+<p><a href="https://travis-ci.org/Polytonic/Chlorine"><img src="http://img.shields.io/travis/Polytonic/Chlorine/master.svg?style=flat-square" alt="Build Status"></a>
 <a href="https://coveralls.io/r/Polytonic/Chlorine"><img src="http://img.shields.io/coveralls/Polytonic/Chlorine.svg?style=flat-square" alt="Coverage Status"></a>
 <a href="https://www.khronos.org/opencl/"><img src="http://img.shields.io/badge/OpenCL-1.2%2B-brightgreen.svg?style=flat-square" alt="OpenCL Version"></a></p>
 
 <h2>
 <a id="summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary</h2>
 
-<p>Chlorine is a simple way to interact with <a href="https://www.khronos.org/opencl/">OpenCL</a> compatible devices. You can rapidly <em>prototype</em> parallel processing on graphics processing units using a generic worker implementation that abstracts away much of the boilerplate involved with writing OpenCL applications.</p>
+<p>Chlorine is the easiest way to interact with <a href="https://www.khronos.org/opencl/">OpenCL</a> compatible devices. Chlorine allows you to write code that runs on graphics processing units without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.</p>
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
@@ -49,38 +40,55 @@
 <p><strong>main.cpp</strong></p>
 
 <div class="highlight highlight-c++"><pre><span class="pl-c">// Include the Chlorine Header</span>
-#<span class="pl-k">include</span> <span class="pl-s1"><span class="pl-pds">"</span>chlorine.hpp<span class="pl-pds">"</span></span>
-<span class="pl-st">int</span> <span class="pl-en">main</span>(<span class="pl-st">int</span> argc, <span class="pl-st">char</span> * argv[])
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>chlorine.hpp<span class="pl-pds">"</span></span>
+<span class="pl-k">int</span> <span class="pl-en">main</span>(<span class="pl-k">int</span> argc, <span class="pl-k">char</span> * argv[])
 {
     <span class="pl-c">// Create Some Data</span>
-    std::vector&lt;<span class="pl-st">float</span>&gt; <span class="pl-s3">spam</span>(<span class="pl-c1">10</span>, <span class="pl-c1">3</span>.<span class="pl-c1">1415f</span>);
-    std::vector&lt;<span class="pl-st">float</span>&gt; <span class="pl-s3">eggs</span>(<span class="pl-c1">10</span>, <span class="pl-c1">2</span>.<span class="pl-c1">7182f</span>);
+    std::vector&lt;<span class="pl-k">float</span>&gt; <span class="pl-c1">spam</span>(<span class="pl-c1">10</span>, <span class="pl-c1">3</span>.<span class="pl-c1">1415f</span>);
+    std::vector&lt;<span class="pl-k">float</span>&gt; <span class="pl-c1">eggs</span>(<span class="pl-c1">10</span>, <span class="pl-c1">2</span>.<span class="pl-c1">7182f</span>);
 
     <span class="pl-c">// Initialize a Chlorine Worker</span>
-    ch::Worker <span class="pl-vo">worker</span>(<span class="pl-s1"><span class="pl-pds">"</span>swap.cl<span class="pl-pds">"</span></span>);
+    ch::Worker <span class="pl-smi">worker</span>(<span class="pl-s"><span class="pl-pds">"</span>swap.cl<span class="pl-pds">"</span></span>);
 
     <span class="pl-c">// Call the Swap Function in the Given Kernel</span>
-    <span class="pl-st">auto</span> event = worker.<span class="pl-s3">call</span>(<span class="pl-s1"><span class="pl-pds">"</span>swap<span class="pl-pds">"</span></span>, spam, eggs);
+    <span class="pl-k">auto</span> event = worker.<span class="pl-c1">call</span>(<span class="pl-s"><span class="pl-pds">"</span>swap<span class="pl-pds">"</span></span>, spam, eggs);
 
     <span class="pl-c">// Host Containers Are Automatically Updated</span>
-    std::cout &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>Spam: <span class="pl-pds">"</span></span> &lt;&lt; spam[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 2.7182</span>
-    std::cout &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>Eggs: <span class="pl-pds">"</span></span> &lt;&lt; eggs[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 3.1415</span>
+    std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Spam: <span class="pl-pds">"</span></span> &lt;&lt; spam[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 2.7182</span>
+    std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Eggs: <span class="pl-pds">"</span></span> &lt;&lt; eggs[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 3.1415</span>
 
     <span class="pl-c">// Print Some Profiling Data</span>
-    std::cout &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>Elapsed Time: <span class="pl-pds">"</span></span> &lt;&lt; <span class="pl-s3">ch::elapsed</span>(event) &lt;&lt; <span class="pl-s1"><span class="pl-pds">"</span>ns<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>;
+    std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Elapsed Time: <span class="pl-pds">"</span></span> &lt;&lt; <span class="pl-c1">ch::elapsed</span>(event) &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>ns<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>;
 }</pre></div>
 
 <p><strong>swap.cl</strong></p>
 
-<div class="highlight highlight-c"><pre>__kernel <span class="pl-st">void</span> <span class="pl-en">swap</span>(__global <span class="pl-st">float</span> * spam, __global <span class="pl-st">float</span> * eggs)
+<div class="highlight highlight-c"><pre>__kernel <span class="pl-k">void</span> <span class="pl-en">swap</span>(__global <span class="pl-k">float</span> * spam, __global <span class="pl-k">float</span> * eggs)
 {
-    <span class="pl-st">unsigned</span> <span class="pl-st">int</span> i = <span class="pl-s3">get_global_id</span>(<span class="pl-c1">0</span>);
-    <span class="pl-st">float</span> swap = spam[i];
+    <span class="pl-k">unsigned</span> <span class="pl-k">int</span> i = <span class="pl-c1">get_global_id</span>(<span class="pl-c1">0</span>);
+    <span class="pl-k">float</span> swap = spam[i];
     spam[i] = eggs[i];
     eggs[i] = swap;
 }</pre></div>
 
-<p>You can build all of the samples by invoking <code>make examples</code>, or you can examine and build individual samples from their respective <a href="https://github.com/Polytonic/Chlorine/tree/master/examples">examples</a> subdirectories.</p>
+<p>Chlorine uses the <a href="http://www.cmake.org/">cmake</a> build system. If you're looking to compile the examples or contribute to Chlorine, you'll need to do the following:</p>
+
+<div class="highlight highlight-bash"><pre><span class="pl-c"># Create the Out-of-Source Builds Folder</span>
+mkdir -p build <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">cd</span> build</pre></div>
+
+<p>Now generate a project file or makefile for your platform. If you want to use a particular IDE, make sure it is installed; don't forget to set the Start-Up Project in Visual Studio or the Target in Xcode.</p>
+
+<div class="highlight highlight-bash"><pre><span class="pl-c"># UNIX Makefile</span>
+cmake ..
+
+<span class="pl-c"># Mac OSX</span>
+cmake -G <span class="pl-s"><span class="pl-pds">"</span>Xcode<span class="pl-pds">"</span></span> ..
+
+<span class="pl-c"># Microsoft Windows</span>
+cmake -G <span class="pl-s"><span class="pl-pds">"</span>Visual Studio 14<span class="pl-pds">"</span></span> ..
+cmake -G <span class="pl-s"><span class="pl-pds">"</span>Visual Studio 14 Win64<span class="pl-pds">"</span></span> ..
+...
+</pre></div>
 
 <h2>
 <a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
@@ -98,7 +106,7 @@
 
 <p>Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, <code>3.14</code> vs. <code>3.14f</code>.</p>
 
-<p>For convenience, Chlorine also provides a simple version of <code>clinfo</code>, allowing you to print basic information about OpenCL devices on your computer. You can build it by invoking <code>make</code>, and optionally, <code>make install</code> to copy it to your system.</p>
+<p>For convenience, Chlorine also provides a simple version of <code>clinfo</code>, allowing you to print basic information about OpenCL devices on your computer. You can build it using <code>cmake</code>.</p>
 
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
@@ -114,13 +122,15 @@
 
 <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
 </blockquote>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/Polytonic">Polytonic</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Polytonic/Chlorine">Chlorine</a> is maintained by <a href="https://github.com/Polytonic">Polytonic</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
       </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+
+    </section>
+
+  
   </body>
 </html>
