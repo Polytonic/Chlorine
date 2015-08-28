@@ -41,6 +41,10 @@ install:
   - sudo apt-get install -qq fglrx=2:8.960-0ubuntu1
   - sudo apt-get install -qq opencl-headers
   - sudo pip install cpp-coveralls
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+         wget http://www.cmake.org/files/v3.3/cmake-3.3.0-Linux-i386.tar.gz
+      && tar -xzf cmake-3.3.0-Linux-i386.tar.gz
+      && sudo cp -fR cmake-3.3.0-Linux-i386/* /usr
 
 ########################################
 
