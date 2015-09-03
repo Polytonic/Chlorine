@@ -18,6 +18,10 @@
 
 namespace ch
 {
+    // Forward Declare Helper Functions for Xcode Tooltips
+    unsigned int elapsed(cl::Event const & event);
+    std::string read(std::string const & filename);
+
     class Worker
     {
     public:
