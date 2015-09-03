@@ -22,6 +22,14 @@ namespace ch
     unsigned int elapsed(cl::Event const & event);
     std::string read(std::string const & filename);
 
+    /**
+        Workers are responsible for abstracting away the OpenCL interface. They
+        setup OpenCL, and handle transferring data back and forth between host
+        and device memory. Workers expose a clean concise interface, allowing
+        you to transparently work with your data with little to no overhead.
+
+        @note documentation blocks are available above method definitions.
+     */
     class Worker
     {
     public:
@@ -84,27 +92,56 @@ namespace ch
 
     };
 
-    // Overload Stream Operator << to Print Build Information
+    /**
+        Overloads the insertion operator to display build information if a
+        kernel failed to compile. If the build was successful, this will produce
+        an empty build log.
+
+        @param std::ostream the output stream to write the build log to.
+        @param ch::Worker the Chlorine worker to retrieve the build log from.
+        @returns an output stream containing build information.
+     */
     std::ostream & operator<<(std::ostream & os, Worker const & w)
     {
         return os << w.mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(w.mDevice) << std::endl;
     }
 
-    // Overload Stream Operator >> to Accept Kernel Strings
+    /**
+        Overloads the extraction operator to accept the source of a kernel
+        and attempts to build it on the currently specified platform and device.
+
+        @param ch::Worker the Chlorine worker to build the kernel on.
+        @param std::string the source contents of an OpenCL kernel.
+        @returns a Chlorine worker instance.
+     */
     Worker & operator>>(Worker & worker, std::string const & kernel_source)
     {
         std::cout << worker.build_kernel(kernel_source);
         return worker;
     }
 
-    // Determine the Elapsed Computation Time (ns)
+    /**
+        Determines the elapsed time of a given event. This is typically used to
+        compute the running time of the kernel associated with this event. This
+        does not include time spent transferring data between host and device.
+
+        @param cl::Event the OpenCL event to retrieve profiling data from.
+        @returns the elapsed execution time of the event, in nanoseconds.
+     */
     unsigned int elapsed(cl::Event const & event)
     {
         return event.getProfilingInfo<CL_PROFILING_COMMAND_END>()
              - event.getProfilingInfo<CL_PROFILING_COMMAND_START>();
     }
 
-    // Read the Contents of the Given Filename
+    /**
+        Efficiently loads the contents of a file into a string. This is mainly
+        useful for reading OpenCL kernel files, instead of inlining kernels in
+        source code using concatenated string literals.
+
+        @param std::string the name of an input file.
+        @returns a string containing the contents of the input file.
+     */
     std::string read(std::string const & filename)
     {
         // Read Contents of Kernel
@@ -113,7 +150,17 @@ namespace ch
                           (std::istreambuf_iterator<char>()));
     }
 
-    // Filename Constructor
+    /**
+        Constructs a Chlorine worker and initializes OpenCL. Typically you will
+        call this constructor by only passing the name of a kernel source file.
+        If you need to specifically target a different platform or device, use
+        the bundled `clinfo` program to display information about the OpenCL
+        runtimes available on your system.
+
+        @param std::string (optional) the path to a kernel source file.
+        @param unsigned (optional) the integer index of the platform to use.
+        @param unsigned (optional) the integer index of the device to use.
+     */
     Worker::Worker(std::string const & filename, unsigned int const platform, unsigned int const device)
     {
         set_platform(platform);
@@ -123,7 +170,13 @@ namespace ch
             std::cout << build_kernel(read(filename));
     }
 
-    // Selects the Specified OpenCL Platform
+    /**
+        Specifies the OpenCL platform to use. If you are unsure which platforms
+        are available on your system, please use the bundled `clinfo` program to
+        display an ordered list of available OpenCL platforms.
+
+        @param unsigned the integer index of the platform to use.
+     */
     void Worker::set_platform(unsigned int const platform)
     {
         std::vector<cl::Platform> platforms;
@@ -131,7 +184,13 @@ namespace ch
         mPlatform = platforms[platform];
     }
 
-    // Selects the Specified OpenCL Device
+    /**
+        Specifies the OpenCL device to use. If you are unsure which devices are
+        available on your system, please use the bundled `clinfo` program to
+        display an ordered list of available OpenCL devices.
+
+        @param unsigned the integer index of the device to use.
+     */
     void Worker::set_device(unsigned int const device)
     {
         std::vector<cl::Device> devices;
@@ -141,7 +200,15 @@ namespace ch
         mQueue = cl::CommandQueue(mContext, mDevice, CL_QUEUE_PROFILING_ENABLE);
     }
 
-    // Builds an OpenCL Kernel from a Program String
+    /**
+        Builds the kernel on the target device and platform. Note that this
+        operation is performed at runtime. i.e., kernels are just-in-time
+        compiled, for portability. If the build was successful, this will
+        produce an empty build log.
+
+        @param std::string the source contents of an OpenCL kernel.
+        @returns a string containing the OpenCL build log.
+     */
     std::string Worker::build_kernel(std::string const & kernel_source)
     {
         // Build Kernel Using the Current Context
@@ -159,12 +226,14 @@ namespace ch
         return mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice);
     }
 
-
     /**
-        Base Case
+        Enqueues the kernel for execution on the OpenCL device. Buffer data is
+        automatically transferred back into the input data structures on the
+        host after the kernel has finished executing on the device.
 
+        @note this is an overloaded, recursive, variadic template method.
         @param std::string the name of a kernel function.
-        @return cl::Event an OpenCL event object.
+        @returns an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn>
     cl::Event Worker::call(std::string const & kernel_function)
@@ -180,7 +249,15 @@ namespace ch
         return mEvent;
     }
 
-    // Handle Primitive Types
+    /**
+        Sets the kernel argument at the current index to the value of the given
+        arithmetic primitive data type. For a specific list of fundamental data
+        types, please consult http://en.cppreference.com/w/cpp/language/types
+
+        @note this is an overloaded, recursive, variadic template method.
+        @param <T> a fundamental data type.
+        @returns an OpenCL event object containing profiling data.
+     */
     template<unsigned int const argn, typename T,
              typename std::enable_if<std::is_arithmetic<T>::value>::type*, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, T primitive, Params && ... parameters)
@@ -189,7 +266,15 @@ namespace ch
         return call<argn+1>(kernel_function, parameters...);
     }
 
-    // Handle C-Style Arrays
+    /**
+        Sets the kernel argument at the current index to an OpenCL buffer
+        mapped to the contents of a C-style array. The array size is inferred
+        through operator decay.
+
+        @note this is an overloaded, recursive, variadic template method.
+        @param <T> a C-style array containing your data.
+        @returns an OpenCL event object containing profiling data.
+     */
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
     {
@@ -201,7 +286,14 @@ namespace ch
         return call<argn+1>(kernel_function, parameters...);
     }
 
-    // Handle STL Arrays
+    /**
+        Sets the kernel argument at the current index to an OpenCL buffer
+        mapped to the contents of a std::array.
+
+        @note this is an overloaded, recursive, variadic template method.
+        @param <T> a std::array containing your data.
+        @returns an OpenCL event object containing profiling data.
+     */
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
     {
@@ -213,7 +305,16 @@ namespace ch
         return call<argn+1>(kernel_function, parameters...);
     }
 
-    // Handle Other STL Containers
+    /**
+        Sets the kernel argument at the current index to an OpenCL buffer
+        mapped to the contents of a data structure `V` with constructor matching
+        the form V<T>, typically std::vector or std::valarray. Other containers
+        may also be supported. Your mileage may vary.
+
+        @note this is an overloaded, recursive, variadic template method.
+        @param V<T> a std::vector<T> or std::valarray<T> containing your data.
+        @returns an OpenCL event object containing profiling data.
+     */
     template<unsigned int const argn, template<typename ...> class V, typename T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, V<T> & array, Params && ... parameters)
     {
