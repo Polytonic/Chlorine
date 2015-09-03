@@ -155,7 +155,13 @@ namespace ch
         return mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(mDevice);
     }
 
-    // Handle the Base Case
+
+    /**
+        Base Case
+
+        @param std::string the name of a kernel function.
+        @return cl::Event an OpenCL event object.
+     */
     template<unsigned int const argn>
     cl::Event Worker::call(std::string const & kernel_function)
     {
