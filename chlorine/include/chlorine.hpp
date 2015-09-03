@@ -25,7 +25,7 @@ namespace ch
     /**
         Workers are responsible for abstracting away the OpenCL interface. They
         setup OpenCL, and handle transferring data back and forth between host
-        and device memory. Workers expose a clean concise interface, allowing
+        and device memory. Workers expose a clean, concise interface, allowing
         you to transparently work with your data with little to no overhead.
 
         @note documentation blocks are available above method definitions.
