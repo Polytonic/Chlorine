@@ -42,7 +42,7 @@ namespace ch
         Worker & operator=(Worker const &) = delete;
 
         // Overloaded Stream Operators
-        friend std::ostream & operator<<(std::ostream & os, Worker const & w);
+        friend std::ostream & operator<<(std::ostream & os, Worker const & worker);
         friend Worker       & operator>>(Worker & worker, std::string const & kernel_source);
 
         // Class Methods
@@ -97,21 +97,21 @@ namespace ch
         kernel failed to compile. If the build was successful, this will produce
         an empty build log.
 
-        @param std::ostream the output stream to write the build log to.
-        @param ch::Worker the Chlorine worker to retrieve the build log from.
+        @param os the output stream to write the build log to.
+        @param worker the Chlorine worker to retrieve the build log from.
         @returns an output stream containing build information.
      */
-    std::ostream & operator<<(std::ostream & os, Worker const & w)
+    std::ostream & operator<<(std::ostream & os, Worker const & worker)
     {
-        return os << w.mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(w.mDevice) << std::endl;
+        return os << worker.mProgram.getBuildInfo<CL_PROGRAM_BUILD_LOG>(worker.mDevice) << std::endl;
     }
 
     /**
         Overloads the extraction operator to accept the source of a kernel
         and attempts to build it on the currently specified platform and device.
 
-        @param ch::Worker the Chlorine worker to build the kernel on.
-        @param std::string the source contents of an OpenCL kernel.
+        @param worker the Chlorine worker to build the kernel on.
+        @param kernel_source the source contents of an OpenCL kernel.
         @returns a Chlorine worker instance.
      */
     Worker & operator>>(Worker & worker, std::string const & kernel_source)
@@ -125,7 +125,7 @@ namespace ch
         compute the running time of the kernel associated with this event. This
         does not include time spent transferring data between host and device.
 
-        @param cl::Event the OpenCL event to retrieve profiling data from.
+        @param event the OpenCL event to retrieve profiling data from.
         @returns the elapsed execution time of the event, in nanoseconds.
      */
     unsigned int elapsed(cl::Event const & event)
@@ -139,7 +139,7 @@ namespace ch
         useful for reading OpenCL kernel files, instead of inlining kernels in
         source code using concatenated string literals.
 
-        @param std::string the name of an input file.
+        @param filename the name of an input file.
         @returns a string containing the contents of the input file.
      */
     std::string read(std::string const & filename)
@@ -157,9 +157,9 @@ namespace ch
         the bundled `clinfo` program to display information about the OpenCL
         runtimes available on your system.
 
-        @param std::string (optional) the path to a kernel source file.
-        @param unsigned (optional) the integer index of the platform to use.
-        @param unsigned (optional) the integer index of the device to use.
+        @param filename (optional) the path to a kernel source file.
+        @param platform (optional) the integer index of the platform to use.
+        @param device (optional) the integer index of the device to use.
      */
     Worker::Worker(std::string const & filename, unsigned int const platform, unsigned int const device)
     {
@@ -175,7 +175,7 @@ namespace ch
         are available on your system, please use the bundled `clinfo` program to
         display an ordered list of available OpenCL platforms.
 
-        @param unsigned the integer index of the platform to use.
+        @param platform the integer index of the platform to use.
      */
     void Worker::set_platform(unsigned int const platform)
     {
@@ -189,7 +189,7 @@ namespace ch
         available on your system, please use the bundled `clinfo` program to
         display an ordered list of available OpenCL devices.
 
-        @param unsigned the integer index of the device to use.
+        @param device the integer index of the device to use.
      */
     void Worker::set_device(unsigned int const device)
     {
@@ -206,7 +206,7 @@ namespace ch
         compiled, for portability. If the build was successful, this will
         produce an empty build log.
 
-        @param std::string the source contents of an OpenCL kernel.
+        @param kernel_source the source contents of an OpenCL kernel.
         @returns a string containing the OpenCL build log.
      */
     std::string Worker::build_kernel(std::string const & kernel_source)
@@ -232,7 +232,7 @@ namespace ch
         host after the kernel has finished executing on the device.
 
         @note this is an overloaded, recursive, variadic template method.
-        @param std::string the name of a kernel function.
+        @param kernel_function the name of the kernel function to call.
         @returns an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn>
@@ -255,7 +255,9 @@ namespace ch
         types, please consult http://en.cppreference.com/w/cpp/language/types
 
         @note this is an overloaded, recursive, variadic template method.
-        @param <T> a fundamental data type.
+        @param kernel_function the name of the kernel function to call.
+        @param primitive a fundamental data type.
+        @param parameters arguments to forward to other variadic overloads.
         @returns an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, typename T,
@@ -272,7 +274,9 @@ namespace ch
         through operator decay.
 
         @note this is an overloaded, recursive, variadic template method.
-        @param <T> a C-style array containing your data.
+        @param kernel_function the name of the kernel function to call.
+        @param array a C-style array containing your data.
+        @param parameters arguments to forward to other variadic overloads.
         @returns an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
@@ -291,7 +295,9 @@ namespace ch
         mapped to the contents of a std::array.
 
         @note this is an overloaded, recursive, variadic template method.
-        @param <T> a std::array containing your data.
+        @param kernel_function the name of the kernel function to call.
+        @param array a std::array containing your data.
+        @param parameters arguments to forward to other variadic overloads.
         @returns an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
@@ -312,7 +318,9 @@ namespace ch
         may also be supported. Your mileage may vary.
 
         @note this is an overloaded, recursive, variadic template method.
-        @param V<T> a std::vector<T> or std::valarray<T> containing your data.
+        @param kernel_function the name of the kernel function to call.
+        @param array a std::vector<T> or std::valarray<T> containing your data.
+        @param parameters arguments to forward to other variadic overloads.
         @returns an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, template<typename ...> class V, typename T, typename ... Params>

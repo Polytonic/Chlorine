@@ -3,9 +3,9 @@ project(Chlorine)
 
 # Set Compiler Flags
 if(MSVC)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 else()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++1y")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -std=c++1y")
 endif()
 
 # Enable Coverage on Travis Tests
@@ -13,6 +13,7 @@ if(DEFINED ENV{TRAVIS})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
 endif()
 
+find_package(Doxygen)
 find_package(OpenCL REQUIRED)
 include_directories(chlorine/include ${OpenCL_INCLUDE_DIR})
 file(GLOB PROJECT_HEADERS chlorine/include/*.hpp)
@@ -46,3 +47,13 @@ add_custom_command(TARGET tests PRE_BUILD
 
 # Workaround for Reserved CMAKE Keyword: test
 add_custom_target(check COMMAND tests --reporter compact DEPENDS tests)
+
+# Build the Documentation
+if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/.doxyfile
+                   ${CMAKE_CURRENT_BINARY_DIR}/.doxyfile @ONLY)
+    add_custom_target(doc ${DOXYGEN_EXECUTABLE}
+                      ${CMAKE_CURRENT_BINARY_DIR}/.doxyfile
+                      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+endif(DOXYGEN_FOUND)
