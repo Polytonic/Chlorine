@@ -7,7 +7,7 @@
 Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. Chlorine allows you to write code that runs on graphics processing units without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.
 
 ## Getting Started
-Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp) and a compiler with `C++11` support. An example of how to use Chlorine is shown below. You can also read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
+Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp) and a compiler with `C++11` support. An example of how to use Chlorine is shown below. You can also read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
 
 **main.cpp**
 ```c++
@@ -80,6 +80,8 @@ The core philosophy in Chlorine is that you should *work with your data*, instea
 Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, `3.14` vs. `3.14f`.
 
 For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it using `cmake`.
+
+documentation blocks are available above method definitions. The class declaration is useful as a quick API reference. If you need a more sophisticated viewer, use doxygen to generate the HTML representation of the annotations.
 
 ## License
 >The MIT License (MIT)
