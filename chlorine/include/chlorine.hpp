@@ -28,7 +28,10 @@ namespace ch
         and device memory. Workers expose a clean, concise interface, allowing
         you to transparently work with your data with little to no overhead.
 
-        @note documentation blocks are available above method definitions.
+        @note documentation blocks are available above method definitions. The
+              class declaration is useful as a quick API reference. If you need
+              a more sophisticated viewer, use doxygen to generate the HTML
+              representation of the annotations.
      */
     class Worker
     {
