@@ -81,6 +81,8 @@ Note that kernels may not automatically perform type promotion. When working wit
 
 For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it using `cmake`.
 
+documentation blocks are available above method definitions. The class declaration is useful as a quick API reference. If you need a more sophisticated viewer, use doxygen to generate the HTML representation of the annotations.
+
 ## License
 >The MIT License (MIT)
 
