@@ -16,10 +16,9 @@ before_script:
 
 # Run the Test Script
 script:
-  - mkdir -p build
   - cd build
   - cmake ..
-  - make all
+  - cmake --build .
   - ./clinfo > /dev/null
   - ./chlorine > /dev/null
   - make check
