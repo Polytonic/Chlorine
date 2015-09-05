@@ -48,6 +48,10 @@ add_custom_command(TARGET tests PRE_BUILD
 # Workaround for Reserved CMAKE Keyword: test
 add_custom_target(check COMMAND tests --reporter compact DEPENDS tests)
 
+# Build the Examples
+add_subdirectory(examples/swap EXCLUDE_FROM_ALL)
+add_subdirectory(examples/mandelbrot EXCLUDE_FROM_ALL)
+
 # Build the Documentation
 if(DOXYGEN_FOUND)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/.doxyfile

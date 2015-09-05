@@ -23,5 +23,5 @@ add_executable(swap ${PROJECT_HEADERS} ${PROJECT_SOURCES}
 target_link_libraries(swap ${OpenCL_LIBRARY})
 add_custom_command(TARGET swap PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${CMAKE_SOURCE_DIR}/swap.cl
+                   ${PROJECT_SOURCE_DIR}/swap.cl
                    $<TARGET_FILE_DIR:swap>/swap.cl)

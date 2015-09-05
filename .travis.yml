@@ -19,13 +19,29 @@ script:
   - cd build
   - cmake ..
   - cmake --build .
+
+  # Test the Core Binaries
   - ./clinfo > /dev/null
   - ./chlorine > /dev/null
+
+  # Test the Mandelbrot Example
+  - make mandelbrot
+  - cd examples/mandelbrot
+  - ./mandelbrot > /dev/null
+  - cd -
+
+  # Test the Swap Example
+  - make swap
+  - cd examples/swap
+  - ./swap > /dev/null
+  - cd -
+
+  # Run the Test Suite
   - make check
 
 # Upload Code Coverage Data
 after_success:
-  - coveralls --root .. --exclude chlorine/include/cl.hpp  --exclude chlorine/clinfo/clinfo.cpp --exclude examples --exclude tests
+  - coveralls --root .. --exclude chlorine/include/cl.hpp  --exclude chlorine/clinfo/clinfo.cpp --exclude tests
 
 # Display Compiler Information
 after_script:
