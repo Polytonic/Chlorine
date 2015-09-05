@@ -1,7 +1,9 @@
 // Include the Chlorine Header
 #include "chlorine.hpp"
 
-// Define an OpenCL Kernel
+// Visual Studio has trouble finding files on disk because the working directory
+// is not set using CMake. For the purposes of having a "clone and play" sample,
+// that runs on every platform, I have hard-coded the sample kernel here.
 static const char* kernel =
     "__kernel void swap(__global float * spam, __global float * eggs)"
     "{"
