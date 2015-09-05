@@ -1,6 +1,31 @@
+/**
+    The MIT License (MIT)
+
+    Copyright (c) 2015 Kevin Fung
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to
+    deal in the Software without restriction, including without limitation the
+    rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+    sell copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+    IN THE SOFTWARE.
+ */
+
 // Chlorine Header
 #ifndef CHLORINE
 #define CHLORINE
+#pragma once
 
 // Include OpenCL C++ Bindings
 #pragma GCC diagnostic push
@@ -14,6 +39,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <valarray>
 #include <vector>
 
 namespace ch
@@ -73,6 +99,16 @@ namespace ch
         // Handle Other STL Containers
         template<unsigned int const argn = 0, template<typename ...> class V, typename T, typename ... Params>
         cl::Event call(std::string const & kernel_function, V<T> & array, Params && ... parameters);
+
+#ifdef _WIN32
+        // Explicitly Provide Prototype for STL Valarrays
+        template<unsigned int const argn = 0, class T, typename ... Params>
+        cl::Event call(std::string const & kernel_function, std::valarray<T> & array, Params && ... parameters);
+
+        // Explicitly Provide Prototype for STL Vectors
+        template<unsigned int const argn = 0, class T, typename ... Params>
+        cl::Event call(std::string const & kernel_function, std::vector<T> & array, Params && ... parameters);
+#endif
 
     private:
 
@@ -336,6 +372,53 @@ namespace ch
         mKernels[kernel_function].setArg(argn, buffer);
         return call<argn+1>(kernel_function, parameters...);
     }
-};
+
+#ifdef _WIN32
+    /**
+        Sets the kernel argument at the current index to an OpenCL buffer
+        mapped to the contents of a std::valarray.
+
+        @attention this method is only available under MSVC.
+        @note this is an overloaded, recursive, variadic template method.
+        @param kernel_function the name of the kernel function to call.
+        @param array a std::valarray containing your data.
+        @param parameters arguments to forward to other variadic overloads.
+        @returns an OpenCL event object containing profiling data.
+     */
+    template<unsigned int const argn = 0, class T, typename ... Params>
+    cl::Event Worker::call(std::string const & kernel_function, std::valarray<T> & array, Params && ... parameters)
+    {
+        size_t array_size = array.size() * sizeof(T);
+        if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(argn, buffer);
+        return call<argn+1>(kernel_function, parameters...);
+    }
+
+    /**
+        Sets the kernel argument at the current index to an OpenCL buffer
+        mapped to the contents of a std::vector.
+
+        @attention this method is only available under MSVC.
+        @note this is an overloaded, recursive, variadic template method.
+        @param kernel_function the name of the kernel function to call.
+        @param array a std::vector containing your data.
+        @param parameters arguments to forward to other variadic overloads.
+        @returns an OpenCL event object containing profiling data.
+     */
+    template<unsigned int const argn = 0, class T, typename ... Params>
+    cl::Event Worker::call(std::string const & kernel_function, std::vector<T> & array, Params && ... parameters)
+    {
+        size_t array_size = array.size() * sizeof(T);
+        if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
+        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(argn, buffer);
+        return call<argn+1>(kernel_function, parameters...);
+    }
+#endif
+
+}; //~ Chlorine Namespace
 
 #endif

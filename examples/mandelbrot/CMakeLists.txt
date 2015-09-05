@@ -23,5 +23,5 @@ add_executable(mandelbrot ${PROJECT_HEADERS} ${PROJECT_SOURCES}
 target_link_libraries(mandelbrot ${OpenCL_LIBRARY})
 add_custom_command(TARGET mandelbrot PRE_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy
-                   ${CMAKE_SOURCE_DIR}/mandelbrot.cl
+                   ${PROJECT_SOURCE_DIR}/mandelbrot.cl
                    $<TARGET_FILE_DIR:mandelbrot>/mandelbrot.cl)
