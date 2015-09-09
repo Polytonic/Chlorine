@@ -138,7 +138,7 @@ namespace ch
 
         @param os the output stream to write the build log to.
         @param worker the Chlorine worker to retrieve the build log from.
-        @returns an output stream containing build information.
+        @return an output stream containing build information.
      */
     std::ostream & operator<<(std::ostream & os, Worker const & worker)
     {
@@ -151,7 +151,7 @@ namespace ch
 
         @param worker the Chlorine worker to build the kernel on.
         @param kernel_source the source contents of an OpenCL kernel.
-        @returns a Chlorine worker instance.
+        @return a Chlorine worker instance.
      */
     Worker & operator>>(Worker & worker, std::string const & kernel_source)
     {
@@ -165,7 +165,7 @@ namespace ch
         does not include time spent transferring data between host and device.
 
         @param event the OpenCL event to retrieve profiling data from.
-        @returns the elapsed execution time of the event, in nanoseconds.
+        @return the elapsed execution time of the event, in nanoseconds.
      */
     unsigned int elapsed(cl::Event const & event)
     {
@@ -179,7 +179,7 @@ namespace ch
         source code using concatenated string literals.
 
         @param filename the name of an input file.
-        @returns a string containing the contents of the input file.
+        @return a string containing the contents of the input file.
      */
     std::string read(std::string const & filename)
     {
@@ -246,7 +246,7 @@ namespace ch
         produce an empty build log.
 
         @param kernel_source the source contents of an OpenCL kernel.
-        @returns a string containing the OpenCL build log.
+        @return a string containing the OpenCL build log.
      */
     std::string Worker::build_kernel(std::string const & kernel_source)
     {
@@ -272,7 +272,7 @@ namespace ch
 
         @note this is an overloaded, recursive, variadic template method.
         @param kernel_function the name of the kernel function to call.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn>
     cl::Event Worker::call(std::string const & kernel_function)
@@ -297,7 +297,7 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param primitive a fundamental data type.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, typename T,
              typename std::enable_if<std::is_arithmetic<T>::value>::type*, typename ... Params>
@@ -316,7 +316,7 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a C-style array containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
@@ -337,7 +337,7 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a std::array containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
@@ -360,7 +360,7 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a std::vector<T> or std::valarray<T> containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, template<typename ...> class V, typename T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, V<T> & array, Params && ... parameters)
@@ -383,7 +383,7 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a std::valarray containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn = 0, class T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::valarray<T> & array, Params && ... parameters)
@@ -405,7 +405,7 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a std::vector containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn = 0, class T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::vector<T> & array, Params && ... parameters)
