@@ -278,14 +278,13 @@ namespace ch
     cl::Event Worker::call(std::string const & kernel_function)
     {
         // Perform the Calculation and Read Data from Memory Buffers
-        mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal, NULL, & mEvent);
+        mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal, nullptr, & mEvent);
         for (auto &i : mBuffers)
             mQueue.enqueueUnmapMemObject(i.first,
             mQueue.enqueueMapBuffer(i.first, CL_TRUE, CL_MAP_READ, 0, i.second));
-            mBuffers.clear();
 
-        // Return OpenCL Event Object Containing Profiling Data
-        return mEvent;
+        mBuffers.clear(); // Cleanup the Buffers
+        return mEvent;    // Return Profiling Event
     }
 
     /**
