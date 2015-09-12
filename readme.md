@@ -4,51 +4,35 @@
 [![OpenCL Version](http://img.shields.io/badge/OpenCL-1.2%2B-brightgreen.svg?style=flat-square)](https://www.khronos.org/opencl/)
 
 ## Summary
-Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. Chlorine allows you to write code that runs on graphics processing units without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.
+Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. Chlorine allows you to write cross-platform code that runs on GPUs, without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.
 
 ## Getting Started
-Chlorine is distributed as a single header: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp). You'll also need any version of the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp) and a compiler with `C++11` support. An example of how to use Chlorine is shown below. You can also read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
+Chlorine is composed of just two headers: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp), and its dependency, the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp). To integrate Chlorine into your own project, [install OpenCL](), then add `chlorine/include` to your include paths. Chlorine also requires a compiler with `C++11` support. An example of how to use Chlorine is below. You can also read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
 
 **main.cpp**
 ```c++
-// Include the Chlorine Header
-#include "chlorine.hpp"
-int main(int argc, char * argv[])
-{
-    // Create Some Data
-    std::vector<float> spam(10, 3.1415f);
-    std::vector<float> eggs(10, 2.7182f);
+std::vector<float> data(10, 3.1415f);        // Create Some Sample Data
+ch::Worker worker("square.cl");              // Initialize a Chlorine Worker
+auto event = worker.call("square", data);    // Call Kernel Square Function
+std::cout << "Data: " << data[0] << "\n";    // Prints 9.8696
 
-    // Initialize a Chlorine Worker
-    ch::Worker worker("swap.cl");
-
-    // Call the Swap Function in the Given Kernel
-    auto event = worker.call("swap", spam, eggs);
-
-    // Host Containers Are Automatically Updated
-    std::cout << "Spam: " << spam[0] << "\n"; // 2.7182
-    std::cout << "Eggs: " << eggs[0] << "\n"; // 3.1415
-
-    // Print Some Profiling Data
-    std::cout << "Elapsed Time: " << ch::elapsed(event) << "ns\n";
-}
+// Print Some Profiling Data
+std::cout << "Elapsed Time: " << ch::elapsed(event) << "ns\n";
 ```
-**swap.cl**
+**square.cl**
 ```c
-__kernel void swap(__global float * spam, __global float * eggs)
-{
+__kernel void square(__global float * data) {
     unsigned int i = get_global_id(0);
-    float swap = spam[i];
-    spam[i] = eggs[i];
-    eggs[i] = swap;
+    data[i] = data[i] * data[i];
 }
 ```
 
-Chlorine uses the [cmake](http://www.cmake.org/) build system. If you're looking to compile the examples or contribute to Chlorine, you'll need to do the following:
+Want to get started right away? If you're looking to compile the examples or play around in the sandbox project, follow these steps! Chlorine uses the [cmake](http://www.cmake.org/) build system, which is used to generate platform-specific makefiles or project files.
 
 ```bash
-# Create the Out-of-Source Builds Folder
-mkdir -p build && cd build
+git clone https://github.com/Polytonic/Chlorine
+cd Chlorine
+cd build
 ```
 
 Now generate a project file or makefile for your platform. If you want to use a particular IDE, make sure it is installed; don't forget to set the Start-Up Project in Visual Studio or the Target in Xcode.
@@ -64,7 +48,6 @@ cmake -G "Xcode" ..
 cmake -G "Visual Studio 14" ..
 cmake -G "Visual Studio 14 Win64" ..
 ...
-
 ```
 
 ## Documentation
