@@ -66,10 +66,6 @@ namespace ch
         // Worker Constructors
         Worker(std::string const & filename = "", unsigned int const platform = 0, unsigned int const device = 0);
 
-        // Disable Copy and Assignment Constructors
-        Worker(Worker const &) = delete;
-        Worker & operator=(Worker const &) = delete;
-
         // Overloaded Stream Operators
         friend std::ostream & operator<<(std::ostream & os, Worker const & worker);
         friend Worker       & operator>>(Worker & worker, std::string const & kernel_source);
@@ -100,7 +96,7 @@ namespace ch
         template<unsigned int const argn = 0, template<typename ...> class V, typename T, typename ... Params>
         cl::Event call(std::string const & kernel_function, V<T> & array, Params && ... parameters);
 
-#ifdef _WIN32
+#ifdef _MSC_VER
         // Explicitly Provide Prototype for STL Valarrays
         template<unsigned int const argn = 0, class T, typename ... Params>
         cl::Event call(std::string const & kernel_function, std::valarray<T> & array, Params && ... parameters);
@@ -138,7 +134,7 @@ namespace ch
 
         @param os the output stream to write the build log to.
         @param worker the Chlorine worker to retrieve the build log from.
-        @returns an output stream containing build information.
+        @return an output stream containing build information.
      */
     std::ostream & operator<<(std::ostream & os, Worker const & worker)
     {
@@ -151,7 +147,7 @@ namespace ch
 
         @param worker the Chlorine worker to build the kernel on.
         @param kernel_source the source contents of an OpenCL kernel.
-        @returns a Chlorine worker instance.
+        @return a Chlorine worker instance.
      */
     Worker & operator>>(Worker & worker, std::string const & kernel_source)
     {
@@ -165,7 +161,7 @@ namespace ch
         does not include time spent transferring data between host and device.
 
         @param event the OpenCL event to retrieve profiling data from.
-        @returns the elapsed execution time of the event, in nanoseconds.
+        @return the elapsed execution time of the event, in nanoseconds.
      */
     unsigned int elapsed(cl::Event const & event)
     {
@@ -179,7 +175,7 @@ namespace ch
         source code using concatenated string literals.
 
         @param filename the name of an input file.
-        @returns a string containing the contents of the input file.
+        @return a string containing the contents of the input file.
      */
     std::string read(std::string const & filename)
     {
@@ -246,7 +242,7 @@ namespace ch
         produce an empty build log.
 
         @param kernel_source the source contents of an OpenCL kernel.
-        @returns a string containing the OpenCL build log.
+        @return a string containing the OpenCL build log.
      */
     std::string Worker::build_kernel(std::string const & kernel_source)
     {
@@ -272,20 +268,19 @@ namespace ch
 
         @note this is an overloaded, recursive, variadic template method.
         @param kernel_function the name of the kernel function to call.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn>
     cl::Event Worker::call(std::string const & kernel_function)
     {
         // Perform the Calculation and Read Data from Memory Buffers
-        mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal, NULL, & mEvent);
+        mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal, nullptr, & mEvent);
         for (auto &i : mBuffers)
             mQueue.enqueueUnmapMemObject(i.first,
             mQueue.enqueueMapBuffer(i.first, CL_TRUE, CL_MAP_READ, 0, i.second));
-            mBuffers.clear();
 
-        // Return OpenCL Event Object Containing Profiling Data
-        return mEvent;
+        mBuffers.clear(); // Cleanup the Buffers
+        return mEvent;    // Return Profiling Event
     }
 
     /**
@@ -297,7 +292,7 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param primitive a fundamental data type.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, typename T,
              typename std::enable_if<std::is_arithmetic<T>::value>::type*, typename ... Params>
@@ -316,14 +311,14 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a C-style array containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
     {
         size_t array_size = N * sizeof(array[0]);
         if (N > mGlobal[0]) { mGlobal = cl::NDRange(N); }
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
         return call<argn+1>(kernel_function, parameters...);
@@ -337,14 +332,14 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a std::array containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
         return call<argn+1>(kernel_function, parameters...);
@@ -360,20 +355,20 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a std::vector<T> or std::valarray<T> containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn, template<typename ...> class V, typename T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, V<T> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
         return call<argn+1>(kernel_function, parameters...);
     }
 
-#ifdef _WIN32
+#ifdef _MSC_VER
     /**
         Sets the kernel argument at the current index to an OpenCL buffer
         mapped to the contents of a std::valarray.
@@ -383,14 +378,14 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a std::valarray containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn = 0, class T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::valarray<T> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
         return call<argn+1>(kernel_function, parameters...);
@@ -405,20 +400,20 @@ namespace ch
         @param kernel_function the name of the kernel function to call.
         @param array a std::vector containing your data.
         @param parameters arguments to forward to other variadic overloads.
-        @returns an OpenCL event object containing profiling data.
+        @return an OpenCL event object containing profiling data.
      */
     template<unsigned int const argn = 0, class T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::vector<T> & array, Params && ... parameters)
     {
         size_t array_size = array.size() * sizeof(T);
         if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
-        cl::Buffer buffer = cl::Buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
         mBuffers.push_back(std::make_pair(buffer, array_size));
         mKernels[kernel_function].setArg(argn, buffer);
         return call<argn+1>(kernel_function, parameters...);
     }
-#endif
+#endif //~ _MSC_VER
 
 }; //~ Chlorine Namespace
 
-#endif
+#endif // ~ Chlorine Header
