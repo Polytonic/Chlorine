@@ -6,7 +6,7 @@
 ## Summary
 Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. Chlorine allows you to write cross-platform code that runs on GPUs without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.
 
- - Linux/Mac/Windows friendly!
+ - Header-only, Linux/Mac/Windows friendly!
  - No messing around with buffers or OpenCL API calls ... it just works!
  - [Benchmarking Data](https://www.tinycranes.com/blog/2015/05/visualizing-the-mandelbrot-set#mandelbrot-chart)
 
@@ -16,14 +16,14 @@ Chlorine is composed of just two headers: [chlorine.hpp](https://github.com/Poly
 **main.cpp**
 ```c++
 std::vector<float> data(10, 3.1415f);        // Create Some Sample Data
-ch::Worker worker("square.cl");              // Initialize a Chlorine Worker
+ch::Worker worker("kernel.cl");              // Initialize a Chlorine Worker
 auto event = worker.call("square", data);    // Call Kernel Square Function
 std::cout << "Data: " << data[0] << "\n";    // Prints 9.8696; Like Magic!
 
 // Print Some Profiling Data
 std::cout << "Elapsed Time: " << ch::elapsed(event) << "ns\n";
 ```
-**square.cl**
+**kernel.cl**
 ```c
 __kernel void square(__global float * data) {
     unsigned int i = get_global_id(0);
