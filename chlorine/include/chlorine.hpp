@@ -66,10 +66,6 @@ namespace ch
         // Worker Constructors
         Worker(std::string const & filename = "", unsigned int const platform = 0, unsigned int const device = 0);
 
-        // Disable Copy and Assignment Constructors
-        Worker(Worker const &) = delete;
-        Worker & operator=(Worker const &) = delete;
-
         // Overloaded Stream Operators
         friend std::ostream & operator<<(std::ostream & os, Worker const & worker);
         friend Worker       & operator>>(Worker & worker, std::string const & kernel_source);
@@ -100,7 +96,7 @@ namespace ch
         template<unsigned int const argn = 0, template<typename ...> class V, typename T, typename ... Params>
         cl::Event call(std::string const & kernel_function, V<T> & array, Params && ... parameters);
 
-#ifdef _WIN32
+#ifdef _MSC_VER
         // Explicitly Provide Prototype for STL Valarrays
         template<unsigned int const argn = 0, class T, typename ... Params>
         cl::Event call(std::string const & kernel_function, std::valarray<T> & array, Params && ... parameters);
@@ -372,7 +368,7 @@ namespace ch
         return call<argn+1>(kernel_function, parameters...);
     }
 
-#ifdef _WIN32
+#ifdef _MSC_VER
     /**
         Sets the kernel argument at the current index to an OpenCL buffer
         mapped to the contents of a std::valarray.
@@ -416,8 +412,8 @@ namespace ch
         mKernels[kernel_function].setArg(argn, buffer);
         return call<argn+1>(kernel_function, parameters...);
     }
-#endif
+#endif //~ _MSC_VER
 
 }; //~ Chlorine Namespace
 
-#endif
+#endif // ~ Chlorine Header
