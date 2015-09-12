@@ -6,6 +6,10 @@
 ## Summary
 Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. Chlorine allows you to write cross-platform code that runs on GPUs without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.
 
+ - Linux/Mac/Windows friendly!
+ - No messing around with buffers or OpenCL API calls ... it just works!
+ - [Benchmarking Data](https://www.tinycranes.com/blog/2015/05/visualizing-the-mandelbrot-set#mandelbrot-chart)
+
 ## Getting Started
 Chlorine is composed of just two headers: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp), and its dependency, the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp). To integrate Chlorine into your own project, [install OpenCL](); then add `chlorine/include` to your include paths. Chlorine also requires a compiler with `C++11` support. An example of how to use Chlorine is below, or read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
 
@@ -59,7 +63,7 @@ make_check # Windows
 ```
 
 ## Documentation
-Chlorine focuses on making OpenCL frictionless; you should *work with your data*, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code through a magic method `::call(...)` which takes any number of arguments of any type. This is achieved through the use of [variadic templates](https://en.wikipedia.org/wiki/Variadic_template) to support the following types:
+Chlorine focuses on making OpenCL frictionless; you should *work with your data*, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code through a magic method `::call(...)` which accepts any number of arguments (of any type). This is achieved through the use of [variadic templates](https://en.wikipedia.org/wiki/Variadic_template) to support the following types:
 
  - [Arithmetic Scalar Types](http://www.cplusplus.com/reference/type_traits/is_arithmetic/)
  - [OpenCL Vector Types](https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/vectorDataTypes.html)
