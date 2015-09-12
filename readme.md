@@ -7,7 +7,7 @@
 Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. Chlorine allows you to write cross-platform code that runs on GPUs without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.
 
 ## Getting Started
-Chlorine is composed of just two headers: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp), and its dependency, the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp). To integrate Chlorine into your own project, [install OpenCL](), then add `chlorine/include` to your include paths. Chlorine also requires a compiler with `C++11` support. An example of how to use Chlorine is below, or read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
+Chlorine is composed of just two headers: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp), and its dependency, the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp). To integrate Chlorine into your own project, [install OpenCL](); then add `chlorine/include` to your include paths. Chlorine also requires a compiler with `C++11` support. An example of how to use Chlorine is below, or read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
 
 **main.cpp**
 ```c++
@@ -27,7 +27,7 @@ __kernel void square(__global float * data) {
 }
 ```
 
-Want to get started right away? If you're looking to compile the examples or play around in the sandbox project, follow these steps! Chlorine uses the [cmake](http://www.cmake.org/) build system, which is used to generate platform-specific makefiles or project files.
+If you're looking to compile the examples or just want to play around in the sandbox project, follow these steps! Chlorine uses the [cmake](http://www.cmake.org/) build system, which is used to generate platform-specific makefiles or project files.
 
 ```bash
 git clone https://github.com/Polytonic/Chlorine
@@ -59,7 +59,7 @@ make_check # Windows
 ```
 
 ## Documentation
-Chlorine focuses on making OpenCL frictionless; you should *work with your data*, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code, through a magic method `::call(...)` which takes any number of arguments, of any type. This is achieved through the use of [variadic templates](https://en.wikipedia.org/wiki/Variadic_template) to support the following types:
+Chlorine focuses on making OpenCL frictionless; you should *work with your data*, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code through a magic method `::call(...)` which takes any number of arguments of any type. This is achieved through the use of [variadic templates](https://en.wikipedia.org/wiki/Variadic_template) to support the following types:
 
  - [Arithmetic Scalar Types](http://www.cplusplus.com/reference/type_traits/is_arithmetic/)
  - [OpenCL Vector Types](https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/vectorDataTypes.html)
@@ -68,7 +68,7 @@ Chlorine focuses on making OpenCL frictionless; you should *work with your data*
  - [STL Valarrays](http://www.cplusplus.com/reference/valarray/)
  - [STL Vectors](http://www.cplusplus.com/reference/vector/vector/)
 
-The class declaration is useful as a quick API reference, but all method implementations in Chlorine should have annotations. If you want a more sophisticated API reference, you can use [Doxygen](http://www.doxygen.org) to generate the HTML documentation.
+The class declaration is useful as a quick API reference, and all method implementations in Chlorine should have annotations. If you want a more sophisticated API reference, you can use [Doxygen](http://www.doxygen.org) to generate the HTML documentation.
 
 For convenience, Chlorine also provides a simple version of `clinfo`, allowing you to print basic information about OpenCL devices on your computer. You can build it using `cmake`.
 
