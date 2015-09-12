@@ -12,7 +12,7 @@
   <body>
     <section class="page-header">
       <h1 class="project-name">Chlorine</h1>
-      <h2 class="project-tagline">Parallel Processing Made Simple</h2>
+      <h2 class="project-tagline">Dead Simple OpenCL</h2>
       <a href="https://github.com/Polytonic/Chlorine" class="btn">View on GitHub</a>
       <a href="https://github.com/Polytonic/Chlorine/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/Polytonic/Chlorine/tarball/master" class="btn">Download .tar.gz</a>
@@ -30,51 +30,41 @@
 <h2>
 <a id="summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary</h2>
 
-<p>Chlorine is the easiest way to interact with <a href="https://www.khronos.org/opencl/">OpenCL</a> compatible devices. Chlorine allows you to write code that runs on graphics processing units without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.</p>
+<p>Chlorine is the easiest way to interact with <a href="https://www.khronos.org/opencl/">OpenCL</a> compatible devices. Chlorine allows you to write cross-platform code that runs on GPUs without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.</p>
+
+<ul>
+<li>Linux/Mac/Windows friendly!</li>
+<li>No messing around with buffers or OpenCL API calls ... it just works!</li>
+<li><a href="https://www.tinycranes.com/blog/2015/05/visualizing-the-mandelbrot-set#mandelbrot-chart">Benchmarking Data</a></li>
+</ul>
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
-<p>Chlorine is distributed as a single header: <a href="https://github.com/Polytonic/Chlorine/blob/master/chlorine/chlorine.hpp">chlorine.hpp</a>. You'll also need any version of the <a href="http://www.khronos.org/registry/cl/api/1.2/cl.hpp">OpenCL C++ Bindings</a> and a compiler with <code>C++11</code> support. An example of how to use Chlorine is shown below. You can also read a more detailed <a href="https://github.com/Polytonic/Chlorine/tree/master/examples/swap">walkthrough</a> if you prefer.</p>
+<p>Chlorine is composed of just two headers: <a href="https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp">chlorine.hpp</a>, and its dependency, the <a href="http://www.khronos.org/registry/cl/api/1.2/cl.hpp">OpenCL C++ Bindings</a>. To integrate Chlorine into your own project, <a href="https://github.com/Polytonic/Chlorine/blob/master/build/readme.md">install OpenCL</a>; then add <code>chlorine/include</code> to your include paths. Chlorine also requires a compiler with <code>C++11</code> support. An example of how to use Chlorine is below, or read a more detailed <a href="https://github.com/Polytonic/Chlorine/tree/master/examples/swap">walkthrough</a> if you prefer.</p>
 
 <p><strong>main.cpp</strong></p>
 
-<div class="highlight highlight-c++"><pre><span class="pl-c">// Include the Chlorine Header</span>
-#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>chlorine.hpp<span class="pl-pds">"</span></span>
-<span class="pl-k">int</span> <span class="pl-en">main</span>(<span class="pl-k">int</span> argc, <span class="pl-k">char</span> * argv[])
-{
-    <span class="pl-c">// Create Some Data</span>
-    std::vector&lt;<span class="pl-k">float</span>&gt; <span class="pl-c1">spam</span>(<span class="pl-c1">10</span>, <span class="pl-c1">3</span>.<span class="pl-c1">1415f</span>);
-    std::vector&lt;<span class="pl-k">float</span>&gt; <span class="pl-c1">eggs</span>(<span class="pl-c1">10</span>, <span class="pl-c1">2</span>.<span class="pl-c1">7182f</span>);
+<div class="highlight highlight-c++"><pre>std::vector&lt;<span class="pl-k">float</span>&gt; <span class="pl-en">data</span>(<span class="pl-c1">10</span>, <span class="pl-c1">3</span>.<span class="pl-c1">1415f</span>);        <span class="pl-c">// Create Some Sample Data</span>
+ch::Worker <span class="pl-en">worker</span>(<span class="pl-s"><span class="pl-pds">"</span>square.cl<span class="pl-pds">"</span></span>);              <span class="pl-c">// Initialize a Chlorine Worker</span>
+<span class="pl-k">auto</span> event = worker.call(<span class="pl-s"><span class="pl-pds">"</span>square<span class="pl-pds">"</span></span>, data);    <span class="pl-c">// Call Kernel Square Function</span>
+std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Data: <span class="pl-pds">"</span></span> &lt;&lt; data[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>;    <span class="pl-c">// Prints 9.8696; Like Magic!</span>
 
-    <span class="pl-c">// Initialize a Chlorine Worker</span>
-    ch::Worker <span class="pl-smi">worker</span>(<span class="pl-s"><span class="pl-pds">"</span>swap.cl<span class="pl-pds">"</span></span>);
+<span class="pl-c">// Print Some Profiling Data</span>
+std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Elapsed Time: <span class="pl-pds">"</span></span> &lt;&lt; ch::elapsed(event) &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>ns<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>;</pre></div>
 
-    <span class="pl-c">// Call the Swap Function in the Given Kernel</span>
-    <span class="pl-k">auto</span> event = worker.<span class="pl-c1">call</span>(<span class="pl-s"><span class="pl-pds">"</span>swap<span class="pl-pds">"</span></span>, spam, eggs);
+<p><strong>square.cl</strong></p>
 
-    <span class="pl-c">// Host Containers Are Automatically Updated</span>
-    std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Spam: <span class="pl-pds">"</span></span> &lt;&lt; spam[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 2.7182</span>
-    std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Eggs: <span class="pl-pds">"</span></span> &lt;&lt; eggs[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>; <span class="pl-c">// 3.1415</span>
-
-    <span class="pl-c">// Print Some Profiling Data</span>
-    std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Elapsed Time: <span class="pl-pds">"</span></span> &lt;&lt; <span class="pl-c1">ch::elapsed</span>(event) &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>ns<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>;
-}</pre></div>
-
-<p><strong>swap.cl</strong></p>
-
-<div class="highlight highlight-c"><pre>__kernel <span class="pl-k">void</span> <span class="pl-en">swap</span>(__global <span class="pl-k">float</span> * spam, __global <span class="pl-k">float</span> * eggs)
-{
+<div class="highlight highlight-c"><pre>__kernel <span class="pl-k">void</span> <span class="pl-en">square</span>(__global <span class="pl-k">float</span> * data) {
     <span class="pl-k">unsigned</span> <span class="pl-k">int</span> i = <span class="pl-c1">get_global_id</span>(<span class="pl-c1">0</span>);
-    <span class="pl-k">float</span> swap = spam[i];
-    spam[i] = eggs[i];
-    eggs[i] = swap;
+    data[i] = data[i] * data[i];
 }</pre></div>
 
-<p>Chlorine uses the <a href="http://www.cmake.org/">cmake</a> build system. If you're looking to compile the examples or contribute to Chlorine, you'll need to do the following:</p>
+<p>If you're looking to compile the examples or just want to play around in the sandbox project, follow these steps! Chlorine uses the <a href="http://www.cmake.org/">cmake</a> build system, which is used to generate platform-specific makefiles or project files.</p>
 
-<div class="highlight highlight-bash"><pre><span class="pl-c"># Create the Out-of-Source Builds Folder</span>
-mkdir -p build <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">cd</span> build</pre></div>
+<div class="highlight highlight-bash"><pre>git clone https://github.com/Polytonic/Chlorine
+<span class="pl-c1">cd</span> Chlorine
+<span class="pl-c1">cd</span> build</pre></div>
 
 <p>Now generate a project file or makefile for your platform. If you want to use a particular IDE, make sure it is installed; don't forget to set the Start-Up Project in Visual Studio or the Target in Xcode.</p>
 
@@ -87,13 +77,18 @@ cmake -G <span class="pl-s"><span class="pl-pds">"</span>Xcode<span class="pl-pd
 <span class="pl-c"># Microsoft Windows</span>
 cmake -G <span class="pl-s"><span class="pl-pds">"</span>Visual Studio 14<span class="pl-pds">"</span></span> ..
 cmake -G <span class="pl-s"><span class="pl-pds">"</span>Visual Studio 14 Win64<span class="pl-pds">"</span></span> ..
-...
-</pre></div>
+...</pre></div>
+
+<p>To run tests, you will need to pull down the test framework, then call the right test script.</p>
+
+<div class="highlight highlight-bash"><pre>git submodule update --init
+make check <span class="pl-c"># UNIX</span>
+make_check <span class="pl-c"># Windows</span></pre></div>
 
 <h2>
 <a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
 
-<p>The core philosophy in Chlorine is that you should <em>work with your data</em>, instead of spending time fighting an API. To that end, Chlorine acts as a lightweight interface to OpenCL, automatically mapping arguments passed on the host to kernel functions running on a device. The underlying implementation uses variadic templating to accept any number of arguments of any type, allowing you to mix scalar and vector types as needed. The following types are supported:</p>
+<p>Chlorine focuses on making OpenCL frictionless; you should <em>work with your data</em>, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code through a magic method <code>::call(...)</code> which accepts any number of arguments (of any type). This is achieved through the use of <a href="https://en.wikipedia.org/wiki/Variadic_template">variadic templates</a> to support the following types:</p>
 
 <ul>
 <li><a href="http://www.cplusplus.com/reference/type_traits/is_arithmetic/">Arithmetic Scalar Types</a></li>
@@ -104,9 +99,11 @@ cmake -G <span class="pl-s"><span class="pl-pds">"</span>Visual Studio 14 Win64<
 <li><a href="http://www.cplusplus.com/reference/vector/vector/">STL Vectors</a></li>
 </ul>
 
-<p>Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, <code>3.14</code> vs. <code>3.14f</code>.</p>
+<p>The class declaration is useful as a quick API reference, and all method implementations in Chlorine should have annotations. If you want a more sophisticated API reference, you can use <a href="http://www.doxygen.org">Doxygen</a> to generate the HTML documentation.</p>
 
 <p>For convenience, Chlorine also provides a simple version of <code>clinfo</code>, allowing you to print basic information about OpenCL devices on your computer. You can build it using <code>cmake</code>.</p>
+
+<p>Note that kernels may not automatically perform type promotion. When working with floating point numbers, be sure to use the appropriate literal. For instance, <code>3.14</code> vs. <code>3.14f</code>.</p>
 
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
@@ -114,7 +111,7 @@ cmake -G <span class="pl-s"><span class="pl-pds">"</span>Visual Studio 14 Win64<
 <blockquote>
 <p>The MIT License (MIT)</p>
 
-<p>Copyright (c) 2014 Kevin Fung</p>
+<p>Copyright (c) 2015 Kevin Fung</p>
 
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
 
