@@ -63,7 +63,7 @@ make_check # Windows
 ```
 
 ## Documentation
-Chlorine focuses on making OpenCL frictionless; you should *work with your data*, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code through a magic method `::call(...)` which accepts any number of arguments (of any type). This is achieved through the use of [variadic templates](https://en.wikipedia.org/wiki/Variadic_template) to support the following types:
+Chlorine focuses on making OpenCL frictionless; you should *work with your data*, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code through a magic method `::call(...)` which accepts any number of arguments (of any type). Arguments to `::call(...) are automagically mapped in the order they are passed, to parameters of the indicated kernel function, and data is transferred back when the kernel function finishes. This is achieved through the use of [variadic templates](https://en.wikipedia.org/wiki/Variadic_template) to support the following types:
 
  - [Arithmetic Scalar Types](http://www.cplusplus.com/reference/type_traits/is_arithmetic/)
  - [OpenCL Vector Types](https://www.khronos.org/registry/cl/sdk/1.2/docs/man/xhtml/vectorDataTypes.html)
