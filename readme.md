@@ -11,7 +11,7 @@ Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/op
  - [Benchmarking Data](https://www.tinycranes.com/blog/2015/05/visualizing-the-mandelbrot-set#mandelbrot-chart)
 
 ## Getting Started
-Chlorine is composed of just two headers: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp), and its dependency, the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp). To integrate Chlorine into your own project, [install OpenCL](); then add `chlorine/include` to your include paths. Chlorine also requires a compiler with `C++11` support. An example of how to use Chlorine is below, or read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
+Chlorine is composed of just two headers: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp), and its dependency, the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp). To integrate Chlorine into your own project, [install OpenCL](https://github.com/Polytonic/Chlorine/blob/master/build/readme.md); then add `chlorine/include` to your include paths. Chlorine also requires a compiler with `C++11` support. An example of how to use Chlorine is below, or read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
 
 **main.cpp**
 ```c++
