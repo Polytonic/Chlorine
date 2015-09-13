@@ -4,11 +4,7 @@
 [![OpenCL Version](http://img.shields.io/badge/OpenCL-1.2%2B-brightgreen.svg?style=flat-square)](https://www.khronos.org/opencl/)
 
 ## Summary
-Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. Chlorine allows you to write cross-platform code that runs on GPUs without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.
-
- - Header-only, Linux/Mac/Windows friendly!
- - No messing around with buffers or OpenCL API calls ... it just works!
- - [Benchmarking Data](https://www.tinycranes.com/blog/2015/05/visualizing-the-mandelbrot-set#mandelbrot-chart)
+Chlorine is the easiest way to interact with [OpenCL](https://www.khronos.org/opencl/) compatible devices. It is a header-only framework that allows you to write cross-platform code that runs on GPUs without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.
 
 ## Getting Started
 Chlorine is composed of just two headers: [chlorine.hpp](https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp), and its dependency, the [OpenCL C++ Bindings](http://www.khronos.org/registry/cl/api/1.2/cl.hpp). To integrate Chlorine into your own project, [install OpenCL](https://github.com/Polytonic/Chlorine/blob/master/build/readme.md); then add `chlorine/include` to your include paths and link with OpenCL. Chlorine also requires a compiler with `C++11` support. An example of how to use Chlorine is below, or read a more detailed [walkthrough](https://github.com/Polytonic/Chlorine/tree/master/examples/swap) if you prefer.
@@ -61,6 +57,8 @@ git submodule update --init
 make check # UNIX
 make_check # Windows
 ```
+
+For a performance and time-investment analysis, check out some basic [benchmarking data](https://www.tinycranes.com/blog/2015/05/visualizing-the-mandelbrot-set#mandelbrot-chart)!
 
 ## Documentation
 Chlorine focuses on making OpenCL frictionless; you should *work with your data*, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code through a magic method `::call(...)` which accepts any number of arguments (of any type). Arguments to `::call(...)` are automagically mapped in the order they are passed, to parameters of the indicated kernel function, and data is transferred back when the kernel function finishes. This is achieved through the use of [variadic templates](https://en.wikipedia.org/wiki/Variadic_template) to support the following types:
