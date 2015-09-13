@@ -416,4 +416,4 @@ namespace ch
 
 }; //~ Chlorine Namespace
 
-#endif // ~ Chlorine Header
+#endif //~ Chlorine Header
