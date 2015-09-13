@@ -30,30 +30,24 @@
 <h2>
 <a id="summary" class="anchor" href="#summary" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summary</h2>
 
-<p>Chlorine is the easiest way to interact with <a href="https://www.khronos.org/opencl/">OpenCL</a> compatible devices. Chlorine allows you to write cross-platform code that runs on GPUs without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.</p>
-
-<ul>
-<li>Linux/Mac/Windows friendly!</li>
-<li>No messing around with buffers or OpenCL API calls ... it just works!</li>
-<li><a href="https://www.tinycranes.com/blog/2015/05/visualizing-the-mandelbrot-set#mandelbrot-chart">Benchmarking Data</a></li>
-</ul>
+<p>Chlorine is the easiest way to interact with <a href="https://www.khronos.org/opencl/">OpenCL</a> compatible devices. It is a header-only <code>C++11</code> library that allows you to write cross-platform code that runs on GPUs without ever touching the complicated OpenCL API, leaving you free to write code that matters: kernels that process your data.</p>
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
 
-<p>Chlorine is composed of just two headers: <a href="https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp">chlorine.hpp</a>, and its dependency, the <a href="http://www.khronos.org/registry/cl/api/1.2/cl.hpp">OpenCL C++ Bindings</a>. To integrate Chlorine into your own project, <a href="https://github.com/Polytonic/Chlorine/blob/master/build/readme.md">install OpenCL</a>; then add <code>chlorine/include</code> to your include paths. Chlorine also requires a compiler with <code>C++11</code> support. An example of how to use Chlorine is below, or read a more detailed <a href="https://github.com/Polytonic/Chlorine/tree/master/examples/swap">walkthrough</a> if you prefer.</p>
+<p>Chlorine is composed of just two headers: <a href="https://github.com/Polytonic/Chlorine/blob/master/chlorine/include/chlorine.hpp">chlorine.hpp</a>, and its dependency, the <a href="http://www.khronos.org/registry/cl/api/1.2/cl.hpp">OpenCL C++ Bindings</a>. To integrate Chlorine into your own project, <a href="https://github.com/Polytonic/Chlorine/blob/master/build/readme.md">install OpenCL</a>; then add <code>chlorine/include</code> to your include paths and link with OpenCL. Chlorine also requires a compiler with <code>C++11</code> support. An example of how to use Chlorine is below, or read a more detailed <a href="https://github.com/Polytonic/Chlorine/tree/master/examples/swap">walkthrough</a> if you prefer.</p>
 
 <p><strong>main.cpp</strong></p>
 
 <div class="highlight highlight-c++"><pre>std::vector&lt;<span class="pl-k">float</span>&gt; <span class="pl-en">data</span>(<span class="pl-c1">10</span>, <span class="pl-c1">3</span>.<span class="pl-c1">1415f</span>);        <span class="pl-c">// Create Some Sample Data</span>
-ch::Worker <span class="pl-en">worker</span>(<span class="pl-s"><span class="pl-pds">"</span>square.cl<span class="pl-pds">"</span></span>);              <span class="pl-c">// Initialize a Chlorine Worker</span>
+ch::Worker <span class="pl-en">worker</span>(<span class="pl-s"><span class="pl-pds">"</span>kernel.cl<span class="pl-pds">"</span></span>);              <span class="pl-c">// Initialize a Chlorine Worker</span>
 <span class="pl-k">auto</span> event = worker.call(<span class="pl-s"><span class="pl-pds">"</span>square<span class="pl-pds">"</span></span>, data);    <span class="pl-c">// Call Kernel Square Function</span>
 std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Data: <span class="pl-pds">"</span></span> &lt;&lt; data[<span class="pl-c1">0</span>] &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>;    <span class="pl-c">// Prints 9.8696; Like Magic!</span>
 
 <span class="pl-c">// Print Some Profiling Data</span>
 std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Elapsed Time: <span class="pl-pds">"</span></span> &lt;&lt; ch::elapsed(event) &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>ns<span class="pl-cce">\n</span><span class="pl-pds">"</span></span>;</pre></div>
 
-<p><strong>square.cl</strong></p>
+<p><strong>kernel.cl</strong></p>
 
 <div class="highlight highlight-c"><pre>__kernel <span class="pl-k">void</span> <span class="pl-en">square</span>(__global <span class="pl-k">float</span> * data) {
     <span class="pl-k">unsigned</span> <span class="pl-k">int</span> i = <span class="pl-c1">get_global_id</span>(<span class="pl-c1">0</span>);
@@ -85,10 +79,12 @@ cmake -G <span class="pl-s"><span class="pl-pds">"</span>Visual Studio 14 Win64<
 make check <span class="pl-c"># UNIX</span>
 make_check <span class="pl-c"># Windows</span></pre></div>
 
+<p>For a performance and time-investment analysis, check out some basic <a href="https://www.tinycranes.com/blog/2015/05/visualizing-the-mandelbrot-set#mandelbrot-chart">benchmarking data</a>!</p>
+
 <h2>
 <a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
 
-<p>Chlorine focuses on making OpenCL frictionless; you should <em>work with your data</em>, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code through a magic method <code>::call(...)</code> which accepts any number of arguments (of any type). This is achieved through the use of <a href="https://en.wikipedia.org/wiki/Variadic_template">variadic templates</a> to support the following types:</p>
+<p>Chlorine focuses on making OpenCL frictionless; you should <em>work with your data</em>, not wrangle with an API. Chlorine offers a non-invasive approach to integrating parallel programming into your code through a magic method <code>::call(...)</code> which accepts any number of arguments (of any type). Arguments to <code>::call(...)</code> are automagically mapped in the order they are passed, to parameters of the indicated kernel function, and data is transferred back when the kernel function finishes. This is achieved through the use of <a href="https://en.wikipedia.org/wiki/Variadic_template">variadic templates</a> to support the following types:</p>
 
 <ul>
 <li><a href="http://www.cplusplus.com/reference/type_traits/is_arithmetic/">Arithmetic Scalar Types</a></li>
