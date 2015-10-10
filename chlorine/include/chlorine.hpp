@@ -254,7 +254,7 @@ namespace ch
         // Associate Kernel Objects to String Keys
         std::vector<cl::Kernel> kernels;
         mProgram.createKernels(& kernels);
-        for (auto &i : kernels)
+        for (const auto &i : kernels)
             mKernels[i.getInfo<CL_KERNEL_FUNCTION_NAME>()] = i;
 
         // Return the Kernel Build Log
@@ -275,7 +275,7 @@ namespace ch
     {
         // Perform the Calculation and Read Data from Memory Buffers
         mQueue.enqueueNDRangeKernel(mKernels[kernel_function], mOffset, mGlobal, mLocal, nullptr, & mEvent);
-        for (auto &i : mBuffers)
+        for (const auto &i : mBuffers)
             mQueue.enqueueUnmapMemObject(i.first,
             mQueue.enqueueMapBuffer(i.first, CL_TRUE, CL_MAP_READ, 0, i.second));
 
