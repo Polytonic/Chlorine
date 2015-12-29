@@ -106,6 +106,14 @@ namespace ch
         cl::Event call(std::string const & kernel_function, std::vector<T> & array, Params && ... parameters);
 #endif
 
+    protected:
+
+        // Helper for OpenCL Buffer Allocations
+        template<class T>
+        inline void enqueue(std::string const & kernel_function,
+                            unsigned int const argn,
+                            T & front, size_t const array_size);
+
     private:
 
         // Components
@@ -262,6 +270,30 @@ namespace ch
     }
 
     /**
+        Creates an OpenCL Buffer from the provided array, sets the
+        correct argument index, and pushes the buffer onto the internal
+        stack of buffers to unwind when reading data back.
+
+        @param kernel_function the kernel function this buffer is intended for.
+        @param argn the argument index of the buffer.
+        @param array the array to copy into the buffer.
+        @param array_size the size of the array.
+     */
+    template<class T>
+    inline void Worker::enqueue(std::string const & kernel_function,
+                                unsigned int const argn,
+                                T & array, size_t const array_size)
+    {
+        // Reallocate the Global Workgroup Size if Needed
+        if (array_size > mGlobal[0])
+            mGlobal = cl::NDRange(array_size);
+
+        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
+        mBuffers.push_back(std::make_pair(buffer, array_size));
+        mKernels[kernel_function].setArg(argn, buffer);
+    }
+
+    /**
         Enqueues the kernel for execution on the OpenCL device. Buffer data is
         automatically transferred back into the input data structures on the
         host after the kernel has finished executing on the device.
@@ -316,11 +348,7 @@ namespace ch
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, T (&array) [N], Params && ... parameters)
     {
-        size_t array_size = N * sizeof(array[0]);
-        if (N > mGlobal[0]) { mGlobal = cl::NDRange(N); }
-        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
-        mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(argn, buffer);
+        enqueue(kernel_function, argn, array, N * sizeof(array[0]));
         return call<argn+1>(kernel_function, parameters...);
     }
 
@@ -337,11 +365,7 @@ namespace ch
     template<unsigned int const argn, class T, size_t const N, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::array<T, N> & array, Params && ... parameters)
     {
-        size_t array_size = array.size() * sizeof(T);
-        if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
-        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
-        mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(argn, buffer);
+        enqueue(kernel_function, argn, array, array.size() * sizeof(T));
         return call<argn+1>(kernel_function, parameters...);
     }
 
@@ -360,11 +384,7 @@ namespace ch
     template<unsigned int const argn, template<typename ...> class V, typename T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, V<T> & array, Params && ... parameters)
     {
-        size_t array_size = array.size() * sizeof(T);
-        if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
-        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
-        mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(argn, buffer);
+        enqueue(kernel_function, argn, array, array.size() * sizeof(T));
         return call<argn+1>(kernel_function, parameters...);
     }
 
@@ -383,11 +403,7 @@ namespace ch
     template<unsigned int const argn = 0, class T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::valarray<T> & array, Params && ... parameters)
     {
-        size_t array_size = array.size() * sizeof(T);
-        if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
-        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
-        mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(argn, buffer);
+        enqueue(kernel_function, argn, array, array.size() * sizeof(T));
         return call<argn+1>(kernel_function, parameters...);
     }
 
@@ -405,11 +421,7 @@ namespace ch
     template<unsigned int const argn = 0, class T, typename ... Params>
     cl::Event Worker::call(std::string const & kernel_function, std::vector<T> & array, Params && ... parameters)
     {
-        size_t array_size = array.size() * sizeof(T);
-        if (array.size() > mGlobal[0]) { mGlobal = cl::NDRange(array.size()); }
-        cl::Buffer buffer(mContext, CL_MEM_USE_HOST_PTR, array_size, & array[0]);
-        mBuffers.push_back(std::make_pair(buffer, array_size));
-        mKernels[kernel_function].setArg(argn, buffer);
+        enqueue(kernel_function, argn, array, array.size() * sizeof(T));
         return call<argn+1>(kernel_function, parameters...);
     }
 #endif //~ _MSC_VER
