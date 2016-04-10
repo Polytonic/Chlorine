@@ -27,13 +27,13 @@ script:
   # Test the Mandelbrot Example
   - make mandelbrot
   - cd examples/mandelbrot
-  - ./mandelbrot > /dev/null
+  # - ./mandelbrot > /dev/null
   - cd -
 
   # Test the Swap Example
   - make swap
   - cd examples/swap
-  - ./swap > /dev/null
+  # - ./swap > /dev/null
   - cd -
 
   # Run the Test Suite
